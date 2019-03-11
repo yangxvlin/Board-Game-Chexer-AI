@@ -1,46 +1,38 @@
 """
 Author:      XuLin Yang
 Student id:  904904
-Date:        2019-2-24 20:44:11
+Date:        2019-3-11 21:33:12
 Description: Player class (planned)
 """
 
-import sys
-sys.path.insert(0, './aima-python')
+from Board import Board
+from MaxnAgent import MaxnAgent
 
-try:
-    from games import alphabeta_cutoff_search
-except:
-    raise
 
-# TODO Make Player an abstract class with WhitePlayer and BlackPlayer?
 class Player:
-    # White Player
-    WHITE = "white"
 
-    def __init__(self, colour, depth=4):
+    def __init__(self, colour):
         """ Initialize a player
-        :param str colour: representing the player that control this game 
+        :param str colour: representing the player that control this game
         """
-        self.isWhite = True if colour == Player.WHITE else False
-        # 
-        self.depth = depth
+        self.colour = colour
+        self.board = Board()
 
-        # TODO finish the constructor
+        self.agent = MaxnAgent(self.board)
 
-    def action(self, turns):
+        # self.my_player =  # give an index
+
+    def action(self):
         """ Perform the agent's action
         :param 
         """
-        # TODO try min-max
-
-        alphabeta_cutoff_search()
-
-        pass
+        return self.agent.get_next_move()
 
     def update(self, action):
         """ Update opponent's action
-        :param
+        :param action
         """
-        # TODO finish this
-        pass
+        self.board.update_action(action)
+
+    def get_board(self):
+        return self.board
