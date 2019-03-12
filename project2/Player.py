@@ -16,11 +16,11 @@ class Player:
         :param str colour: representing the player that control this game
         """
         self.colour = colour
-        self.board = Board()
+        self.my_player = 0 # give an index
+        self.board = Board(self.my_player)
 
         self.agent = MaxnAgent(self.board)
 
-        # self.my_player =  # give an index
 
     def action(self):
         """ Perform the agent's action

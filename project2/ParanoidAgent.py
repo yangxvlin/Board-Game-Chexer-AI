@@ -10,15 +10,13 @@ from Agent import Agent
 
 class ParanoidAgent(Agent):
     SEARCH_DEPTH = 7
-    NEGATIVE_INFINITY = float('-inf')
-    POSITIVE_INFINITY = float('inf')
 
     def __init__(self, board, depth=SEARCH_DEPTH):
         self.board = board  # copy board for ai search
         self.depth = depth
 
     def get_next_move(self):
-        next_move, _ = self.paranoid(self.board.get_current_state(), self.depth, self.board.get_current_player(),
+        next_move, _ = self.paranoid(self.board.get_current_state(), self.depth, self.board.get_playing_player(),
                                      Agent.NEGATIVE_INFINITY, Agent.POSITIVE_INFINITY)
 
         return next_move
@@ -31,9 +29,9 @@ class ParanoidAgent(Agent):
         if self.board.is_terminate(s) or depth <= 0:
             # if currentPlayer == rootPlayer then
             if self.board.is_my_player_playing(cur_player):
-                return next_move, self.board.evaluate_state(s)
+                return next_move, self.board.evaluate_player_state(cur_player, s)
             else:
-                return next_move, -self.board.evaluate_state(s)
+                return next_move, -self.board.evaluate_player_state(cur_player, s)
 
         possible_moves = self.board.get_all_moves(s)
 

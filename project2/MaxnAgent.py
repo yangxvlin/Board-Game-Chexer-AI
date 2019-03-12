@@ -20,7 +20,7 @@ class MaxnAgent(Agent):
         self.depth = depth
 
     def get_next_move(self):
-        next_move, _ = self.maxn(self.board.get_current_state(), self.depth, self.board.get_current_player(),
+        next_move, _ = self.maxn(self.board.get_current_state(), self.depth, self.board.get_playing_player(),
                                  Agent.NEGATIVE_INFINITY)
 
         return next_move
@@ -50,7 +50,7 @@ class MaxnAgent(Agent):
 
                 # TODO place need check
                 # our player
-                if cur_player % 3 == 1:
+                if self.board.is_my_player_playing(cur_player):
                     next_move = possible_move
 
             if result[cur_player] >= self.U - alpha:

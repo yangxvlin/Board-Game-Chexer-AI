@@ -10,9 +10,10 @@ class Board(object):
     N_PLAYER = 3
     PLAYERS = [0, 1, 2]
 
-    def __init__(self):
+    def __init__(self, my_player):
         self.states = []
         self.playing_player = Board.PLAYERS[0]
+        self.my_player = my_player
 
     def get_states(self):
         return self.states
@@ -22,6 +23,7 @@ class Board(object):
 
     def update_state(self, state):
         self.states.append(state)
+        self.playing_player = self.get_next_player()
 
     def update_action(self, action):
         self.update_state(self.get_next_state(self.get_current_state(), action))
@@ -62,16 +64,16 @@ class Board(object):
         # return a tuple of evaluation for each player
         pass
 
-    def evaluate_player_state(self, player):
-        # use self.states[-1]
+    def evaluate_player_state(self, player, state):
+        # TODO when just start no state for player not yet played
         pass
 
     def evaluate_action(self, action):
-        return self.evaluate_state(self.get_next_state(self.get_current_state(),action))
+        return self.evaluate_state(self.get_next_state(self.get_current_state(), action))
 
-    def is_my_player_playing(self, my_player):
+    def is_my_player_playing(self, cur_player):
         # i.e. is our player playing now using state[-1]
-        return my_player == self.playing_player
+        return self.my_player == cur_player
 
     def get_playing_player(self):
         return self.playing_player
