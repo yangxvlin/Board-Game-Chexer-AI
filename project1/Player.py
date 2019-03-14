@@ -6,7 +6,7 @@ Description: Player class
 """
 
 from Board import Board
-from MaxnAgent import MaxnAgent
+# from MaxnAgent import MaxnAgent
 
 
 class Player:
@@ -21,13 +21,13 @@ class Player:
         self.my_player = Player.PLAYER_ORDER[self.colour]
         self.board = Board(self.my_player)
 
-        self.agent = MaxnAgent(self.board)
+        # self.agent = MaxnAgent(self.board)
 
     def action(self, turn):
         """ Perform the agent's action
         :param 
         """
-        return self.agent.get_next_move(turn)
+        # return self.agent.get_next_move(turn)
 
     def update(self, action):
         """ Update opponent's action

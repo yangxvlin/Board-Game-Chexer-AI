@@ -12,5 +12,5 @@ class Agent(metaclass=ABCMeta):
     POSITIVE_INFINITY = float('inf')
 
     @abstractmethod
-    def get_next_move(self):
+    def get_next_move(self, turn):
         pass

@@ -4,8 +4,8 @@ Student id:  904904
 Date:        2019-3-11 21:30:38
 Description: Class used to represent the board and available information for agent
 """
-import copy
 
+import copy
 from State import State
 import numpy as np
 
