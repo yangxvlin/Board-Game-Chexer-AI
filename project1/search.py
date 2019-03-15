@@ -18,6 +18,7 @@ JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
 class Search:
     @staticmethod
     def search(state):
+        # TODO finish this
         actions = []
 
         # NOTE: use s.get_next_state to further search
