@@ -10,6 +10,7 @@ Description:
 
 import json
 import sys
+from collections import deque
 
 from Action import Action
 from Hexe import Hexe
@@ -22,28 +23,42 @@ JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
 class Search:
     MAX_DEPTH = 100
 
-    # IDDFS
-    @staticmethod
-    def iterative_deeping_search(root, max_depth = MAX_DEPTH):
+    def __init__(self):
+        self.visited_states = None
+        self.found = None
+
+    # IDDFS return all next actions version
+    # IDDFS https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
+    def iterative_deeping_search(self, root, max_depth=MAX_DEPTH):
         """ returns the optimal solution of shortest steps problem in game
         chexer
         :param root
+        :param max_depth:
         """
         # TODO finish this
-        actions = []
+        not_found = []
         # NOTE: use s.get_next_state to further search
 
         for depth in range(0, max_depth):
-            found, remaining = depth_limited_search(root, depth)
+            # clear search history
+            self.visited_states = []
+            self.found = deque()  # deque([action, state], ....)
+
+            found, remaining = self.depth_limited_search(root, depth)
             if found is not None:
-                return found
+                return self.found
             elif not remaining:
-                return null
+                return not_found
 
-        return actions
+        return not_found
 
-    @staticmethod
-    def depth_limited_search(state, depth):
+    def depth_limited_search(self, state, depth):
+        # duplicated states
+        if state in self.visited_states:
+            return state, False
+        else:
+            self.visited_states.append(state)
+
         if depth == 0:
             if not state.has_remaining_pieces():
                 return state, True
@@ -54,13 +69,58 @@ class Search:
             any_remaining = False
             for pieces in state.player_pieces[state.playing_player]:
                 for action in pieces.get_all_possible_actions(state.obstacles):
-                    found, remaining = Search.depth_limited_search(
+                    found, remaining = self.depth_limited_search(
                         state.get_next_state(action), depth - 1)
                     if found is not None:
+                        self.found.extendleft([action, found])
                         return found, True
+                    # (At least one state found at depth, let IDDFS deepen)
                     if remaining:
-                        any_remaining = True  # (At least one state found at depth, let IDDFS deepen)
+                        any_remaining = True
             return None, any_remaining
+
+    # IDDFS only return next action version
+    # # IDDFS https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
+    # @staticmethod
+    # def iterative_deeping_search(root, max_depth=MAX_DEPTH):
+    #     """ returns the optimal solution of shortest steps problem in game
+    #     chexer
+    #     :param root
+    #     :param max_depth:
+    #     """
+    #     # TODO finish this
+    #     actions = []
+    #     # NOTE: use s.get_next_state to further search
+    #
+    #     for depth in range(0, max_depth):
+    #         found, remaining = Search.depth_limited_search(root, depth)
+    #         if found is not None:
+    #             return found
+    #         elif not remaining:
+    #             return actions
+    #
+    #     return actions
+    #
+    # @staticmethod
+    # def depth_limited_search(state, depth):
+    #     if depth == 0:
+    #         if not state.has_remaining_pieces():
+    #             return state, True
+    #         else:
+    #             return None, True  # (Not found, but may have children)
+    #
+    #     elif depth > 0:
+    #         any_remaining = False
+    #         for pieces in state.player_pieces[state.playing_player]:
+    #             for action in pieces.get_all_possible_actions(state.obstacles):
+    #                 found, remaining = Search.depth_limited_search(
+    #                     state.get_next_state(action), depth - 1)
+    #                 if found is not None:
+    #                     return found, True
+    #                 if remaining:
+    #                     any_remaining = True  # (At least one state found at depth, let IDDFS deepen)
+    #         return None, any_remaining
+
 
 def main():
     filename = sys.argv[1]
@@ -75,10 +135,19 @@ def main():
         obstacles = Hexe.read_coordinates(data[JSON_FILE_KEYS[2]],
                                           JSON_FILE_KEYS[2])
 
+    search = Search()
+
     state = State(player, player_pieces, obstacles)
 
-    search_res = Search.iterative_deeping_search(state)
-    Action.print_all_actions(search_res)
+    search_res = search.iterative_deeping_search(state)
+
+    print_result(search_res)
+
+
+def print_result(search_result):
+    for action, state in search_result:
+        print_board(state.to_board_dict(), str(action), True)
+
 
 def print_board(board_dict, message="", debug=False, **kwargs):
     """
@@ -154,7 +223,7 @@ def print_board(board_dict, message="", debug=False, **kwargs):
         if qr in board_dict:
             cell = str(board_dict[qr]).center(5)
         else:
-            cell = "     " # 5 spaces will fill a cell
+            cell = "     "  # 5 spaces will fill a cell
         cells.append(cell)
 
     # fill in the template to create the board drawing, then print!

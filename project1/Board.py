@@ -8,3 +8,5 @@ Description: Class used to represent the board and available information for age
 
 class Board(object):
     BOARD_BOUND = 3
+
+    N_PLAYER = 3

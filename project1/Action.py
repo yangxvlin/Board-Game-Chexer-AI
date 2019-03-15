@@ -31,8 +31,3 @@ class Action:
             res = " ".join([res, "to", str(self.to_hexe)])
 
         return res + "."
-
-    @staticmethod
-    def print_all_actions(actions):
-        for action in actions:
-            print(str(action))

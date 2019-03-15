@@ -4,6 +4,7 @@ Student id:  904904
 Date:        2019-3-14 14:32:08
 Description: 
 """
+from Board import Board
 
 
 class State:
@@ -29,3 +30,14 @@ class State:
 
     def has_remaining_pieces(self):
         return len(self.player_pieces[self.playing_player]) == 0
+
+    def to_board_dict(self):
+        board_dict = {}
+
+        for player in range(0, Board.N_PLAYER):
+            for hexe in self.player_pieces[player]:
+                board_dict[(hexe.q, hexe.r)] = hexe.owner
+
+        for hexe in self.obstacles:
+            board_dict[(hexe.q, hexe.r)] = hexe.owner
+        return board_dict
