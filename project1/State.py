@@ -26,3 +26,6 @@ class State:
         # TODO
 
         return next_state
+
+    def has_remaining_pieces(self):
+        return len(self.player_pieces[self.playing_player]) == 0
