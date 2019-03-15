@@ -9,15 +9,17 @@ Description:
 """
 
 import json
+import os
 import sys
 from collections import deque
 
-from Action import Action
 from Hexe import Hexe
 from Player import Player
 from State import State
 
 JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
+
+REPLY = True
 
 
 class Search:
@@ -45,12 +47,15 @@ class Search:
             self.found = deque()  # deque([action, state], ....)
 
             found, remaining = self.depth_limited_search(root, depth)
-            if found is not None:
+            # print(found, remaining, self.found)
+            # print(found and (not remaining))
+            if found and (not remaining):  # has result
                 return self.found
             elif not remaining:
                 return not_found
+                # return self.found
 
-        return not_found
+        return self.found
 
     def depth_limited_search(self, state, depth):
         # duplicated states
@@ -60,7 +65,8 @@ class Search:
             self.visited_states.append(state)
 
         if depth == 0:
-            if not state.has_remaining_pieces():
+            # print(state, state.has_remaining_pieces())
+            if not state.has_remaining_pieces():  # all finished
                 return state, True
             else:
                 return None, True  # (Not found, but may have children)
@@ -72,7 +78,8 @@ class Search:
                     found, remaining = self.depth_limited_search(
                         state.get_next_state(action), depth - 1)
                     if found is not None:
-                        self.found.extendleft([action, found])
+                        # print(action, found)
+                        self.found.appendleft((action, state))
                         return found, True
                     # (At least one state found at depth, let IDDFS deepen)
                     if remaining:
@@ -128,25 +135,36 @@ def main():
     with open(filename) as json_file:
         data = json.load(json_file)
 
-        player = data[JSON_FILE_KEYS[0]]
+        player = Player.PLAYER_ORDER[data[JSON_FILE_KEYS[0]]]
+
         player_pieces = {player: Hexe.read_coordinates(data[JSON_FILE_KEYS[1]],
-                                                       Player.PLAYER_ORDER[data[
-                                                           JSON_FILE_KEYS[0]]])}
+                                                       data[JSON_FILE_KEYS[0]])}
         obstacles = Hexe.read_coordinates(data[JSON_FILE_KEYS[2]],
-                                          JSON_FILE_KEYS[2])
+                                          JSON_FILE_KEYS[2][:-1])
 
     search = Search()
 
     state = State(player, player_pieces, obstacles)
 
-    search_res = search.iterative_deeping_search(state)
+    # search_res = search.iterative_deeping_search(state)
+    #
+    # print_result(search_res, False)
 
-    print_result(search_res)
+    test1(state)
 
 
-def print_result(search_result):
+def test1(state):
+    print(state.player_pieces[0][0].get_all_possible_actions(state.obstacles))
+
+
+def print_result(search_result, debug=True, reply_mode=REPLY):
+    # print(len(search_result))
     for action, state in search_result:
-        print_board(state.to_board_dict(), str(action), True)
+        # print("###", action, state)
+        print_board(state.to_board_dict(), str(action), debug)
+
+        if reply_mode:
+            os.system('pause')
 
 
 def print_board(board_dict, message="", debug=False, **kwargs):
@@ -174,7 +192,7 @@ def print_board(board_dict, message="", debug=False, **kwargs):
     # Set up the board template:
     if not debug:
         # Use the normal board template (smaller, not showing coordinates)
-        template = """# {0}
+        template = """{0}
 #           .-'-._.-'-._.-'-._.-'-.
 #          |{16:}|{23:}|{29:}|{34:}| 
 #        .-'-._.-'-._.-'-._.-'-._.-'-.
@@ -192,7 +210,7 @@ def print_board(board_dict, message="", debug=False, **kwargs):
 #          '-._.-'-._.-'-._.-'-._.-'"""
     else:
         # Use the debug board template (larger, showing coordinates)
-        template = """# {0}
+        template = """{0}
 #              ,-' `-._,-' `-._,-' `-._,-' `-.
 #             | {16:} | {23:} | {29:} | {34:} | 
 #             |  0,-3 |  1,-3 |  2,-3 |  3,-3 |

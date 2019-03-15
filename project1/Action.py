@@ -14,8 +14,8 @@ class Action:
     # [left,  top left,   top right, right, down wight, down left]
     DELTAS = {ACTIONS[0]: [Hexe(-1, 0, ACTIONS[0]), Hexe(0, -1, ACTIONS[0]), Hexe(1, -1, ACTIONS[0]),
                            Hexe(1, 0, ACTIONS[0]),  Hexe(0, 1, ACTIONS[0]),  Hexe(-1, 1, ACTIONS[0])],
-              ACTIONS[1]: [Hexe(-2, 0, ACTIONS[0]), Hexe(0, -2, ACTIONS[0]), Hexe(2, -2, ACTIONS[0]),
-                           Hexe(2, 0, ACTIONS[0]),  Hexe(0, 2, ACTIONS[0]),  Hexe(-2, 2, ACTIONS[0])]}
+              ACTIONS[1]: [Hexe(-2, 0, ACTIONS[1]), Hexe(0, -2, ACTIONS[1]), Hexe(2, -2, ACTIONS[1]),
+                           Hexe(2, 0, ACTIONS[1]),  Hexe(0, 2, ACTIONS[1]),  Hexe(-2, 2, ACTIONS[1])]}
 
     # TODO update to maintain kill information
     def __init__(self, action_id, from_hexe, to_hexe=None): #, has_killed=False):

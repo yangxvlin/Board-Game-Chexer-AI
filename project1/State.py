@@ -4,7 +4,6 @@ Student id:  904904
 Date:        2019-3-14 14:32:08
 Description: 
 """
-from Board import Board
 
 
 class State:
@@ -19,17 +18,27 @@ class State:
         # [Hexe(), ...]
         self.obstacles = obstacles
 
+    def __repr__(self):
+        # print(self.player_pieces)
+        return "".join([str(self.playing_player), ": ",
+                        str(self.player_pieces[self.playing_player])])
+
     def get_next_state(self, action):
         # update next player to play
         next_state = State(self.playing_player)
 
         # update player_piece position|action
+        import copy
+        next_state.player_pieces = copy.deepcopy(self.player_pieces)
+        # move or jump or exit
+        next_state.player_pieces[self.playing_player].remove(action.from_hexe)
         # move or jump
-        self.player_pieces[self.playing_player].remove(action.from_hexe)
-        # exit
-        if action.action_id == 2:
-            self.player_pieces[self.playing_player].remove(action.from_hexe)
-        
+        if action.action_id != 2:
+            next_state.player_pieces[self.playing_player].append(action.to_hexe)
+
+        next_state.obstacles = copy.deepcopy(self.obstacles)
+
+        # print(" -> ".join([str(self), str(next_state)]))
         return next_state
 
     def has_remaining_pieces(self):
@@ -38,9 +47,14 @@ class State:
     def to_board_dict(self):
         board_dict = {}
 
+        from Board import Board
+
         for player in range(0, Board.N_PLAYER):
-            for hexe in self.player_pieces[player]:
-                board_dict[(hexe.q, hexe.r)] = hexe.owner
+            try:
+                for hexe in self.player_pieces[player]:
+                    board_dict[(hexe.q, hexe.r)] = hexe.owner
+            except KeyError:
+                continue
 
         for hexe in self.obstacles:
             board_dict[(hexe.q, hexe.r)] = hexe.owner

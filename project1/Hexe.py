@@ -5,15 +5,11 @@ Date:        2019-3-14 14:18:34
 Description: 
 """
 
-from Board import Board
-from Action import Action
-from Player import Player
-
 
 class Hexe:
     def __init__(self, q, r, owner=None):
-        self.q = q  # TODO is this really column?
-        self.r = r  # TODO is this really row?  I am not sure. You check.
+        self.q = q
+        self.r = r
         # an additional note
         self.owner = owner  # NOTE: needed for identify kill information
 
@@ -44,8 +40,9 @@ class Hexe:
 
         move = 0
         jump = 1
-        exit = 2
+        exit_action_id = 2
 
+        from Action import Action
         jump_delta = Action.DELTAS[Action.ACTIONS[jump]]
 
         for i, delta in enumerate(Action.DELTAS[Action.ACTIONS[move]]):
@@ -58,20 +55,25 @@ class Hexe:
                     possible_actions.append(Action(move, self, move_to_hexe))
 
                     jump_to_hexe = self + jump_delta[i]
-                    # jump: destination in board and not onto other piece and path must on other piece
-                    if (jump_to_hexe._is_in_board()) & (jump_to_hexe not in other_pieces):
-                        possible_actions.append(Action(jump, self, jump_to_hexe))
+                    # jump: destination in board and not onto other piece and
+                    # path must on other piece
+                    if (jump_to_hexe._is_in_board()) & \
+                            (jump_to_hexe not in other_pieces):
+                        possible_actions.append(Action(jump, self,
+                                                       jump_to_hexe))
 
-            # exit: one move step not in board and self in player's goal hexe
+            # exi: one move step not in board and self in player's goal hexe
             elif self._is_in_goal_hexe():
-                possible_actions.append(Action(exit, self))
+                possible_actions.append(Action(exit_action_id, self))
 
         return possible_actions
 
     def _is_in_board(self):
-        return (abs(self.q) <= Board.BOARD_BOUND) & (self.r <= Board.BOARD_BOUND)
+        from Board import Board
+        return (abs(self.q) <= Board.BOARD_BOUND) & (abs(self.r) <= Board.BOARD_BOUND)
 
     def _is_in_goal_hexe(self):
+        from Player import Player
         if self.owner in Player.PLAYER_ORDER.keys():
-            return self in Player.PLAYER_GOAL[self.owner]
+            return self in Player.PLAYER_GOAL[Player.PLAYER_ORDER[self.owner]]
         return False
