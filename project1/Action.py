@@ -9,16 +9,16 @@ Description:
 class Action:
     ACTIONS = ["MOVE", "JUMP", "EXIT"]
 
-    def __init__(self, action_id, from_hexa, to_hexa=None):
+    def __init__(self, action_id, from_hexe, to_hexe=None):
         self.action_id = action_id  # TODO use index or String
-        self.from_hexa = from_hexa
-        self.to_hexa = to_hexa
+        self.from_hexe = from_hexe
+        self.to_hexe = to_hexe
 
     def __repr__(self):
-        res = " ".join([Action.ACTIONS[self.action_id], "from", str(self.from_hexa)])
+        res = " ".join([Action.ACTIONS[self.action_id], "from", str(self.from_hexe)])
 
-        if self.to_hexa is not None:
-            res = " ".join([res, "to", str(self.to_hexa)])
+        if self.to_hexe is not None:
+            res = " ".join([res, "to", str(self.to_hexe)])
 
         return res + "."
 

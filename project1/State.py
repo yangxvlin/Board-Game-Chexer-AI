@@ -13,9 +13,9 @@ class State:
         """ """
         # playing_player
         self.playing_player = playing_player
-        # {player#: [Hexa(), ...], ...}
+        # {player#: [Hexe(), ...], ...}
         self.player_pieces = player_pieces
-        # [Hexa(), ...]
+        # [Hexe(), ...]
         self.obstacles = obstacles
 
     def get_next_state(self, action):

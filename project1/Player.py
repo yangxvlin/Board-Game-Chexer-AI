@@ -5,7 +5,7 @@ Date:        2019-3-11 21:33:12
 Description: Player class
 """
 from Board import Board
-from Hexa import Hexa
+from Hexe import Hexe
 
 
 class Player:
@@ -18,6 +18,6 @@ class Player:
     PLAYER_WIN_THRESHOLD = 4
 
     # TODO check this
-    PLAYER_GOAL = {0: [Hexa(Board.BOARD_BOUND, -i, GOAL) for i in range(0, PLAYER_WIN_THRESHOLD)],
-                   1: [Hexa(i-Board.BOARD_BOUND, Board.BOARD_BOUND, GOAL) for i in range(0, PLAYER_WIN_THRESHOLD)],
-                   2: [Hexa(-i, i-Board.BOARD_BOUND, GOAL) for i in range(0, PLAYER_WIN_THRESHOLD)]}
+    PLAYER_GOAL = {0: [Hexe(Board.BOARD_BOUND, -i, GOAL) for i in range(0, PLAYER_WIN_THRESHOLD)],
+                   1: [Hexe(i-Board.BOARD_BOUND, Board.BOARD_BOUND, GOAL) for i in range(0, PLAYER_WIN_THRESHOLD)],
+                   2: [Hexe(-i, i-Board.BOARD_BOUND, GOAL) for i in range(0, PLAYER_WIN_THRESHOLD)]}
