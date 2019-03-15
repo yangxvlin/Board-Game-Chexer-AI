@@ -4,14 +4,16 @@ Student id:  904904
 Date:        2019-3-14 14:32:08
 Description: 
 """
-from collections import Counter
 
+import json
+from collections import Counter
 import numpy as np
 import Board
 
 
 class State:
     INITIAL_TURN = 0
+    JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
 
     def __init__(self, playing_player, player_pieces=None, player_finished_piece=None, turns=INITIAL_TURN):
         """ """
@@ -27,6 +29,7 @@ class State:
     # for state in states
     def __eq__(self, other):
         # TODO test
+        # TODO efficiency
         assert self.turns != other.turns
 
         if not isinstance(other, self.__class__):
@@ -47,7 +50,7 @@ class State:
     def __hash__(self):
         # TODO no idea
         #  class School:有一个attribute people(一个tuple of Person)
-        #  我不知道改怎么implement __hash__()
+        #  我不知道该怎么implement __hash__()
         #  因为 hash((1, 2)) != hash(2, 1), 所以两个相同的学校（不同的person order）会hash出两个结果
         #  那只能反复in list check 而不能用collections.counter
 
@@ -99,3 +102,10 @@ class State:
             if self.player_finished_piece[player] >= Board.Board.PLAYER_WIN_THRESHOLD:
                 return True, player
         return False, None
+
+    @staticmethod
+    def read_state(filename):
+        with open(filename) as json_file:
+            data = json.load(json_file)
+
+

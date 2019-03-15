@@ -5,17 +5,12 @@ Date:        2019-3-14 14:18:34
 Description: 
 """
 
-# each hexa contains some coordinates
-# x, y, z for cube coordinates
-# two of x, y, z for axial coordinate
-
-# using axial coordinate for storing
-
 
 class Hexa:
-    def __init__(self, q, r):
-        self.q = q
-        self.r = r
+    def __init__(self, q, r, owner=None):
+        self.q = q  # TODO is this really column?
+        self.r = r  # TODO is this really row?  I am not sure. You check.
+        self.owner = owner  # TODO not yet fully decided to delete this
 
     # TODO .join() us faster
     def __repr__(self):
@@ -27,7 +22,21 @@ class Hexa:
     def __hash__(self):
         return hash((self.q, self.r))
 
-    def get_all_movable_hexa(self):
+    @staticmethod
+    def read_coordinates(pieces_coordinates, owner):
+        """return list of hexa after read list of coordinates"""
+        hexas = []
+
+        for q, y in pieces_coordinates:
+            hexas.append(Hexa(q, r, owner))
+
+        return hexas
+
+    def get_all_movable_hexa(self, other_pieces=[]):
         movable_hexa = []
-        # TODO implement this
+        # TODO implement this not return hexa out of board
         return movable_hexa
+
+    # TODO return hexa if not outside board use Board.BOUND else None
+    def _left(self):
+        return None
