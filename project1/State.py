@@ -24,8 +24,12 @@ class State:
         next_state = State(self.playing_player)
 
         # update player_piece position|action
-        # TODO
-
+        # move or jump
+        self.player_pieces[self.playing_player].remove(action.from_hexe)
+        # exit
+        if action.action_id == 2:
+            self.player_pieces[self.playing_player].remove(action.from_hexe)
+        
         return next_state
 
     def has_remaining_pieces(self):
