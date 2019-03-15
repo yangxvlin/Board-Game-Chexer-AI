@@ -10,6 +10,7 @@ import sys
 
 from Action import Action
 from Hexe import Hexe
+from Player import Player
 from State import State
 
 JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
@@ -33,7 +34,8 @@ def main(argv):
         data = json.load(json_file)
 
         player = data[JSON_FILE_KEYS[0]]
-        player_pieces = {player: Hexe.read_coordinates(data[JSON_FILE_KEYS[1]], data[JSON_FILE_KEYS[0]])}
+        player_pieces = {player: Hexe.read_coordinates(data[JSON_FILE_KEYS[1]],
+                                                       Player.PLAYER_ORDER[data[JSON_FILE_KEYS[0]]])}
         obstacles = Hexe.read_coordinates(data[JSON_FILE_KEYS[2]], JSON_FILE_KEYS[2])
 
     state = State(player, player_pieces, obstacles)
