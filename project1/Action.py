@@ -18,7 +18,7 @@ class Action:
                            Hexe(2, 0, ACTIONS[1]),  Hexe(0, 2, ACTIONS[1]),  Hexe(-2, 2, ACTIONS[1])]}
 
     # TODO update to maintain kill information
-    def __init__(self, action_id, from_hexe, to_hexe=None): #, has_killed=False):
+    def __init__(self, action_id, from_hexe, to_hexe=None): #  has_killed=False):
         self.action_id = action_id  # TODO use index or String
         self.from_hexe = from_hexe
         self.to_hexe = to_hexe
@@ -31,3 +31,12 @@ class Action:
             res = " ".join([res, "to", str(self.to_hexe)])
 
         return res + "."
+
+    def __eq__(self, other):
+        if self.action_id == 2:
+            return (self.action_id == other.action_id) & \
+                   (self.from_hexe == other.from_hexe)
+        else:
+            return (self.action_id == other.action_id) & \
+                   (self.from_hexe == other.from_hexe) & \
+                    (self.to_hexe == other.to_hexe)

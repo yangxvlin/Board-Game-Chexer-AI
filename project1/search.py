@@ -11,6 +11,7 @@ Description:
 import json
 import os
 import sys
+import copy
 from collections import deque
 
 from Hexe import Hexe
@@ -46,45 +47,77 @@ class Search:
             self.visited_states = []
             self.found = deque()  # deque([action, state], ....)
 
-            found, remaining = self.depth_limited_search(root, depth)
+            actions = []
+
+            # route: [[action, ...], [state, ...]]
+            route = self.depth_limited_search([[], [root]], depth)
             # print(found, remaining, self.found)
             # print(found and (not remaining))
-            if found and (not remaining):  # has result
-                return self.found
-            elif not remaining:
-                return not_found
-                # return self.found
+            print(depth, route)
+            if route is not None:  # has result
+                if route[0]:
+                    return route
+        return not_found
 
-        return self.found
-
-    def depth_limited_search(self, state, depth):
-        # duplicated states
-        if state in self.visited_states:
-            return state, False
-        else:
-            self.visited_states.append(state)
-
+    def depth_limited_search(self, route, depth):
+        cur_state = route[-1][-1]
+        # print(1, route)
         if depth == 0:
-            # print(state, state.has_remaining_pieces())
-            if not state.has_remaining_pieces():  # all finished
-                return state, True
-            else:
-                return None, True  # (Not found, but may have children)
+            return None
+        if not cur_state.has_remaining_pieces():
+            return route
 
-        elif depth > 0:
-            any_remaining = False
-            for pieces in state.player_pieces[state.playing_player]:
-                for action in pieces.get_all_possible_actions(state.obstacles):
-                    found, remaining = self.depth_limited_search(
-                        state.get_next_state(action), depth - 1)
-                    if found is not None:
-                        # print(action, found)
-                        self.found.appendleft((action, state))
-                        return found, True
-                    # (At least one state found at depth, let IDDFS deepen)
-                    if remaining:
-                        any_remaining = True
-            return None, any_remaining
+        # print(2, cur_state.all_possible_playing_player_action())
+
+        for action in cur_state.all_possible_playing_player_action():
+
+            # print(3, action, "on states[-1]:", cur_state)
+
+            next_state = cur_state.get_next_state(action)
+
+            # print(4, next_state not in route[1])
+
+            if next_state not in route[1]:
+
+                route_copy = copy.deepcopy(route)
+
+                route_copy[0].append(action)
+                route_copy[1].append(next_state)
+
+                # print(route_copy)
+
+                next_route = self.depth_limited_search(route_copy, depth - 1)
+                if next_route:
+                    # print("end")
+                    return next_route
+
+        # duplicated states
+        # if state in self.visited_states:
+        #     return None, False
+        # else:
+        #     self.visited_states.append(state)
+
+        # if depth == 0:
+        #     # print(state, state.has_remaining_pieces())
+        #     if not state.has_remaining_pieces():  # all finished
+        #         return state, True
+        #     else:
+        #         return None, True  # (Not found, but may have children)
+        #
+        # elif depth > 0:
+        #     any_remaining = False
+        #     for pieces in state.player_pieces[state.playing_player]:
+        #         for action in pieces.get_all_possible_actions(state.all_pieces()):
+        #             found, remaining = self.depth_limited_search(
+        #                 state.get_next_state(action), depth - 1)
+        #             if found is not None:
+        #                 # print(action, found)
+        #                 # self.found.appendleft((action, state))
+        #                 return found, True
+        #             # (At least one state found at depth, let IDDFS deepen)
+        #             if remaining:
+        #                 any_remaining = True
+        #     return None, any_remaining
 
     # IDDFS only return next action version
     # # IDDFS https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
@@ -146,11 +179,12 @@ def main():
 
     state = State(player, player_pieces, obstacles)
 
-    # search_res = search.iterative_deeping_search(state)
-    #
-    # print_result(search_res, False)
+    search_res = search.iterative_deeping_search(state)
 
-    test1(state)
+    # print("final: ", search_res)
+    print_result(search_res, True)
+
+    # test1(state)
 
 
 def test1(state):
@@ -159,7 +193,9 @@ def test1(state):
 
 def print_result(search_result, debug=True, reply_mode=REPLY):
     # print(len(search_result))
-    for action, state in search_result:
+    for i in range(0, len(search_result[0])):
+        state = search_result[1][i+1]
+        action = search_result[0][i]
         # print("###", action, state)
         print_board(state.to_board_dict(), str(action), debug)
 

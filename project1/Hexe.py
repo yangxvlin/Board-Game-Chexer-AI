@@ -17,7 +17,9 @@ class Hexe:
         return "".join(["(", str(self.q), ", ", str(self.r), ")"])
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) & (self.q == other.q) & (self.r == other.r)
+        return isinstance(other, self.__class__) & \
+               (self.q == other.q) & \
+               (self.r == other.r)
 
     def __hash__(self):
         return hash((self.q, self.r))
@@ -45,6 +47,8 @@ class Hexe:
         from Action import Action
         jump_delta = Action.DELTAS[Action.ACTIONS[jump]]
 
+        # print(other_pieces)
+
         for i, delta in enumerate(Action.DELTAS[Action.ACTIONS[move]]):
             move_to_hexe = self + delta
 
@@ -52,28 +56,34 @@ class Hexe:
             if move_to_hexe._is_in_board():
                 # move: destination in board and not onto other piece
                 if move_to_hexe not in other_pieces:
+                    # print(i, move_to_hexe)
                     possible_actions.append(Action(move, self, move_to_hexe))
-
+                else:
                     jump_to_hexe = self + jump_delta[i]
                     # jump: destination in board and not onto other piece and
                     # path must on other piece
-                    if (jump_to_hexe._is_in_board()) & \
+                    if jump_to_hexe._is_in_board() & \
                             (jump_to_hexe not in other_pieces):
+
                         possible_actions.append(Action(jump, self,
                                                        jump_to_hexe))
 
             # exi: one move step not in board and self in player's goal hexe
             elif self._is_in_goal_hexe():
-                possible_actions.append(Action(exit_action_id, self))
+                exit_action = Action(exit_action_id, self)
+                if exit_action not in possible_actions:
+                    possible_actions.append(exit_action)
 
+        # print(possible_actions)
         return possible_actions
 
     def _is_in_board(self):
         from Board import Board
-        return (abs(self.q) <= Board.BOARD_BOUND) & (abs(self.r) <= Board.BOARD_BOUND)
+        return self in Board.BOARD_HEXES
 
     def _is_in_goal_hexe(self):
         from Player import Player
         if self.owner in Player.PLAYER_ORDER.keys():
+            # print(self, Player.PLAYER_GOAL[Player.PLAYER_ORDER[self.owner]])
             return self in Player.PLAYER_GOAL[Player.PLAYER_ORDER[self.owner]]
         return False
