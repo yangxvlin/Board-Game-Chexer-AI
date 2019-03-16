@@ -89,4 +89,24 @@ class State:
         return res
 
     def cost_to_finish(self):
-        
+        def hex_distance(a, b):
+            return (abs(a.q - b.q) +
+                    abs(a.q + a.r - b.q - b.r) +
+                    abs(a.r - b.r)) / 2
+
+        from Player import Player
+
+        total_dist = 0
+        goal_hexes = Player.PLAYER_GOAL[self.playing_player]
+
+        # for each remaining pieces
+        for piece in self.player_pieces[self.playing_player]:
+            final_dist = []
+
+            # closest dist to exit
+            for goal_hexe in goal_hexes:
+                final_dist.append(hex_distance(piece, goal_hexe))
+
+            total_dist += max(final_dist) + 1  # 1 for exit action
+
+        return total_dist
