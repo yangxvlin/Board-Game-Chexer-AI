@@ -88,3 +88,5 @@ class State:
 
         return res
 
+    def cost_to_finish(self):
+        

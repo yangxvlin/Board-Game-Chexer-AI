@@ -91,7 +91,81 @@ class Search:
                     # print("end")
                     return next_route
 
-        # duplicated states
+    # https://gist.github.com/damienstanton/7de65065bf584a43f96a
+    @staticmethod
+    def a_star_search(root):
+
+        from functools import lru_cache
+
+        @lru_cache(maxsize=128)
+        def f(state, state_g_score):
+            return state_g_score + h(state)
+
+        @lru_cache(maxsize=128)
+        def h(state):
+            return state.cost_to_finish()
+
+        def reconstruct_path(came_from_dict, current):
+            """ :return [[None, root], [action 1, state 1], ...]"""
+            total_path = [current, None]
+            while current in came_from_dict.keys():
+                total_path.append([current, came_from_dict[current][0]])
+
+                current = came_from_dict[current][1]  # current := previous
+            return total_path
+
+        def min_open_set(cur_open_set, cur_f_score):
+            cur_state = cur_open_set[0]
+            cur_min_f_score = cur_f_score[current_state]
+
+            for i in range(1, len(cur_open_set)):
+                tmp_state = cur_open_set[i]
+
+                if cur_f_score[tmp_state] < cur_min_f_score:
+                    cur_min_f_score = cur_f_score[tmp_state]
+                    cur_state = tmp_state
+
+            return cur_state
+
+        close_set = []
+        open_set = [root]
+        came_from = {root: [None, None]}  # {state: [action, previous_state]}
+
+        g_score = {root: 0}
+        f_score = {root: f(root, g_score[root])}
+
+        while open_set:
+            # the node in open_set having the lowest f_score[] value
+            current_state = min_open_set(open_set, f_score)
+
+            if not current_state.has_remaining_pieces():
+                return reconstruct_path(came_from, current_state)
+
+            open_set.remove(current_state)
+            close_set.append(current_state)
+
+            for action in current_state.all_possible_playing_player_action():
+                next_state = current_state.get_next_state(action)
+
+                if next_state in close_set:
+                    continue
+
+                tentative_g_score = g_score[current_state] + 1  # path cost = 1
+
+                if (next_state not in open_set) & \
+                        (tentative_g_score < g_score[next_state]):
+                    came_from[next_state] = [action, current_state]
+                    g_score[next_state] = tentative_g_score
+                    f_score[next_state] = h(next_state)
+
+                    if next_state not in open_set:
+                        open_set.append(next_state)
+
+        return None
+
+
+
+    # duplicated states
         # if state in self.visited_states:
         #     return None, False
         # else:
