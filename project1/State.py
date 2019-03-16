@@ -34,7 +34,7 @@ class State:
         import copy
         next_state.player_pieces = copy.deepcopy(self.player_pieces)
         # move or jump or exit
-        # print("####", next_state.player_pieces[self.playing_player], action.from_hexe, action.from_hexe in next_state.player_pieces[self.playing_player])
+        
         next_state.player_pieces[self.playing_player].remove(action.from_hexe)
         # move or jump
         if action.action_id != 2:

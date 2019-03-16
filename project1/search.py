@@ -116,7 +116,7 @@ class Search:
 
         def min_open_set(cur_open_set, cur_f_score):
             cur_state = cur_open_set[0]
-            cur_min_f_score = cur_f_score[current_state]
+            cur_min_f_score = cur_f_score[cur_state]
 
             for i in range(1, len(cur_open_set)):
                 tmp_state = cur_open_set[i]
@@ -253,16 +253,28 @@ def main():
 
     state = State(player, player_pieces, obstacles)
 
-    search_res = search.iterative_deeping_search(state)
+    # search_res = search.iterative_deeping_search(state)
+    # print_result(search_res, True)
 
-    # print("final: ", search_res)
-    print_result(search_res, True)
+    search_res = search.a_star_search(state)
+    print_result2(search_res, True)
 
     # test1(state)
 
 
 def test1(state):
     print(state.player_pieces[0][0].get_all_possible_actions(state.obstacles))
+
+
+def print_result2(search_result, debug=True, reply_mode=REPLY):
+    for i in range(1, len(search_result)):
+        state = search_result[i][1]
+        action = search_result[i][0]
+
+        print_board(state.to_board_dict(), str(action), debug)
+
+        if reply_mode:
+            os.system('pause')
 
 
 def print_result(search_result, debug=True, reply_mode=REPLY):
