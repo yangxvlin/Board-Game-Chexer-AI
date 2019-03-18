@@ -107,9 +107,6 @@ def main():
 
     state = State(player, obstacles, player_pieces)
 
-    # search_res = iterative_deeping_search(state)
-    # print_result(search_res, True)
-
     search_res = a_star_search(state)
     print_result2(search_res, True)
 

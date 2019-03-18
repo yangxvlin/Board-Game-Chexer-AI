@@ -36,8 +36,9 @@ class State:
     def __hash__(self):
         return hash(str(self))
 
-    # def __eq__(self, other):
-        # return str(self) == str(other)
+    def __eq__(self, other):
+        # state in states need this will there be a better way? 
+        return str(self) == str(other)
 
     def _copy(self):
         from copy import deepcopy
@@ -113,8 +114,8 @@ class State:
                             if next_state not in res:
                                 res.append(next_state)
 
-                # exit action: exit from goal hexe
-                elif not is_in_goal_hexe(adj_piece, self.playing_player):
+                # exit action: move out board from goal hexe
+                elif is_in_goal_hexe(piece, self.playing_player):
                     # create next state
                     next_state = self._copy()
                     # update action
