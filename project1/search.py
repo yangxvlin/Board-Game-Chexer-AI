@@ -22,218 +22,147 @@ JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
 
 REPLY = True
 
+MAX_DEPTH = 100
 
-class Search:
-    MAX_DEPTH = 100
 
-    def __init__(self):
-        self.visited_states = None
-        self.found = None
+# IDDFS return all next actions version
+# IDDFS https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
+def iterative_deeping_search(root, max_depth=MAX_DEPTH):
+    """ returns the optimal solution of shortest steps problem in game
+    chexer
+    :param root
+    :param max_depth:
+    """
+    # TODO finish this
+    not_found = []
+    # NOTE: use s.get_next_state to further search
 
-    # IDDFS return all next actions version
-    # IDDFS https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
-    def iterative_deeping_search(self, root, max_depth=MAX_DEPTH):
-        """ returns the optimal solution of shortest steps problem in game
-        chexer
-        :param root
-        :param max_depth:
-        """
-        # TODO finish this
-        not_found = []
-        # NOTE: use s.get_next_state to further search
+    for depth in range(0, max_depth):
 
-        for depth in range(0, max_depth):
-            # clear search history
-            self.visited_states = []
-            self.found = deque()  # deque([action, state], ....)
+        # route: [[action, ...], [state, ...]]
+        route = depth_limited_search([[], [root]], depth)
 
-            actions = []
+        print(depth, route)
+        if route is not None:  # has result
+            if route[0]:
+                return route
+    return not_found
 
-            # route: [[action, ...], [state, ...]]
-            route = self.depth_limited_search([[], [root]], depth)
-            # print(found, remaining, self.found)
-            # print(found and (not remaining))
-            print(depth, route)
-            if route is not None:  # has result
-                if route[0]:
-                    return route
-        return not_found
 
-    def depth_limited_search(self, route, depth):
-        cur_state = route[-1][-1]
-        # print(1, route)
-        if depth == 0:
-            return None
-        if not cur_state.has_remaining_pieces():
-            return route
+def depth_limited_search(self, route, depth):
+    cur_state = route[-1][-1]
+    # print(1, route)
+    if depth == 0:
+        return None
+    if not cur_state.has_remaining_pieces():
+        return route
 
-        # print(2, cur_state.all_possible_playing_player_action())
+    # print(2, cur_state.all_possible_playing_player_action())
 
-        for action in cur_state.all_possible_playing_player_action():
+    for action in cur_state.all_possible_playing_player_action():
 
-            # print(3, action, "on states[-1]:", cur_state)
+        # print(3, action, "on states[-1]:", cur_state)
 
-            next_state = cur_state.get_next_state(action)
+        next_state = cur_state.get_next_state(action)
 
-            # print(4, next_state not in route[1])
+        # print(4, next_state not in route[1])
 
-            if next_state not in route[1]:
+        if next_state not in route[1]:
 
-                route_copy = copy.deepcopy(route)
+            route_copy = copy.deepcopy(route)
 
-                route_copy[0].append(action)
-                route_copy[1].append(next_state)
+            route_copy[0].append(action)
+            route_copy[1].append(next_state)
 
-                # print(route_copy)
+            # print(route_copy)
 
-                next_route = self.depth_limited_search(route_copy, depth - 1)
-                if next_route:
-                    # print("end")
-                    return next_route
+            next_route = self.depth_limited_search(route_copy, depth - 1)
+            if next_route:
+                # print("end")
+                return next_route
 
-    # https://gist.github.com/damienstanton/7de65065bf584a43f96a
-    @staticmethod
-    def a_star_search(root):
 
-        from functools import lru_cache
+# https://gist.github.com/damienstanton/7de65065bf584a43f96a
+def a_star_search(root):
 
-        @lru_cache(maxsize=128)
-        def f(state, state_g_score):
-            return state_g_score + h(state)
+    from functools import lru_cache
 
-        @lru_cache(maxsize=128)
-        def h(state):
-            return state.cost_to_finish()
+    @lru_cache(maxsize=128)
+    def f(state, state_g_score):
+        return state_g_score + h(state)
 
-        def reconstruct_path(came_from_dict, current):
-            """ :return [[None, root], [action 1, state 1], ...]"""
-            total_path = [current, None]
-            while current in came_from_dict.keys():
-                total_path.append([current, came_from_dict[current][0]])
+    @lru_cache(maxsize=128)
+    def h(state):
+        return state.cost_to_finish()
 
-                current = came_from_dict[current][1]  # current := previous
-            return total_path
+    def reconstruct_path(came_from_dict, current):
+        """ :return [[None, root], [action 1, state 1], ...]"""
+        total_path = deque([current, None])
+        while current in came_from_dict.keys():
+            total_path.appendleft([current, came_from_dict[current][0]])
 
-        def min_open_set(cur_open_set, cur_f_score):
-            cur_state = cur_open_set[0]
-            cur_min_f_score = cur_f_score[cur_state]
+            current = came_from_dict[current][1]  # current := previous
+        return list(total_path)[:-2]
 
-            for i in range(1, len(cur_open_set)):
-                tmp_state = cur_open_set[i]
+    def min_open_set(cur_open_set, cur_f_score):
+        cur_state = cur_open_set[0]
+        cur_min_f_score = cur_f_score[cur_state]
 
-                if cur_f_score[tmp_state] < cur_min_f_score:
-                    cur_min_f_score = cur_f_score[tmp_state]
-                    cur_state = tmp_state
+        for i in range(1, len(cur_open_set)):
+            tmp_state = cur_open_set[i]
 
-            return cur_state
+            if cur_f_score[tmp_state] < cur_min_f_score:
+                cur_min_f_score = cur_f_score[tmp_state]
+                cur_state = tmp_state
 
-        close_set = []
-        open_set = [root]
-        came_from = {root: [None, None]}  # {state: [action, previous_state]}
+        return cur_state
 
-        g_score = {root: 0}
-        f_score = {root: f(root, g_score[root])}
+    close_set = []
+    open_set = [root]
+    came_from = {root: [None, None]}  # {state: [action, previous_state]}
 
-        while open_set:
-            # the node in open_set having the lowest f_score[] value
-            current_state = min_open_set(open_set, f_score)
+    g_score = {root: 0}
+    f_score = {root: f(root, g_score[root])}
 
-            if not current_state.has_remaining_pieces():
-                return reconstruct_path(came_from, current_state)
+    while open_set:
+        # the node in open_set having the lowest f_score[] value
+        current_state = min_open_set(open_set, f_score)
 
-            open_set.remove(current_state)
-            close_set.append(current_state)
+        if not current_state.has_remaining_pieces():
+            return reconstruct_path(came_from, current_state)
 
-            for action in current_state.all_possible_playing_player_action():
-                next_state = current_state.get_next_state(action)
+        open_set.remove(current_state)
+        close_set.append(current_state)
 
-                if next_state in close_set:
-                    continue
+        for action in current_state.all_possible_playing_player_action():
+            next_state = current_state.get_next_state(action)
 
-                tentative_g_score = g_score[current_state] + 1  # path cost = 1
+            if next_state in close_set:
+                continue
 
-                if (next_state not in open_set) & \
-                        (tentative_g_score < g_score[next_state]):
+            tentative_g_score = g_score[current_state] + 1  # path cost = 1
+
+            # print(next_state, "in", g_score)
+            if next_state not in open_set:
+
+                try:
+                    if tentative_g_score < g_score[next_state]:
+                        came_from[next_state] = [action, current_state]
+                        g_score[next_state] = tentative_g_score
+                        f_score[next_state] = f(next_state, g_score[next_state])
+
+                        if next_state not in open_set:
+                            open_set.append(next_state)
+                # newly meet next_state directly update its score
+                except KeyError:
                     came_from[next_state] = [action, current_state]
                     g_score[next_state] = tentative_g_score
-                    f_score[next_state] = h(next_state)
+                    f_score[next_state] = f(next_state, g_score[next_state])
 
                     if next_state not in open_set:
                         open_set.append(next_state)
 
-        return None
-
-
-
-    # duplicated states
-        # if state in self.visited_states:
-        #     return None, False
-        # else:
-        #     self.visited_states.append(state)
-
-        # if depth == 0:
-        #     # print(state, state.has_remaining_pieces())
-        #     if not state.has_remaining_pieces():  # all finished
-        #         return state, True
-        #     else:
-        #         return None, True  # (Not found, but may have children)
-        #
-        # elif depth > 0:
-        #     any_remaining = False
-        #     for pieces in state.player_pieces[state.playing_player]:
-        #         for action in pieces.get_all_possible_actions(state.all_pieces()):
-        #             found, remaining = self.depth_limited_search(
-        #                 state.get_next_state(action), depth - 1)
-        #             if found is not None:
-        #                 # print(action, found)
-        #                 # self.found.appendleft((action, state))
-        #                 return found, True
-        #             # (At least one state found at depth, let IDDFS deepen)
-        #             if remaining:
-        #                 any_remaining = True
-        #     return None, any_remaining
-
-    # IDDFS only return next action version
-    # # IDDFS https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
-    # @staticmethod
-    # def iterative_deeping_search(root, max_depth=MAX_DEPTH):
-    #     """ returns the optimal solution of shortest steps problem in game
-    #     chexer
-    #     :param root
-    #     :param max_depth:
-    #     """
-    #     # TODO finish this
-    #     actions = []
-    #     # NOTE: use s.get_next_state to further search
-    #
-    #     for depth in range(0, max_depth):
-    #         found, remaining = Search.depth_limited_search(root, depth)
-    #         if found is not None:
-    #             return found
-    #         elif not remaining:
-    #             return actions
-    #
-    #     return actions
-    #
-    # @staticmethod
-    # def depth_limited_search(state, depth):
-    #     if depth == 0:
-    #         if not state.has_remaining_pieces():
-    #             return state, True
-    #         else:
-    #             return None, True  # (Not found, but may have children)
-    #
-    #     elif depth > 0:
-    #         any_remaining = False
-    #         for pieces in state.player_pieces[state.playing_player]:
-    #             for action in pieces.get_all_possible_actions(state.obstacles):
-    #                 found, remaining = Search.depth_limited_search(
-    #                     state.get_next_state(action), depth - 1)
-    #                 if found is not None:
-    #                     return found, True
-    #                 if remaining:
-    #                     any_remaining = True  # (At least one state found at depth, let IDDFS deepen)
-    #         return None, any_remaining
+    return None
 
 
 def main():
@@ -249,14 +178,12 @@ def main():
         obstacles = Hexe.read_coordinates(data[JSON_FILE_KEYS[2]],
                                           JSON_FILE_KEYS[2][:-1])
 
-    search = Search()
-
     state = State(player, player_pieces, obstacles)
 
-    # search_res = search.iterative_deeping_search(state)
+    # search_res = iterative_deeping_search(state)
     # print_result(search_res, True)
 
-    search_res = search.a_star_search(state)
+    search_res = a_star_search(state)
     print_result2(search_res, True)
 
     # test1(state)
@@ -267,9 +194,16 @@ def test1(state):
 
 
 def print_result2(search_result, debug=True, reply_mode=REPLY):
+
+    # print(search_result)
+
+    print_board(search_result[0][0].to_board_dict(), "# initial state", debug)
+    if reply_mode:
+        os.system('pause')
+
     for i in range(1, len(search_result)):
-        state = search_result[i][1]
-        action = search_result[i][0]
+        state = search_result[i][0]
+        action = search_result[i][1]
 
         print_board(state.to_board_dict(), str(action), debug)
 

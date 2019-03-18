@@ -20,8 +20,11 @@ class State:
 
     def __repr__(self):
         # print(self.player_pieces)
-        return "".join([str(self.playing_player), ": ",
-                        str(self.player_pieces[self.playing_player])])
+        return "".join(["(", str(self.playing_player), ": ",
+                        str(self.player_pieces[self.playing_player]), ")"])
+
+    def __hash__(self):
+        return hash(str(self))
 
     def get_next_state(self, action):
         # update next player to play
@@ -34,11 +37,17 @@ class State:
         import copy
         next_state.player_pieces = copy.deepcopy(self.player_pieces)
         # move or jump or exit
-        
-        next_state.player_pieces[self.playing_player].remove(action.from_hexe)
+
+        piece_index = next_state.player_pieces[self.playing_player].index(
+            action.from_hexe)
+
         # move or jump
         if action.action_id != 2:
-            next_state.player_pieces[self.playing_player].append(action.to_hexe)
+            next_state.player_pieces[self.playing_player][piece_index] = action.to_hexe
+        # exit
+        else:
+            next_state.player_pieces[self.playing_player].remove(
+                action.from_hexe)
 
         next_state.obstacles = copy.deepcopy(self.obstacles)
 
@@ -110,3 +119,4 @@ class State:
             total_dist += max(final_dist) + 1  # 1 for exit action
 
         return total_dist
+
