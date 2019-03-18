@@ -12,8 +12,8 @@ import json
 import os
 import sys
 import copy
-from collections import deque
 
+from collections import deque
 from Hexe import Hexe
 from Player import Player
 from State import State
@@ -145,16 +145,9 @@ def a_star_search(root):
             # print(next_state, "in", g_score)
             if next_state not in open_set:
 
-                try:
-                    if tentative_g_score < g_score[next_state]:
-                        came_from[next_state] = [action, current_state]
-                        g_score[next_state] = tentative_g_score
-                        f_score[next_state] = f(next_state, g_score[next_state])
-
-                        if next_state not in open_set:
-                            open_set.append(next_state)
                 # newly meet next_state directly update its score
-                except KeyError:
+                if (next_state not in g_score.keys()) or \
+                        (tentative_g_score < g_score[next_state]):
                     came_from[next_state] = [action, current_state]
                     g_score[next_state] = tentative_g_score
                     f_score[next_state] = f(next_state, g_score[next_state])
