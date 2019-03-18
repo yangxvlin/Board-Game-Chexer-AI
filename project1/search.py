@@ -11,11 +11,8 @@ Description:
 import json
 import os
 import sys
-import copy
 
 from collections import deque
-from Hexe import Hexe
-from Player import Player
 from State import State
 
 JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
@@ -23,63 +20,6 @@ JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
 REPLY = True
 
 MAX_DEPTH = 100
-
-
-# IDDFS return all next actions version
-# IDDFS https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
-def iterative_deeping_search(root, max_depth=MAX_DEPTH):
-    """ returns the optimal solution of shortest steps problem in game
-    chexer
-    :param root
-    :param max_depth:
-    """
-    # TODO finish this
-    not_found = []
-    # NOTE: use s.get_next_state to further search
-
-    for depth in range(0, max_depth):
-
-        # route: [[action, ...], [state, ...]]
-        route = depth_limited_search([[], [root]], depth)
-
-        print(depth, route)
-        if route is not None:  # has result
-            if route[0]:
-                return route
-    return not_found
-
-
-def depth_limited_search(self, route, depth):
-    cur_state = route[-1][-1]
-    # print(1, route)
-    if depth == 0:
-        return None
-    if not cur_state.has_remaining_pieces():
-        return route
-
-    # print(2, cur_state.all_possible_playing_player_action())
-
-    for action in cur_state.all_possible_playing_player_action():
-
-        # print(3, action, "on states[-1]:", cur_state)
-
-        next_state = cur_state.get_next_state(action)
-
-        # print(4, next_state not in route[1])
-
-        if next_state not in route[1]:
-
-            route_copy = copy.deepcopy(route)
-
-            route_copy[0].append(action)
-            route_copy[1].append(next_state)
-
-            # print(route_copy)
-
-            next_route = self.depth_limited_search(route_copy, depth - 1)
-            if next_route:
-                # print("end")
-                return next_route
 
 
 # https://gist.github.com/damienstanton/7de65065bf584a43f96a
@@ -91,18 +31,18 @@ def a_star_search(root):
     def f(state, state_g_score):
         return state_g_score + h(state)
 
-    @lru_cache(maxsize=128)
     def h(state):
         return state.cost_to_finish()
 
     def reconstruct_path(came_from_dict, current):
-        """ :return [[None, root], [action 1, state 1], ...]"""
-        total_path = deque([current, None])
+        """ :return [state, ...]"""
+        total_path = deque()
+        total_path.append(current)
         while current in came_from_dict.keys():
-            total_path.appendleft([current, came_from_dict[current][0]])
+            total_path.appendleft(came_from_dict[current])
 
-            current = came_from_dict[current][1]  # current := previous
-        return list(total_path)[:-2]
+            current = came_from_dict[current]  # current := previous
+        return list(total_path)[1:]
 
     def min_open_set(cur_open_set, cur_f_score):
         cur_state = cur_open_set[0]
@@ -119,7 +59,7 @@ def a_star_search(root):
 
     close_set = []
     open_set = [root]
-    came_from = {root: [None, None]}  # {state: [action, previous_state]}
+    came_from = {root: None}  # {state: previous_state}
 
     g_score = {root: 0}
     f_score = {root: f(root, g_score[root])}
@@ -134,8 +74,7 @@ def a_star_search(root):
         open_set.remove(current_state)
         close_set.append(current_state)
 
-        for action in current_state.all_possible_playing_player_action():
-            next_state = current_state.get_next_state(action)
+        for next_state in current_state.all_next_state():
 
             if next_state in close_set:
                 continue
@@ -148,7 +87,7 @@ def a_star_search(root):
                 # newly meet next_state directly update its score
                 if (next_state not in g_score.keys()) or \
                         (tentative_g_score < g_score[next_state]):
-                    came_from[next_state] = [action, current_state]
+                    came_from[next_state] = current_state
                     g_score[next_state] = tentative_g_score
                     f_score[next_state] = f(next_state, g_score[next_state])
 
@@ -159,57 +98,45 @@ def a_star_search(root):
 
 
 def main():
+    from util import element_to_tuple
+
     filename = sys.argv[1]
 
     with open(filename) as json_file:
         data = json.load(json_file)
 
-        player = Player.PLAYER_ORDER[data[JSON_FILE_KEYS[0]]]
+        player = data[JSON_FILE_KEYS[0]]
 
-        player_pieces = {player: Hexe.read_coordinates(data[JSON_FILE_KEYS[1]],
-                                                       data[JSON_FILE_KEYS[0]])}
-        obstacles = Hexe.read_coordinates(data[JSON_FILE_KEYS[2]],
-                                          JSON_FILE_KEYS[2][:-1])
+        player_pieces = {player: element_to_tuple(data[JSON_FILE_KEYS[1]])}
+        obstacles = element_to_tuple(data[JSON_FILE_KEYS[2]])
 
-    state = State(player, player_pieces, obstacles)
+    # print(player_pieces)
+    # print(obstacles)
+
+    state = State(player, obstacles, player_pieces)
 
     # search_res = iterative_deeping_search(state)
     # print_result(search_res, True)
 
     search_res = a_star_search(state)
+    # print(search_res)
     print_result2(search_res, True)
 
+    # from test import test1, test2
     # test1(state)
-
-
-def test1(state):
-    print(state.player_pieces[0][0].get_all_possible_actions(state.obstacles))
+    # test2()
 
 
 def print_result2(search_result, debug=True, reply_mode=REPLY):
-
-    # print(search_result)
-
-    print_board(search_result[0][0].to_board_dict(), "# initial state", debug)
+    print(search_result)
+    print_board(search_result[0].to_board_dict(), "# initial state", debug)
     if reply_mode:
         os.system('pause')
 
     for i in range(1, len(search_result)):
-        state = search_result[i][0]
-        action = search_result[i][1]
+        state = search_result[i]
+        action = search_result[i].action
 
-        print_board(state.to_board_dict(), str(action), debug)
-
-        if reply_mode:
-            os.system('pause')
-
-
-def print_result(search_result, debug=True, reply_mode=REPLY):
-    # print(len(search_result))
-    for i in range(0, len(search_result[0])):
-        state = search_result[1][i+1]
-        action = search_result[0][i]
-        # print("###", action, state)
         print_board(state.to_board_dict(), str(action), debug)
 
         if reply_mode:
@@ -286,7 +213,7 @@ def print_board(board_dict, message="", debug=False, **kwargs):
     # prepare the provided board contents as strings, formatted to size.
     ran = range(-3, +3+1)
     cells = []
-    for qr in [(q,r) for q in ran for r in ran if -q-r in ran]:
+    for qr in [(q, r) for q in ran for r in ran if -q-r in ran]:
         if qr in board_dict:
             cell = str(board_dict[qr]).center(5)
         else:

@@ -9,107 +9,162 @@ Description:
 class State:
     INITIAL_TURN = 0
 
-    def __init__(self, playing_player, player_pieces=None, obstacles=None):
+    def __init__(self, playing_player, obstacles, player_pieces={}):
         """ """
         # playing_player
         self.playing_player = playing_player
-        # {player#: [Hexe(), ...], ...}
-        self.player_pieces = player_pieces
-        # [Hexe(), ...]
+        # [(q, r), ...]
         self.obstacles = obstacles
+        # {player: [(q, r), ...], ...}  dict planned for project 2
+        self.player_pieces_dict = player_pieces
+        # {(q, r): player, ...}
+        self.pieces_player_dict = {}
+        for player in player_pieces.keys():
+            for piece in player_pieces[player]:
+                self.pieces_player_dict[piece] = player
+
+        self.action = None
 
     def __repr__(self):
-        # print(self.player_pieces)
         return "".join(["(", str(self.playing_player), ": ",
-                        str(self.player_pieces[self.playing_player]), ")"])
+                        str(self.player_pieces_dict[self.playing_player]), ")"])
+        # return "".join(["[", "{player: pieces}: ", "(", str(self.playing_player), ": ",
+        #                 str(self.player_pieces_dict[self.playing_player]), ")",
+        #                 ", ", "{piece: player} ",
+        #                 "(", str(self.pieces_player_dict), ")", "]", "\n"])
 
     def __hash__(self):
         return hash(str(self))
 
-    def get_next_state(self, action):
-        # update next player to play
-        next_state = State(self.playing_player)
+    # def __eq__(self, other):
+    #     return str(self) == str(other)
 
-        # print("action: ", action)
-        # print("previous: ", self)
+    def _copy(self):
+        from copy import deepcopy
+        copyed = State(self.playing_player, self.obstacles)
+        copyed.player_pieces_dict = deepcopy(self.player_pieces_dict)
+        copyed.pieces_player_dict = deepcopy(self.pieces_player_dict)
 
-        # update player_piece position|action
-        import copy
-        next_state.player_pieces = copy.deepcopy(self.player_pieces)
-        # move or jump or exit
+        return copyed
 
-        piece_index = next_state.player_pieces[self.playing_player].index(
-            action.from_hexe)
+    def all_next_state(self):
+        from Constants import MOVE_DELTA, MOVE, JUMP, EXIT
+        from util import vector_add, on_board, action_to_string, is_in_goal_hexe
 
-        # move or jump
-        if action.action_id != 2:
-            next_state.player_pieces[self.playing_player][piece_index] = action.to_hexe
-        # exit
-        else:
-            next_state.player_pieces[self.playing_player].remove(
-                action.from_hexe)
+        res = []
 
-        next_state.obstacles = copy.deepcopy(self.obstacles)
+        all_piece_on_board = self.all_pieces()
 
-        # print("after: ", next_state)
+        # foreach movable piece
+        for piece in self.pieces_player_dict.keys():
+            for delta in MOVE_DELTA:
+                adj_piece = vector_add(piece, delta)
+                # print(is_in_goal_hexe(adj_piece, self.playing_player), adj_piece)
+                # print(piece, delta, adj_piece)
 
-        # print(" -> ".join([str(self), str(next_state)]))
-        return next_state
+                # move action: on board & not occupied
+                if on_board(adj_piece):
+                    if adj_piece not in all_piece_on_board:
+                        # create next state
+                        next_state = self._copy()
+                        # update action
+                        next_state.action = action_to_string(MOVE, piece, adj_piece)
+                        # delete player's original piece info
+                        mov_from_index = next_state.player_pieces_dict[self.playing_player].index(piece)
+                        # update player's new piece info
+                        next_state.player_pieces_dict[self.playing_player][mov_from_index] = adj_piece
+                        # update location of piece
+                        next_state.pieces_player_dict.pop(piece)
+                        next_state.pieces_player_dict.update({adj_piece : self.playing_player})
+
+                        if next_state not in res:
+                            res.append(next_state)
+                        # print(next_state.action)
+                    # jump action: occupied adj piece & not occupied & on board
+                    else:
+                        jump_piece = vector_add(adj_piece, delta)  # jump is just move same direction again
+
+                        if (jump_piece not in all_piece_on_board) & (on_board(jump_piece)):
+                            # create next state
+                            next_state = self._copy()
+                            # update action
+                            next_state.action = action_to_string(JUMP, piece, jump_piece)
+                            # delete player's original piece info
+                            jump_from_index = next_state.player_pieces_dict[self.playing_player].index(piece)
+                            # update player's new piece info
+                            next_state.player_pieces_dict[self.playing_player][jump_from_index] = jump_piece
+
+                            # update location of piece
+                            next_state.pieces_player_dict.pop(piece)
+                            next_state.pieces_player_dict.update({jump_piece: self.playing_player})
+
+                            # TODO for project 2 unchecked
+                            # # kill other player's piece
+                            # if next_state.pieces_player_dict[adj_piece] != self.playing_player:
+                            #     # delete owner's piece information
+                            #     next_state.player_pieces_dict[next_state.pieces_player_dict[adj_piece]].remove(adj_piece)
+                            #
+                            #     # update player gained piece
+                            #     next_state.player_pieces_dict[self.playing_player].append(adj_piece)
+                            #
+                            #     # update killed piece owner
+                            #     next_state.pieces_player_dict[adj_piece] = self.playing_player
+
+                            if next_state not in res:
+                                res.append(next_state)
+
+                # exit action: exit from goal hexe
+                elif not is_in_goal_hexe(adj_piece, self.playing_player):
+                    # create next state
+                    next_state = self._copy()
+                    # update action
+                    next_state.action = action_to_string(EXIT, piece)
+                    # delete player's original piece info
+                    next_state.player_pieces_dict[self.playing_player].remove(piece)
+                    # delete location of piece
+                    next_state.pieces_player_dict.pop(piece)
+
+                    if next_state not in res:
+                        res.append(next_state)
+
+        return res
 
     def has_remaining_pieces(self):
-        return len(self.player_pieces[self.playing_player]) != 0
+        return len(self.player_pieces_dict[self.playing_player]) != 0
 
     def to_board_dict(self):
-        board_dict = {}
+        from copy import deepcopy
+        board_dict = deepcopy(self.pieces_player_dict)
 
-        from Board import Board
+        for obstacle in self.obstacles:
+            board_dict[obstacle] = "block"
 
-        for player in range(0, Board.N_PLAYER):
-            try:
-                for hexe in self.player_pieces[player]:
-                    board_dict[(hexe.q, hexe.r)] = hexe.owner
-            except KeyError:
-                continue
-
-        for hexe in self.obstacles:
-            board_dict[(hexe.q, hexe.r)] = hexe.owner
         return board_dict
 
     def all_pieces(self):
         all_pieces = []
 
         all_pieces.extend(self.obstacles)
-
-        from Board import Board
-        for player in range(0, Board.N_PLAYER):
-            try:
-                all_pieces.extend(self.player_pieces[player])
-            except KeyError:
-                continue
+        all_pieces.extend(self.pieces_player_dict.keys())
 
         return all_pieces
 
-    def all_possible_playing_player_action(self):
-        res = []
-
-        for piece in self.player_pieces[self.playing_player]:
-            res.extend(piece.get_all_possible_actions(self.all_pieces()))
-
-        return res
-
     def cost_to_finish(self):
-        def hex_distance(a, b):
-            return (abs(a.q - b.q) +
-                    abs(a.q + a.r - b.q - b.r) +
-                    abs(a.r - b.r)) / 2
+        from functools import lru_cache
 
-        from Player import Player
+        @lru_cache(maxsize=128)
+        def hex_distance(a, b):
+            return (abs(a[0] - b[0]) +
+                    abs(a[0] + a[1] - b[0] - b[1]) +
+                    abs(a[1] - b[1])) / 2
+
+        from Constants import PLAYER_GOAL
 
         total_dist = 0
-        goal_hexes = Player.PLAYER_GOAL[self.playing_player]
+        goal_hexes = PLAYER_GOAL[self.playing_player]
 
         # for each remaining pieces
-        for piece in self.player_pieces[self.playing_player]:
+        for piece in self.player_pieces_dict[self.playing_player]:
             final_dist = []
 
             # closest dist to exit
@@ -120,3 +175,4 @@ class State:
 
         return total_dist
 
+        # return 0

@@ -3,3 +3,4 @@
 
 # python file.py -flag < input.txt > output.txt
 python search.py ./input/sample1.json
+# python search.py ./input/sample2.json
