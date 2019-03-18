@@ -31,6 +31,7 @@ def a_star_search(root):
     def f(state, state_g_score):
         return state_g_score + h(state)
 
+    @lru_cache(maxsize=128)
     def h(state):
         return state.cost_to_finish()
 
@@ -44,34 +45,25 @@ def a_star_search(root):
             current = came_from_dict[current]  # current := previous
         return list(total_path)[1:]
 
-    def min_open_set(cur_open_set, cur_f_score):
-        cur_state = cur_open_set[0]
-        cur_min_f_score = cur_f_score[cur_state]
-
-        for i in range(1, len(cur_open_set)):
-            tmp_state = cur_open_set[i]
-
-            if cur_f_score[tmp_state] < cur_min_f_score:
-                cur_min_f_score = cur_f_score[tmp_state]
-                cur_state = tmp_state
-
-        return cur_state
+    from queue import PriorityQueue
+    from PriorityItem import PriorityItem
 
     close_set = []
-    open_set = [root]
+    open_set = PriorityQueue()
     came_from = {root: None}  # {state: previous_state}
 
     g_score = {root: 0}
     f_score = {root: f(root, g_score[root])}
 
+    open_set.put(PriorityItem(f_score[root], root))
     while open_set:
         # the node in open_set having the lowest f_score[] value
-        current_state = min_open_set(open_set, f_score)
+        current_state = open_set.get().get_item()
+        # print(current_state)
 
         if not current_state.has_remaining_pieces():
             return reconstruct_path(came_from, current_state)
 
-        open_set.remove(current_state)
         close_set.append(current_state)
 
         for next_state in current_state.all_next_state():
@@ -82,17 +74,17 @@ def a_star_search(root):
             tentative_g_score = g_score[current_state] + 1  # path cost = 1
 
             # print(next_state, "in", g_score)
-            if next_state not in open_set:
+            # if next_state not in open_set:
 
-                # newly meet next_state directly update its score
-                if (next_state not in g_score.keys()) or \
-                        (tentative_g_score < g_score[next_state]):
-                    came_from[next_state] = current_state
-                    g_score[next_state] = tentative_g_score
-                    f_score[next_state] = f(next_state, g_score[next_state])
+            # newly meet next_state directly update its score
+            if (next_state not in g_score.keys()) or \
+                    (tentative_g_score < g_score[next_state]):
+                came_from[next_state] = current_state
+                g_score[next_state] = tentative_g_score
+                f_score[next_state] = f(next_state, g_score[next_state])
 
-                    if next_state not in open_set:
-                        open_set.append(next_state)
+                # if next_state not in open_set:
+                open_set.put(PriorityItem(f_score[next_state], next_state))
 
     return None
 
@@ -119,7 +111,6 @@ def main():
     # print_result(search_res, True)
 
     search_res = a_star_search(state)
-    # print(search_res)
     print_result2(search_res, True)
 
     # from test import test1, test2
