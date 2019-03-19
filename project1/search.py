@@ -107,11 +107,11 @@ def main():
 
     state = State(player, obstacles, player_pieces)
 
-    search_res = a_star_search(state)
-    print_result2(search_res, True)
+    # search_res = a_star_search(state)
+    # print_result2(search_res, True)
 
-    # from test import test1, test2
-    # test1(state)
+    from test import test1, test2
+    test1(state)
     # test2()
 
 

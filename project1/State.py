@@ -152,26 +152,26 @@ class State:
 
     def cost_to_finish(self):
         
-        # def hex_distance(a, b):
-        #     return (abs(a[0] - b[0]) +
-        #             abs(a[0] + a[1] - b[0] - b[1]) +
-        #             abs(a[1] - b[1])) / 2
+        def hex_distance(a, b):
+            return (abs(a[0] - b[0]) +
+                    abs(a[0] + a[1] - b[0] - b[1]) +
+                    abs(a[1] - b[1])) / 2
 
-        # from Constants import PLAYER_GOAL
+        from Constants import PLAYER_GOAL
 
-        # total_dist = 0
-        # goal_hexes = PLAYER_GOAL[self.playing_player]
+        total_dist = 0
+        goal_hexes = PLAYER_GOAL[self.playing_player]
 
-        # # for each remaining pieces
-        # for piece in self.player_pieces_dict[self.playing_player]:
-        #     final_dist = []
+        # for each remaining pieces
+        for piece in self.player_pieces_dict[self.playing_player]:
+            final_dist = []
 
-        #     # closest dist to exit
-        #     for goal_hexe in goal_hexes:
-        #         final_dist.append(hex_distance(piece, goal_hexe))
+            # closest dist to exit
+            for goal_hexe in goal_hexes:
+                final_dist.append(hex_distance(piece, goal_hexe))
 
-        #     total_dist += max(final_dist) + 1  # 1 for exit action
+            total_dist += min(final_dist) + 1  # 1 for exit action
 
-        # return total_dist
+        return total_dist
 
-        return 0
+        # return 0

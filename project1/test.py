@@ -8,6 +8,7 @@ Description:
 
 def test1(state):
     print(state)
+    print(state.cost_to_finish())
     for next_state in state.all_next_state():
         print(next_state.action, next_state, next_state.cost_to_finish())
 
