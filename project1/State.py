@@ -168,9 +168,10 @@ class State:
 
             # closest dist to exit
             for goal_hexe in goal_hexes:
-                final_dist.append(hex_distance(piece, goal_hexe))
+                # /2 for always jumping; 1 for exit action
+                final_dist.append(hex_distance(piece, goal_hexe) / 2 + 1)
 
-            total_dist += min(final_dist) + 1  # 1 for exit action
+            total_dist += min(final_dist)
 
         return total_dist
 
