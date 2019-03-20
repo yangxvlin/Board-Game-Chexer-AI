@@ -8,11 +8,21 @@ team member: XuLin Yang(904904), Liguo Chen()
 - _**Path Cost**_: 1 cost per action
 
 ## search algorithms
+### terminology
+- _**b**_: branching factor for search tree
+- _**d**_: length for the solution path in search tree
+- _**δ**_: relative error in heuristic = |h*(s) - h(s)|
+
 ### a* search 
-- time complexity: 
-- space complexity
+- time complexity
+    - best case ∈ O(d) if we disregard the complexity of the heuristic calculation
+    - average case ∈ O(b<sup>δd</sup>) (from lecture)
+    - worst case ∈ O(b<sup>d</sup>) (because it is uniform cost search now)
+- space complexity ∈ O(b<sup>δd</sup>) (because "keep all nodes in memory")
 - completeness
+    - Yes, as we are guaranteed in the specification "at least one winning sequence of actions exists"
 - optimality
+    - Yes, as long as h(s) <= h*(s) ∀ s ∈ state space
 
 ### heuristic function
 - admissibility
