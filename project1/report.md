@@ -1,5 +1,5 @@
 # COMP30024 Artificial Intelligence Project 1 Report
-team member: XuLin Yang(904904), Liguo C()
+team member: XuLin Yang(904904), Liguo Chen()
 
 ## search problem formulation
 - _**State**_: player pieces and obstacle pieces' location on board
