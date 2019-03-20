@@ -2,15 +2,14 @@
 team member: XuLin Yang(904904), Liguo C()
 
 ## search problem formulation
-- _**State**_: 
-- _**Action**_: 
-- _**Goal Test**_: 
-- _**Path Cost**_: 
+- _**State**_: player pieces and obstacle pieces' location on board
+- _**Action**_: player can move, jump or exit one player piece per turn defined in specification
+- _**Goal Test**_: no player's piece on board
+- _**Path Cost**_: 1 cost per action
 
 ## search algorithms
-
 ### a* search 
-- time complexity
+- time complexity: 
 - space complexity
 - completeness
 - optimality
