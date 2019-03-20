@@ -12,7 +12,8 @@
 - _**b**_: branching factor for search tree
 - _**d**_: length for the solution path in search tree
 - _**δ**_: relative error in heuristic = |h*(s) - h(s)|
-- _**dist<sub>SLD</sub>**_: straight line distance in hexe
+- _**dist<sub>SLD</sub>()**_: straight line distance in hexe
+- _**h()**_:  heuristic function
 
 ### a* search 
 - time complexity
@@ -26,13 +27,14 @@
     - Yes, as long as h(s) ≤ h*(s) ∀ s ∈ state space
 
 ### heuristic function
-- h(state) = $\sum_{piece ∈ player}​$($\lceil​$dist<sub>SLD</sub>(piece) / 2$\rceil​$ + 1)
+- h(state) = $\sum_{piece ∈ player}​$($\lceil \frac{dist_{SLD} (piece)}{2}  \rceil​$ + 1)
 - admissibility:  
-	- Discussing Red player is similar for Green and Blue player as they are parallel cases.So we can only discuss Red player case at here.  
-Fastest path for a single piece on board to reach in goal hexe is that the piece can jump to goal hexe as much as possible and then exit.  i.e. h(piece to goal hexe) = # jump action = $\lceil{\frac{number \, of \, move \, action}{2}}\rceil$. Where #move action can be measured by SLD distance  
-∵# jump action is the ideal(lower bound of) length of path for the piece to reach the goal hexe as described above  
-∴h\*(piece) ≥ # jump action + 1. Note: plus 1 for exit action  
-∴ h\*(state) ≥ $\sum_{piece ∈ player}$h(piece)  =$\sum_{piece ∈ player}$($\lceil$dist<sub>SLD</sub>(piece) / 2$\rceil​$ + 1)
+  - Discussing Red player is similar for Green and Blue player as they are parallel cases. So we can only discuss Red player case at here.  
+    Fastest path for a single piece on board to reach in goal hexe is that the piece can jump to goal hexe as much as possible (optionally plus one move if next to the goal hexe) and then exit.  
+    i.e. h(piece to goal hexe) = $\lceil{\frac{number \, of \, move \, action}{2}}\rceil$ as one jump is considered as two move actions. Where #move action = SLD distance  
+    ∵# jump action (optionally plus one move if next the goal hexe) is the ideal(lower bound of) length of path for the piece to reach the goal hexe as described above  
+    ∴h\*(piece) ≥ # jump action (optionally plus one move if next to the goal hexe) + 1. Note: plus 1 for exit action  
+    ∴ h\*(state) ≥ $\sum_{piece ∈ player}$h(piece)  = $\sum_{piece ∈ player}$($\lceil \frac{dist_{SLD} (piece)}{2}  \rceil​$ + 1)
 
 ## problem feature impact
 ### search tree
