@@ -89,10 +89,8 @@ def a_star_search(root):
     return None
 
 
-def main():
+def read_state_from_json(filename):
     from util import element_to_tuple
-
-    filename = sys.argv[1]
 
     with open(filename) as json_file:
         data = json.load(json_file)
@@ -105,7 +103,13 @@ def main():
     # print(player_pieces)
     # print(obstacles)
 
-    state = State(player, obstacles, player_pieces)
+    return State(player, obstacles, player_pieces)
+
+def main():
+
+    filename = sys.argv[1]
+
+    state = read_state_from_json(filename)
 
     search_res = a_star_search(state)
     print_result2(search_res, True)
