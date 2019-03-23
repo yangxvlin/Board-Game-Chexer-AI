@@ -38,7 +38,22 @@ class State:
 
     def __eq__(self, other):
         # state in states need this will there be a better way? 
-        return str(self) == str(other)
+        if self.playing_player != other.playing_player:
+            return False
+        self_player_piece = self.player_pieces_dict[self.playing_player]
+        other_player_piece = other.player_pieces_dict[other.playing_player]
+
+        if len(self_player_piece) != len(other_player_piece):
+            return False
+
+        for i in range(0, len(self_player_piece)):
+            if self_player_piece[i] != other_player_piece[i]:
+                return False
+        return True
+
+        # return set(self_player_piece) == set(other_player_piece)
+
+        # return str(self) == str(other)
 
     def _copy(self):
         from copy import deepcopy
@@ -158,6 +173,7 @@ class State:
                     abs(a[1] - b[1])) / 2
 
         from Constants import PLAYER_GOAL
+        # from math import floor
 
         total_dist = 0
         goal_hexes = PLAYER_GOAL[self.playing_player]

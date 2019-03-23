@@ -39,7 +39,7 @@ def a_star_search(root):
         """ :return [state, ...]"""
         total_path = deque()
         total_path.append(current)
-        while current in came_from_dict.keys():
+        while current in came_from_dict:
             total_path.appendleft(came_from_dict[current])
 
             current = came_from_dict[current]  # current := previous
@@ -48,7 +48,7 @@ def a_star_search(root):
     from queue import PriorityQueue
     from PriorityItem import PriorityItem
 
-    close_set = []
+    close_set = set()
     open_set = PriorityQueue()
     came_from = {root: None}  # {state: previous_state}
 
@@ -57,14 +57,16 @@ def a_star_search(root):
 
     open_set.put(PriorityItem(f_score[root], root))
     while open_set:
+        # print(len(open_set.queue))
         # the node in open_set having the lowest f_score[] value
         current_state = open_set.get().get_item()
         # print(current_state)
 
         if not current_state.has_remaining_pieces():
+            # print(len(close_set))
             return reconstruct_path(came_from, current_state)
 
-        close_set.append(current_state)
+        close_set.add(current_state)
 
         for next_state in current_state.all_next_state():
 
@@ -77,7 +79,7 @@ def a_star_search(root):
             # if next_state not in open_set:
 
             # newly meet next_state directly update its score
-            if (next_state not in g_score.keys()) or \
+            if (next_state not in g_score) or \
                     (tentative_g_score < g_score[next_state]):
                 came_from[next_state] = current_state
                 g_score[next_state] = tentative_g_score
@@ -87,7 +89,6 @@ def a_star_search(root):
                 open_set.put(PriorityItem(f_score[next_state], next_state))
 
     return None
-
 
 def read_state_from_json(filename):
     from util import element_to_tuple
@@ -108,19 +109,25 @@ def read_state_from_json(filename):
 def main():
 
     filename = sys.argv[1]
+    print(filename)
 
     state = read_state_from_json(filename)
 
+    # from datetime import datetime
+    # print(datetime.now())
     search_res = a_star_search(state)
-    print_result2(search_res, True)
-
+    # print(datetime.now())
+    print("# solution path length =", len(search_res)-1, "\n")
+    # print_result2(search_res, True, False)
+    
     # from test import test1, test2
     # test1(state)
     # test2()
+    
 
 
 def print_result2(search_result, debug=True, reply_mode=REPLY):
-    print(search_result)
+    
     print_board(search_result[0].to_board_dict(), "# initial state", debug)
     if reply_mode:
         os.system('pause')
