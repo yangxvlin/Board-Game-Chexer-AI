@@ -1,30 +1,32 @@
 # COMP30024 Artificial Intelligence Project 1 Report
-<p align="right"/>team member: XuLin Yang(904904), Liguo Chen()
+<p align="right"/>team member: XuLin Yang(904904), Liguo Chen(851090)
 
-## search problem formulation
+## Search Problem Formulation
 - _**State**_: player pieces and obstacle pieces' location on board
 - _**Action**_: player can move, jump or exit one player piece per turn defined in specification
 - _**Goal Test**_: no player's piece on board
 - _**Path Cost**_: 1 cost per action
 
-## search algorithms
-### terminology
+## Search Algorithms
+### Terminology
 - _**b**_: branching factor for search tree
 - _**d**_: length for the solution path in search tree
 - _**δ**_: relative error in heuristic = |h*(s) - h(s)|
 - _**dist<sub>SLD</sub>()**_: straight line distance in hexe
 - _**h()**_:  heuristic function
-
-### a* search 
+ 
+### A* search 
 - time complexity
     - best case ∈ O(d) if we disregard the complexity of the heuristic calculation
     - average case ∈ O(b<sup>δd</sup>) (from lecture)
     - worst case ∈ O(b<sup>d</sup>) (because it is uniform cost search now)
 - space complexity ∈ O(b<sup>δd</sup>) (because "keep all nodes in memory")
 - completeness
-    - Yes, as we are guaranteed in the specification "at least one winning sequence of actions exists"
+    - Yes, as we are guaranteed in the specification "at least one winning sequence of actions exists"  
+    (A* search guarantees to find a solution if one exists. According to the project spec, there must be at least one solution. Hence, A* search is complete in this scenario)
 - optimality
-    - Yes, as long as h(s) ≤ h*(s) ∀ s ∈ state space
+    - Yes, as long as h(s) ≤ h*(s) ∀ s ∈ state space  
+    (A* search is optimal is the heuristic is admissible(required in tree search) and consistent(required in graph search))
 
 ### heuristic function
 - h(state) = $\sum_{piece ∈ player} (\lceil \frac{dist_{SLD} (piece)}{2}  \rceil + 1)​$
@@ -34,7 +36,16 @@
     i.e. h(piece to goal hexe) = $\lceil{\frac{number \, of \, move \, action}{2}}\rceil$ as one jump is considered as two move actions. Where #move action = SLD distance  
     ∵# jump action (optionally plus one move if next the goal hexe) is the ideal(lower bound of) length of path for the piece to reach the goal hexe as described above  
     ∴h\*(piece) ≥ h(piece to goal hexe) + 1. Note: plus 1 for exit action  
-    ∴ h\*(state) ≥ $\sum_{piece ∈ player}$h(piece) = $\sum_{piece ∈ player} (\lceil \frac{dist_{SLD} (piece)}{2}  \rceil + 1)​$
+    ∴ h\*(state) ≥ $\sum_{piece ∈ player}$h(piece) = $\sum_{piece ∈ player} (\lceil \frac{dist_{SLD} (piece)}{2}  \rceil + 1)​$  
+    
+    (The heuristic we chose is half of the hex distance(which is the straight line distance in hex coordinate).It is derived using relaxed problem method.
+    In the original rules of game, a piece can move to a new location if it is not occupied by other pieces or blocks,
+    and a piece can jump to a new location if it is not occupied by other pieces or blocks and there is a piece or block in between.
+    In the relaxed problem, a piece can move or jump as it wishes.
+    So, the heuristic we chose can be interpreted as the piece jumps all the way
+    to the destination without thinking the availability of new location and if there is
+    piece/block helping for jumping. This is the shortest path as in real scenario, 
+    jump action is not always valid. Therefore, the heuristic is admissible.)
 
 ## problem feature impact
 ### search tree
