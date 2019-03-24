@@ -16,21 +16,25 @@
 - _**h()**_:  heuristic function
  
 ### A* search 
-- time complexity
+- This is the search algorithm used in our program. It's a simple but efficient search
+algorithm. Not only is it complete and optimal, but also optimally efficient, meaning
+among similar algorithms(ones that expands paths using heuristic as a guide), which use the same heuristic, 
+A* expands the least(or as least as others) number of nodes(states in this project).
+- Time Complexity
     - best case ∈ O(d) if we disregard the complexity of the heuristic calculation
     - average case ∈ O(b<sup>δd</sup>) (from lecture)
     - worst case ∈ O(b<sup>d</sup>) (because it is uniform cost search now)
-- space complexity ∈ O(b<sup>δd</sup>) (because "keep all nodes in memory")
-- completeness
+- Space Complexity ∈ O(b<sup>δd</sup>) (because "keep all nodes in memory")
+- Completeness
     - Yes, as we are guaranteed in the specification "at least one winning sequence of actions exists"  
-    (A* search guarantees to find a solution if one exists. According to the project spec, there must be at least one solution. Hence, A* search is complete in this scenario)
-- optimality
+    (A* search is guaranteed to find a solution if one exists. According to the project spec, there must be at least one solution. Hence, A* search is complete in this scenario)
+- Optimality
     - Yes, as long as h(s) ≤ h*(s) ∀ s ∈ state space  
-    (A* search is optimal is the heuristic is admissible(required in tree search) and consistent(required in graph search))
+    (A* search is optimal if the heuristic is admissible(required in tree search) and consistent(required in graph search))
 
-### heuristic function
+### Heuristic Function
 - h(state) = $\sum_{piece ∈ player} (\lceil \frac{dist_{SLD} (piece)}{2}  \rceil + 1)​$
-- admissibility:  
+- Admissibility:  
   - Discussing Red player is similar for Green and Blue player as they are parallel cases. So we can only discuss Red player case at here.  
     Fastest path for a single piece on board to reach in goal hexe is that the piece can jump to goal hexe as much as possible (optionally plus one move if next to the goal hexe) and then exit.  
     i.e. h(piece to goal hexe) = $\lceil{\frac{number \, of \, move \, action}{2}}\rceil$ as one jump is considered as two move actions. Where #move action = SLD distance  
@@ -47,11 +51,17 @@
     piece/block helping for jumping. This is the shortest path as in real scenario, 
     jump action is not always valid. Therefore, the heuristic is admissible.)
 
-## problem feature impact
-### search tree
+## Problem Feature Impact
+### Search Tree
 - branching factor
 - depth 
 
 ### other features of the input impact on search algorithm
+- Not Sure: The input(initial information) of our program comes from a json file in the disk. Another way
+of giving input(initial information) is through command line argument(CLA).
+The complexity of algorithm remains the same for both input methods, but the execution time
+of the program is affected. There is one I/O operation for the first method, whereas using CLA,
+the information goes directly into the memory, ready for much faster reading for CPU.
+
 - time complexity 
 - space complexity
