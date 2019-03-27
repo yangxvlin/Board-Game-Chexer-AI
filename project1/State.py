@@ -86,7 +86,7 @@ class State:
         all_piece_on_board = self.all_pieces()
 
         # These two line of code give same output and nearly same run time, but
-        # the seond has a better practical performance.
+        # the second has a better practical performance.
         # Because the first one give in piece order (e.g. always [piece No.1, 
         # piece No.2, ...] no matter the change in axial coordinates due to my 
         # implementation). 
@@ -95,7 +95,7 @@ class State:
         # As a result, the true solution tends to move piece respectively not
         # in a focusing on particular piece. Which means the second one is
         # closer to real world logic consider process. As a result, lead to 
-        # a better practical perfoamnce.
+        # a better practical performance.
         # player_pieces = self.player_pieces_dict[self.playing_player]
         player_pieces = [k for k, v in self.pieces_player_dict.items()
                          if v == self.playing_player]
