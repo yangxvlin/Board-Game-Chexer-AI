@@ -18,7 +18,7 @@ def a_star_search(root):
     # used to map function result with function input to reduce calculation time
     from functools import lru_cache
 
-    @lru_cache(maxsize=5000)
+    @lru_cache(maxsize=20000)
     def f(state, state_g_score):
         """ f(state)
         :param state: input state
@@ -27,7 +27,7 @@ def a_star_search(root):
         """
         return state_g_score + h(state)
 
-    @lru_cache(maxsize=5000)
+    @lru_cache(maxsize=20000)
     def h(state):
         """ h(state)
         :param state: input state
@@ -75,6 +75,7 @@ def a_star_search(root):
 
         # find solution and reconstruct action path
         if not current_state.has_remaining_pieces():
+            print(len(close_set))
             return reconstruct_path(came_from, current_state)
 
         close_set.add(current_state)

@@ -13,6 +13,7 @@
 # python search.py ./input/sample2.json
 # python search.py ./input/sample3.json
 # python search.py ./input/sample4.json
-date
+
+# date
 python search.py ./input/sample5.json
-date
+# date

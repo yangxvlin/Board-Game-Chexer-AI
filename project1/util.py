@@ -33,8 +33,10 @@ def main():
     # print_result(search_res, True, True, True)
 
     # testing
-    # from test import test1, test2
+    # from test import test1
+    # print("#", datetime.now())
     # test1(state)
+    # print("#", datetime.now())
     # test2()
 
 

@@ -41,6 +41,7 @@ class State:
         """ hash(State)
         :return: hash value the state
         """
+        # return hash(str(self))
         return hash(tuple(self.player_pieces_dict[self.playing_player]))
 
     def __eq__(self, other):
@@ -84,8 +85,23 @@ class State:
 
         all_piece_on_board = self.all_pieces()
 
+        # These two line of code give same output and nearly same run time, but
+        # the seond has a better practical performance.
+        # Because the first one give in piece order (e.g. always [piece No.1, 
+        # piece No.2, ...] no matter the change in axial coordinates due to my 
+        # implementation). 
+        # The second one give in last modified time order (e.g. [most hasn't 
+        # moved piece, second most hasn't moved piece, ...])
+        # As a result, the true solution tends to move piece respectively not
+        # in a focusing on particular piece. Which means the second one is
+        # closer to real world logic consider process. As a result, lead to 
+        # a better practical perfoamnce.
+        # player_pieces = self.player_pieces_dict[self.playing_player]
+        player_pieces = [k for k, v in self.pieces_player_dict.items()
+                         if v == self.playing_player]
+
         # foreach movable piece
-        for piece in self.pieces_player_dict.keys():
+        for piece in player_pieces:
             for delta in MOVE_DELTA:
                 adj_piece = vector_add(piece, delta)
 
@@ -107,13 +123,15 @@ class State:
                         # jump is just move same direction again
                         jump_piece = vector_add(adj_piece, delta)
 
+                        # not occupied & on board
                         if (jump_piece not in all_piece_on_board) & \
                                 (on_board(jump_piece)):
                             # create next state
                             next_state = self._copy()
 
                             # update action
-                            next_state.update_action(JUMP, piece, jump_piece)
+                            next_state.update_action(JUMP, piece, jump_piece, 
+                                                     adj_piece)
 
                             if next_state not in res:
                                 res.append(next_state)
@@ -130,11 +148,12 @@ class State:
 
         return res
 
-    def update_action(self, action, from_hexe, to_hexe=None):
+    def update_action(self, action, from_hexe, to_hexe=None, jumped_hexe=None):
         """ update a state by action
         :param action: MOVE or JUMP or EXIT
         :param from_hexe: original hexe piece coordinate
         :param to_hexe: new hexe piece coordinate
+        :param jumped_hexe: piece was jumped over
         """
         from util import action_to_string
 
