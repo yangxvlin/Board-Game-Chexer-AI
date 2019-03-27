@@ -3,14 +3,16 @@
 
 # python file.py -flag input.txt > output.txt
 
-for i in {1..10}; do
+# for i in {1..10}; do
     # date
-    python search.py "./input/one_piece/depth$i.json"
+    # python search.py "./input/one_piece/depth$i.json"
     # date
-done
+# done
 
 # python search.py ./input/sample1.json
 # python search.py ./input/sample2.json
 # python search.py ./input/sample3.json
 # python search.py ./input/sample4.json
-# python search.py ./input/sample5.json
+date
+python search.py ./input/sample5.json
+date

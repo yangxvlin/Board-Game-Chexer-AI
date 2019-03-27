@@ -5,78 +5,89 @@ Solution to Project Part A: Searching
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-3-15 14:56:03
-Description: 
+Description: search algorithm for part a
 """
 
-import json
-import os
-import sys
 
-from collections import deque
-from State import State
-
-JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
-
-REPLY = True
-
-MAX_DEPTH = 100
-
-
-# https://gist.github.com/damienstanton/7de65065bf584a43f96a
 def a_star_search(root):
-
+    """ a* algorithm modified from
+    https://www.redblobgames.com/pathfinding/a-star/implementation.html
+    :param root: root state to start search
+    :return: search result with [root, state, state, ...] or None
+    """
+    # used to map function result with function input to reduce calculation time
     from functools import lru_cache
 
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=5000)
     def f(state, state_g_score):
+        """ f(state)
+        :param state: input state
+        :param state_g_score: g(state)
+        :return: g(state) + h(state)
+        """
         return state_g_score + h(state)
 
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=5000)
     def h(state):
+        """ h(state)
+        :param state: input state
+        :return: heuristic of state to goal state
+        """
         return state.cost_to_finish()
 
     def reconstruct_path(came_from_dict, current):
-        """ :return [state, ...]"""
+        """ reconstruct solution path from visited state and its parent
+        :param came_from_dict: a dictionary of {state: state's parent}
+        :param current: goal state
+        :return: [root, state1, state2, ..., goal state]
+        """
+        from collections import deque
+
         total_path = deque()
         total_path.append(current)
         while current in came_from_dict:
             total_path.appendleft(came_from_dict[current])
 
-            current = came_from_dict[current]  # current := previous
+            # current := previous
+            current = came_from_dict[current]
         return list(total_path)[1:]
 
     from queue import PriorityQueue
     from PriorityItem import PriorityItem
 
+    # visited state
     close_set = set()
+    # exploring state
     open_set = PriorityQueue()
-    came_from = {root: None}  # {state: previous_state}
+    # {state: previous_state}
+    came_from = {root: None}
 
+    # g(state)
     g_score = {root: 0}
+    # f(state)
     f_score = {root: f(root, g_score[root])}
 
     open_set.put(PriorityItem(f_score[root], root))
+
     while open_set:
-        # print(len(open_set.queue))
         # the node in open_set having the lowest f_score[] value
         current_state = open_set.get().get_item()
-        # print(current_state)
 
+        # find solution and reconstruct action path
         if not current_state.has_remaining_pieces():
-            # print(len(close_set))
             return reconstruct_path(came_from, current_state)
 
         close_set.add(current_state)
 
+        # search for all neighbors
         for next_state in current_state.all_next_state():
 
+            # avoid repeated state
             if next_state in close_set:
                 continue
 
-            tentative_g_score = g_score[current_state] + 1  # path cost = 1
-
-            # print(next_state, "in", g_score)
-            # if next_state not in open_set:
+            # 1 for `path cost = 1`
+            tentative_g_score = g_score[current_state] + 1
 
             # newly meet next_state directly update its score
             if (next_state not in g_score) or \
@@ -90,141 +101,11 @@ def a_star_search(root):
 
     return None
 
-def read_state_from_json(filename):
-    from util import element_to_tuple
 
-    with open(filename) as json_file:
-        data = json.load(json_file)
-
-        player = data[JSON_FILE_KEYS[0]]
-
-        player_pieces = {player: element_to_tuple(data[JSON_FILE_KEYS[1]])}
-        obstacles = element_to_tuple(data[JSON_FILE_KEYS[2]])
-
-    # print(player_pieces)
-    # print(obstacles)
-
-    return State(player, obstacles, player_pieces)
-
-def main():
-
-    filename = sys.argv[1]
-    print(filename)
-
-    state = read_state_from_json(filename)
-
-    # from datetime import datetime
-    # print(datetime.now())
-    search_res = a_star_search(state)
-    # print(datetime.now())
-    print("# solution path length =", len(search_res)-1, "\n")
-    # print_result2(search_res, True, False)
-    
-    # from test import test1, test2
-    # test1(state)
-    # test2()
-    
-
-
-def print_result2(search_result, debug=True, reply_mode=REPLY):
-    
-    print_board(search_result[0].to_board_dict(), "# initial state", debug)
-    if reply_mode:
-        os.system('pause')
-
-    for i in range(1, len(search_result)):
-        state = search_result[i]
-        action = search_result[i].action
-
-        print_board(state.to_board_dict(), str(action), debug)
-
-        if reply_mode:
-            os.system('pause')
-
-
-def print_board(board_dict, message="", debug=False, **kwargs):
-    """
-    Helper function to print a drawing of a hexagonal board's contents.
-    
-    Arguments:
-
-    * `board_dict` -- dictionary with tuples for keys and anything printable
-    for values. The tuple keys are interpreted as hexagonal coordinates (using 
-    the axial coordinate system outlined in the project specification) and the 
-    values are formatted as strings and placed in the drawing at the corres- 
-    ponding location (only the first 5 characters of each string are used, to 
-    keep the drawings small). Coordinates with missing values are left blank.
-
-    Keyword arguments:
-
-    * `message` -- an optional message to include on the first line of the 
-    drawing (above the board) -- default `""` (resulting in a blank message).
-    * `debug` -- for a larger board drawing that includes the coordinates 
-    inside each hex, set this to `True` -- default `False`.
-    * Or, any other keyword arguments! They will be forwarded to `print()`.
-    """
-
-    # Set up the board template:
-    if not debug:
-        # Use the normal board template (smaller, not showing coordinates)
-        template = """{0}
-#           .-'-._.-'-._.-'-._.-'-.
-#          |{16:}|{23:}|{29:}|{34:}| 
-#        .-'-._.-'-._.-'-._.-'-._.-'-.
-#       |{10:}|{17:}|{24:}|{30:}|{35:}| 
-#     .-'-._.-'-._.-'-._.-'-._.-'-._.-'-.
-#    |{05:}|{11:}|{18:}|{25:}|{31:}|{36:}| 
-#  .-'-._.-'-._.-'-._.-'-._.-'-._.-'-._.-'-.
-# |{01:}|{06:}|{12:}|{19:}|{26:}|{32:}|{37:}| 
-# '-._.-'-._.-'-._.-'-._.-'-._.-'-._.-'-._.-'
-#    |{02:}|{07:}|{13:}|{20:}|{27:}|{33:}| 
-#    '-._.-'-._.-'-._.-'-._.-'-._.-'-._.-'
-#       |{03:}|{08:}|{14:}|{21:}|{28:}| 
-#       '-._.-'-._.-'-._.-'-._.-'-._.-'
-#          |{04:}|{09:}|{15:}|{22:}|
-#          '-._.-'-._.-'-._.-'-._.-'"""
-    else:
-        # Use the debug board template (larger, showing coordinates)
-        template = """{0}
-#              ,-' `-._,-' `-._,-' `-._,-' `-.
-#             | {16:} | {23:} | {29:} | {34:} | 
-#             |  0,-3 |  1,-3 |  2,-3 |  3,-3 |
-#          ,-' `-._,-' `-._,-' `-._,-' `-._,-' `-.
-#         | {10:} | {17:} | {24:} | {30:} | {35:} |
-#         | -1,-2 |  0,-2 |  1,-2 |  2,-2 |  3,-2 |
-#      ,-' `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' `-. 
-#     | {05:} | {11:} | {18:} | {25:} | {31:} | {36:} |
-#     | -2,-1 | -1,-1 |  0,-1 |  1,-1 |  2,-1 |  3,-1 |
-#  ,-' `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' `-.
-# | {01:} | {06:} | {12:} | {19:} | {26:} | {32:} | {37:} |
-# | -3, 0 | -2, 0 | -1, 0 |  0, 0 |  1, 0 |  2, 0 |  3, 0 |
-#  `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' 
-#     | {02:} | {07:} | {13:} | {20:} | {27:} | {33:} |
-#     | -3, 1 | -2, 1 | -1, 1 |  0, 1 |  1, 1 |  2, 1 |
-#      `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' 
-#         | {03:} | {08:} | {14:} | {21:} | {28:} |
-#         | -3, 2 | -2, 2 | -1, 2 |  0, 2 |  1, 2 | key:
-#          `-._,-' `-._,-' `-._,-' `-._,-' `-._,-' ,-' `-.
-#             | {04:} | {09:} | {15:} | {22:} |   | input |
-#             | -3, 3 | -2, 3 | -1, 3 |  0, 3 |   |  q, r |
-#              `-._,-' `-._,-' `-._,-' `-._,-'     `-._,-'"""
-
-    # prepare the provided board contents as strings, formatted to size.
-    ran = range(-3, +3+1)
-    cells = []
-    for qr in [(q, r) for q in ran for r in ran if -q-r in ran]:
-        if qr in board_dict:
-            cell = str(board_dict[qr]).center(5)
-        else:
-            cell = "     "  # 5 spaces will fill a cell
-        cells.append(cell)
-
-    # fill in the template to create the board drawing, then print!
-    board = template.format(message, *cells)
-    print(board, **kwargs)
-
-
-# when this module is executed, run the `main` function:
 if __name__ == '__main__':
-    main()
+    """ when this module is executed, run the `main` function:
+    """
 
+    from util import main
+
+    main()

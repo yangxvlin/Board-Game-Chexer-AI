@@ -14,6 +14,7 @@ def test1(state):
 
 
 def test2():
-    from util import vector_add, vector_dot_product
-    print(vector_add((0, 0), (1, -1)))
-    print(vector_dot_product(2, (1, -1)))
+    pass
+    # from util import vector_add, vector_dot_product
+    # print(vector_add((0, 0), (1, -1)))
+    # print(vector_dot_product(2, (1, -1)))
