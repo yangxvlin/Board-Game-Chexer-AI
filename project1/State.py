@@ -73,9 +73,12 @@ class State:
     def all_next_state(self):
         """ find all possible states
         :return: list of state after performed one action
+
+        additional note: state's copy should inside each if condition as copy
+        is an expensive operation
         """
         from Constants import MOVE_DELTA, MOVE, JUMP, EXIT
-        from util import vector_add, on_board, action_to_string, is_in_goal_hexe
+        from util import vector_add, on_board, is_in_goal_hexe
 
         res = []
 
@@ -88,25 +91,17 @@ class State:
 
                 # move action: on board & not occupied
                 if on_board(adj_piece):
+                    # not occupied
                     if adj_piece not in all_piece_on_board:
                         # create next state
                         next_state = self._copy()
+
                         # update action
-                        next_state.action = action_to_string(MOVE, piece,
-                                                             adj_piece)
-                        # delete player's original piece info
-                        mov_from_index = next_state.player_pieces_dict[
-                            self.playing_player].index(piece)
-                        # update player's new piece info
-                        next_state.player_pieces_dict[self.playing_player][
-                            mov_from_index] = adj_piece
-                        # update location of piece
-                        next_state.pieces_player_dict.pop(piece)
-                        next_state.pieces_player_dict.update(
-                            {adj_piece: self.playing_player})
+                        next_state.update_action(MOVE, piece, adj_piece)
 
                         if next_state not in res:
                             res.append(next_state)
+
                     # jump action: occupied adj piece & not occupied & on board
                     else:
                         # jump is just move same direction again
@@ -116,37 +111,9 @@ class State:
                                 (on_board(jump_piece)):
                             # create next state
                             next_state = self._copy()
+
                             # update action
-                            next_state.action = action_to_string(JUMP, piece,
-                                                                 jump_piece)
-                            # delete player's original piece info
-                            jump_from_index = next_state.player_pieces_dict[
-                                self.playing_player].index(piece)
-                            # update player's new piece info
-                            next_state.player_pieces_dict[self.playing_player][
-                                jump_from_index] = jump_piece
-
-                            # update location of piece
-                            next_state.pieces_player_dict.pop(piece)
-                            next_state.pieces_player_dict.update(
-                                {jump_piece: self.playing_player})
-
-                            # TODO for project 2 unchecked
-                            # # kill other player's piece
-                            # if next_state.pieces_player_dict[adj_piece] != \
-                            #         self.playing_player:
-                            #     # delete owner's piece information
-                            #     next_state.player_pieces_dict[
-                            #         next_state.pieces_player_dict[
-                            #             adj_piece]].remove(adj_piece)
-                            #
-                            #     # update player gained piece
-                            #     next_state.player_pieces_dict[
-                            #         self.playing_player].append(adj_piece)
-                            #
-                            #     # update killed piece owner
-                            #     next_state.pieces_player_dict[adj_piece] = \
-                            #         self.playing_player
+                            next_state.update_action(JUMP, piece, jump_piece)
 
                             if next_state not in res:
                                 res.append(next_state)
@@ -156,17 +123,60 @@ class State:
                     # create next state
                     next_state = self._copy()
                     # update action
-                    next_state.action = action_to_string(EXIT, piece)
-                    # delete player's original piece info
-                    next_state.player_pieces_dict[self.playing_player].remove(
-                        piece)
-                    # delete location of piece
-                    next_state.pieces_player_dict.pop(piece)
+                    next_state.update_action(EXIT, piece)
 
                     if next_state not in res:
                         res.append(next_state)
 
         return res
+
+    def update_action(self, action, from_hexe, to_hexe=None):
+        """ update a state by action
+        :param action: MOVE or JUMP or EXIT
+        :param from_hexe: original hexe piece coordinate
+        :param to_hexe: new hexe piece coordinate
+        """
+        from util import action_to_string
+
+        # mov and jump
+        if to_hexe is not None:
+            # get player's original piece index
+            from_index = self.player_pieces_dict[self.playing_player].index(
+                from_hexe)
+            # update player's new piece info over original piece
+            self.player_pieces_dict[self.playing_player][from_index] = to_hexe
+            # update location of piece
+            self.pieces_player_dict.pop(from_hexe)
+            self.pieces_player_dict.update({to_hexe: self.playing_player})
+
+            # TODO for project 2
+            # kill other player's piece
+            # if action.equals(JUMP):
+            #     if next_state.pieces_player_dict[adj_piece] != \
+            #             self.playing_player:
+            #         # delete owner's piece information
+            #         next_state.player_pieces_dict[
+            #             next_state.pieces_player_dict[
+            #                 adj_piece]].remove(adj_piece)
+            #
+            #         # update player gained piece
+            #         next_state.player_pieces_dict[
+            #             self.playing_player].append(adj_piece)
+            #
+            #         # update killed piece owner
+            #         next_state.pieces_player_dict[adj_piece] = \
+            #             self.playing_player
+        # exit
+        else:
+            # delete player's original piece info
+            self.player_pieces_dict[self.playing_player].remove(from_hexe)
+            # delete location of piece
+            self.pieces_player_dict.pop(from_hexe)
+
+        # update action
+        self.action = action_to_string(action, from_hexe, to_hexe)
+
+        # TODO update next playing player
 
     def has_remaining_pieces(self):
         """ check whether a player has exited all player's pieces
