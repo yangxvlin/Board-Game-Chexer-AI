@@ -5,32 +5,38 @@ Date:        2019-3-11 21:33:12
 Description: Player class
 """
 
-from Board import Board
-# from MaxnAgent import MaxnAgent
+# from Board import Board
+from MaxnAgent import get_next_move
 
 
 class Player:
-    # TODO lower case or upper case or sting
-    PLAYER_ORDER = {'red': 0, 'green': 1, 'blue': 2}
 
     def __init__(self, colour):
         """ Initialize a player
-        :param str colour: representing the player that control this game
+        :param colour: representing the player that control this game
         """
-        self.colour = colour
-        self.my_player = Player.PLAYER_ORDER[self.colour]
-        self.board = Board(self.my_player)
+        from util import initial_state
 
-        # self.agent = MaxnAgent(self.board)
+        self.colour = colour
+        self.states_history = [initial_state()]
+
 
     def action(self, turn):
         """ Perform the agent's action
         :param 
         """
-        # return self.agent.get_next_move(turn)
+        next_move = get_next_move(self.states_history[-1])
+
+        return next_move
 
     def update(self, action):
         """ Update opponent's action
         :param action
         """
-        self.board.update_action(action)
+        # action from String
+
+        # generate state | action
+        next_state = self.states_history[-1].copy()
+        next_state.update_action()
+
+        self.states_history.append(next_state)

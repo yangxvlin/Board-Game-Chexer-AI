@@ -8,13 +8,6 @@ Date:        2019-3-15 14:56:03
 Description: search algorithm for part a
 """
 
-# used to map function result with function input to reduce calculation time
-from functools import lru_cache
-from collections import deque
-from queue import PriorityQueue
-from PriorityItem import PriorityItem
-from util import main
-
 
 def a_star_search(root):
     """ a* algorithm modified from
@@ -22,6 +15,8 @@ def a_star_search(root):
     :param root: root state to start search
     :return: search result with [root, state, state, ...] or None
     """
+    # used to map function result with function input to reduce calculation time
+    from functools import lru_cache
 
     @lru_cache(maxsize=20000)
     def f(state, state_g_score):
@@ -46,6 +41,7 @@ def a_star_search(root):
         :param current: goal state
         :return: [root, state1, state2, ..., goal state]
         """
+        from collections import deque
 
         total_path = deque()
         total_path.append(current)
@@ -55,6 +51,9 @@ def a_star_search(root):
             # current := previous
             current = came_from_dict[current]
         return list(total_path)[1:]
+
+    from queue import PriorityQueue
+    from PriorityItem import PriorityItem
 
     # visited state
     close_set = set()
@@ -102,9 +101,3 @@ def a_star_search(root):
                 open_set.put(PriorityItem(f_score[next_state], next_state))
 
     return None
-
-
-if __name__ == '__main__':
-    """ when this module is executed, run the `main` function:
-    """
-    main()

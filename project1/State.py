@@ -5,6 +5,11 @@ Date:        2019-3-14 14:32:08
 Description: State to store information about the environment
 """
 
+from copy import deepcopy
+from math import ceil
+from Constants import MOVE_DELTA, MOVE, JUMP, EXIT, PLAYER_GOAL
+from util import vector_add, on_board, is_in_goal_hexe, action_to_string
+
 
 class State:
     """ class used to store information of pieces on board and player is playing
@@ -64,7 +69,6 @@ class State:
         """ copy(state)
         :return: deepcopy of current copy
         """
-        from copy import deepcopy
         copyed = State(self.playing_player, self.obstacles)
         copyed.player_pieces_dict = deepcopy(self.player_pieces_dict)
         copyed.pieces_player_dict = deepcopy(self.pieces_player_dict)
@@ -78,8 +82,6 @@ class State:
         additional note: state's copy should inside each if condition as copy
         is an expensive operation
         """
-        from Constants import MOVE_DELTA, MOVE, JUMP, EXIT
-        from util import vector_add, on_board, is_in_goal_hexe
 
         res = []
 
@@ -155,7 +157,6 @@ class State:
         :param to_hexe: new hexe piece coordinate
         :param jumped_hexe: piece was jumped over
         """
-        from util import action_to_string
 
         # mov and jump
         if to_hexe is not None:
@@ -168,23 +169,6 @@ class State:
             self.pieces_player_dict.pop(from_hexe)
             self.pieces_player_dict.update({to_hexe: self.playing_player})
 
-            # TODO for project 2
-            # kill other player's piece
-            # if action.equals(JUMP):
-            #     if next_state.pieces_player_dict[adj_piece] != \
-            #             self.playing_player:
-            #         # delete owner's piece information
-            #         next_state.player_pieces_dict[
-            #             next_state.pieces_player_dict[
-            #                 adj_piece]].remove(adj_piece)
-            #
-            #         # update player gained piece
-            #         next_state.player_pieces_dict[
-            #             self.playing_player].append(adj_piece)
-            #
-            #         # update killed piece owner
-            #         next_state.pieces_player_dict[adj_piece] = \
-            #             self.playing_player
         # exit
         else:
             # delete player's original piece info
@@ -207,7 +191,6 @@ class State:
         """ convert state to a printable board
         :return: {piece: piece's colour}
         """
-        from copy import deepcopy
         board_dict = deepcopy(self.pieces_player_dict)
 
         for obstacle in self.obstacles:
@@ -241,9 +224,6 @@ class State:
             return (abs(a[0] - b[0]) +
                     abs(a[0] + a[1] - b[0] - b[1]) +
                     abs(a[1] - b[1])) / 2
-
-        from Constants import PLAYER_GOAL
-        from math import ceil
 
         total_dist = 0
         goal_hexes = PLAYER_GOAL[self.playing_player]
