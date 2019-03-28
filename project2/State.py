@@ -95,7 +95,6 @@ class State:
         return copyed
 
     def next_player(self):
-
         # blue go to red
         if self.playing_player == 2:
             self.playing_player = 0
@@ -304,4 +303,5 @@ class State:
         return self.has_turns_reamining() and self.has_winner()
 
     def evaluate(self):
+        # TODO a long road to go :(
         return 0
