@@ -9,14 +9,20 @@ Description: search algorithm for part a
 """
 
 
+
+# used to map function result with function input to reduce calculation time
+from functools import lru_cache
+from collections import deque
+from queue import PriorityQueue
+from PriorityItem import PriorityItem
+
+
 def a_star_search(root):
     """ a* algorithm modified from
     https://www.redblobgames.com/pathfinding/a-star/implementation.html
     :param root: root state to start search
     :return: search result with [root, state, state, ...] or None
     """
-    # used to map function result with function input to reduce calculation time
-    from functools import lru_cache
 
     @lru_cache(maxsize=20000)
     def f(state, state_g_score):
@@ -41,7 +47,6 @@ def a_star_search(root):
         :param current: goal state
         :return: [root, state1, state2, ..., goal state]
         """
-        from collections import deque
 
         total_path = deque()
         total_path.append(current)
@@ -51,9 +56,6 @@ def a_star_search(root):
             # current := previous
             current = came_from_dict[current]
         return list(total_path)[1:]
-
-    from queue import PriorityQueue
-    from PriorityItem import PriorityItem
 
     # visited state
     close_set = set()
@@ -75,7 +77,8 @@ def a_star_search(root):
 
         # find solution and reconstruct action path
         if not current_state.has_remaining_pieces():
-            print(len(close_set))
+            print("# open list size:", open_set.qsize())
+            print("# close list size:", len(close_set))
             return reconstruct_path(came_from, current_state)
 
         close_set.add(current_state)

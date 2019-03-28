@@ -5,6 +5,11 @@ Date:        2019-3-18 19:20:58
 Description: Some helper function used in program
 """
 
+import os
+import sys
+from Constants import PLAYER_PLAYING_ORDER, PLAYER_GOAL, BOARD_BOUND
+import json
+
 """ enable pause in state replay """
 PAUSE = False
 
@@ -17,11 +22,11 @@ def print_result(search_result, debug=True, replay_mode=PAUSE,
     :param board_printed: print state after action
     """
 
-    import os
-
+    # print pieces on board
     if board_printed:
         print_board(search_result[0].to_board_dict(), "# initial state", debug)
 
+    # enable step by step play
     if replay_mode:
         os.system('pause')
 
@@ -31,37 +36,20 @@ def print_result(search_result, debug=True, replay_mode=PAUSE,
 
         print(action)
 
+        # print pieces on board
         if board_printed:
             print_board(state.to_board_dict(), "", debug)
 
+        # enable step by step play
         if replay_mode:
             os.system('pause')
 
 def initial_state():
     from State import State
 
-    return State("red", {"red": [(-3, i) for i in range(0, 4)], 
-                         "green": [(i, -3) for i in range(0, 4)], 
-                         "blue": [(3-i, i) for i in range(0, 4)]})
-
-def read_state_from_json(filename):
-    """ read State from file
-    :param filename: json file path
-    :return: State(file)
-    """
-
-    from Constants import JSON_FILE_KEYS
-    from State import State
-    import json
-
-    with open(filename) as json_file:
-        data = json.load(json_file)
-
-        player = data[JSON_FILE_KEYS[0]]
-        player_pieces = {player: element_to_tuple(data[JSON_FILE_KEYS[1]])}
-        obstacles = element_to_tuple(data[JSON_FILE_KEYS[2]])
-
-    return State(player, obstacles, player_pieces)
+    return State(0, [[(-3, i) for i in range(0, 4)], 
+                     [(i, -3) for i in range(0, 4)], 
+                     [(3-i, i) for i in range(0, 4)]])
 
 
 def vector_add(a, b):
@@ -94,10 +82,10 @@ def on_board(hexe):
     :param hexe: axial coordinate in hexagonal system
     :returns: True if on bard, otherwise False
     """
-    from Constants import BOARD_BOUND
 
     cube = axial_to_cube(hexe)
 
+    # check each bound
     for axis in cube:
         if abs(axis) > BOARD_BOUND:
             return False
@@ -125,7 +113,6 @@ def is_in_goal_hexe(hexe, player):
     :param player: the player is playing
     :return: True if hexe is in player's goal hexes, otherwise False
     """
-    from Constants import PLAYER_GOAL
     assert(player in PLAYER_GOAL)
 
     return hexe in PLAYER_GOAL[player]

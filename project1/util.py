@@ -5,8 +5,10 @@ Date:        2019-3-18 19:20:58
 Description: Some helper function used in program
 """
 
+import os
 import sys
-from Constants import JSON_FILE_KEYS, PLAYER_PLAYING_ORDER
+from Constants import JSON_FILE_KEYS, PLAYER_PLAYING_ORDER, PLAYER_GOAL, \
+    BOARD_BOUND
 import json
 
 """ enable pause in state replay """
@@ -53,8 +55,6 @@ def print_result(search_result, debug=True, replay_mode=PAUSE,
     :param replay_mode: enable pause if one state is printed
     :param board_printed: print state after action
     """
-
-    import os
 
     # print pieces on board
     if board_printed:
@@ -146,7 +146,6 @@ def on_board(hexe):
     :param hexe: axial coordinate in hexagonal system
     :returns: True if on bard, otherwise False
     """
-    from Constants import BOARD_BOUND
 
     cube = axial_to_cube(hexe)
 
@@ -178,7 +177,6 @@ def is_in_goal_hexe(hexe, player):
     :param player: the player is playing
     :return: True if hexe is in player's goal hexes, otherwise False
     """
-    from Constants import PLAYER_GOAL
     assert(player in PLAYER_GOAL)
 
     return hexe in PLAYER_GOAL[player]

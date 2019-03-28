@@ -23,21 +23,26 @@ EXIT = "EXIT"
 """ player win when 4 pieces exit """
 PLAYER_WIN_THRESHOLD = 4
 
+""" max number of game turns """
 MAX_TURN = 256
 
+""" map player string with player playing order """
+PLAYER_PLAYING_ORDER = {"red": 0, "green": 1, "blue": 2}
+
+""" player index playing order """
+PLAYER_ORDER = [0, 1, 2]
+
+""" player playing order with map player string """
+PLAYING_ORDER_PLAYER_MAP = {0: "red", 1: "green", 2: "blue"}
+
 """ each player's goal hexes' axial coordinates """
-PLAYER_GOAL = {"red": [(BOARD_BOUND, -i)
-                       for i in range(0, PLAYER_WIN_THRESHOLD)],
-               "green": [(i-BOARD_BOUND, BOARD_BOUND)
-                         for i in range(0, PLAYER_WIN_THRESHOLD)],
-               "blue": [(-i, i-BOARD_BOUND)
-                        for i in range(0, PLAYER_WIN_THRESHOLD)]}
-
-PLAYER_OEDER = ["red", "green", "blue"]
-
-PLAYER_OEDER_DICT = {"red": 0, "green": 1, "blue": 2}
+PLAYER_GOAL = {0: [(BOARD_BOUND, -i) for i in range(0, PLAYER_WIN_THRESHOLD)],
+               1: [(i-BOARD_BOUND, BOARD_BOUND)
+                   for i in range(0, PLAYER_WIN_THRESHOLD)],
+               2: [(-i, i-BOARD_BOUND) for i in range(0, PLAYER_WIN_THRESHOLD)]}
 
 """ keys for information stored in json file """
 JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
 
+""" number of players in game """
 N_PLAYER = 3
