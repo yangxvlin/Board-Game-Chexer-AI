@@ -7,7 +7,8 @@ Description: State to store information about the environment
 
 from copy import deepcopy
 from math import ceil
-from Constants import MOVE_DELTA, MOVE, JUMP, EXIT, PLAYER_GOAL
+from Constants import MOVE_DELTA, MOVE, JUMP, EXIT, PLAYER_GOAL, \
+    PLAYER_PLAYING_ORDER, PLAYING_ORDER_PLAYER_MAP
 from util import vector_add, on_board, is_in_goal_hexe, action_to_string
 
 
@@ -15,7 +16,7 @@ class State:
     """ class used to store information of pieces on board and player is playing
     """
 
-    def __init__(self, playing_player, obstacles, player_pieces={}):
+    def __init__(self, playing_player, obstacles, player_pieces=[]):
         """ initialize a state
         :param playing_player: the  player is going to perform an action
         :param obstacles: obstacles in part a
@@ -25,13 +26,15 @@ class State:
         self.playing_player = playing_player
         # [(q, r), ...]
         self.obstacles = obstacles
-        # {player: [(q, r), ...], ...}  dict planned for project 2
-        self.player_pieces_dict = player_pieces
+        # [[(q, r), ...], ...]  list planned for project 2
+        self.player_pieces_list = player_pieces
         # {(q, r): player, ...}
         self.pieces_player_dict = {}
-        for player in player_pieces.keys():
-            for piece in player_pieces[player]:
-                self.pieces_player_dict[piece] = player
+
+        if player_pieces:
+            for player in PLAYER_PLAYING_ORDER.values():
+                for piece in player_pieces[player]:
+                    self.pieces_player_dict[piece] = player
 
         self.action = None
 
@@ -39,23 +42,23 @@ class State:
         """ str(State)
         :return: state.toString()
         """
-        return "".join(["(", self.playing_player, ": ",
-                        str(self.player_pieces_dict[self.playing_player]), ")"])
+        return "".join(["(", str(self.playing_player), ": ",
+                        str(self.player_pieces_list[self.playing_player]), ")"])
 
     def __hash__(self):
         """ hash(State)
         :return: hash value the state
         """
         # return hash(str(self))
-        return hash(tuple(self.player_pieces_dict[self.playing_player]))
+        return hash(tuple(self.player_pieces_list[self.playing_player]))
 
     def __eq__(self, other):
         """ check the equality of two states
         :param other: the other state
         :return: True if state has same board configuration. otherwise False
         """
-        self_player_piece = self.player_pieces_dict[self.playing_player]
-        other_player_piece = other.player_pieces_dict[other.playing_player]
+        self_player_piece = self.player_pieces_list[self.playing_player]
+        other_player_piece = other.player_pieces_list[other.playing_player]
 
         if len(self_player_piece) != len(other_player_piece):
             return False
@@ -70,7 +73,7 @@ class State:
         :return: deepcopy of current copy
         """
         copyed = State(self.playing_player, self.obstacles)
-        copyed.player_pieces_dict = deepcopy(self.player_pieces_dict)
+        copyed.player_pieces_list = deepcopy(self.player_pieces_list)
         copyed.pieces_player_dict = deepcopy(self.pieces_player_dict)
 
         return copyed
@@ -98,7 +101,7 @@ class State:
         # in a focusing on particular piece. Which means the second one is
         # closer to real world logic consider process. As a result, lead to 
         # a better practical performance.
-        # player_pieces = self.player_pieces_dict[self.playing_player]
+        # player_pieces = self.player_pieces_list[self.playing_player]
         player_pieces = [k for k, v in self.pieces_player_dict.items()
                          if v == self.playing_player]
 
@@ -161,10 +164,10 @@ class State:
         # mov and jump
         if to_hexe is not None:
             # get player's original piece index
-            from_index = self.player_pieces_dict[self.playing_player].index(
+            from_index = self.player_pieces_list[self.playing_player].index(
                 from_hexe)
             # update player's new piece info over original piece
-            self.player_pieces_dict[self.playing_player][from_index] = to_hexe
+            self.player_pieces_list[self.playing_player][from_index] = to_hexe
             # update location of piece
             self.pieces_player_dict.pop(from_hexe)
             self.pieces_player_dict.update({to_hexe: self.playing_player})
@@ -172,26 +175,27 @@ class State:
         # exit
         else:
             # delete player's original piece info
-            self.player_pieces_dict[self.playing_player].remove(from_hexe)
+            self.player_pieces_list[self.playing_player].remove(from_hexe)
             # delete location of piece
             self.pieces_player_dict.pop(from_hexe)
 
         # update action
         self.action = action_to_string(action, from_hexe, to_hexe)
 
-        # TODO update next playing player
-
     def has_remaining_pieces(self):
         """ check whether a player has exited all player's pieces
         :return: True if player has no more pieces, otherwise False
         """
-        return len(self.player_pieces_dict[self.playing_player]) != 0
+        return len(self.player_pieces_list[self.playing_player]) != 0
 
     def to_board_dict(self):
         """ convert state to a printable board
         :return: {piece: piece's colour}
         """
-        board_dict = deepcopy(self.pieces_player_dict)
+        board_dict = {}
+
+        for piece, player in self.pieces_player_dict.items():
+            board_dict[piece] = PLAYING_ORDER_PLAYER_MAP[player]
 
         for obstacle in self.obstacles:
             board_dict[obstacle] = "block"
@@ -229,7 +233,7 @@ class State:
         goal_hexes = PLAYER_GOAL[self.playing_player]
 
         # for each remaining pieces
-        for piece in self.player_pieces_dict[self.playing_player]:
+        for piece in self.player_pieces_list[self.playing_player]:
             final_dist = []
 
             # closest dist to exit

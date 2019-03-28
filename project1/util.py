@@ -5,6 +5,10 @@ Date:        2019-3-18 19:20:58
 Description: Some helper function used in program
 """
 
+import sys
+from Constants import JSON_FILE_KEYS, PLAYER_PLAYING_ORDER
+import json
+
 """ enable pause in state replay """
 PAUSE = False
 
@@ -13,10 +17,11 @@ def main():
     """ main function
     """
     from search import a_star_search
-    import sys
 
+    # get filename
     filename = sys.argv[1]
 
+    # read state
     state = read_state_from_json(filename)
 
     # test a* running time
@@ -51,9 +56,11 @@ def print_result(search_result, debug=True, replay_mode=PAUSE,
 
     import os
 
+    # print pieces on board
     if board_printed:
         print_board(search_result[0].to_board_dict(), "# initial state", debug)
 
+    # enable step by step play
     if replay_mode:
         os.system('pause')
 
@@ -63,9 +70,11 @@ def print_result(search_result, debug=True, replay_mode=PAUSE,
 
         print(action)
 
+        # print pieces on board
         if board_printed:
             print_board(state.to_board_dict(), "", debug)
 
+        # enable step by step play
         if replay_mode:
             os.system('pause')
 
@@ -76,18 +85,35 @@ def read_state_from_json(filename):
     :return: State(file)
     """
 
-    from Constants import JSON_FILE_KEYS
-    from State import State
-    import json
-
     with open(filename) as json_file:
         data = json.load(json_file)
 
         player = data[JSON_FILE_KEYS[0]]
-        player_pieces = {player: element_to_tuple(data[JSON_FILE_KEYS[1]])}
+        player_pieces = element_to_tuple(data[JSON_FILE_KEYS[1]])
         obstacles = element_to_tuple(data[JSON_FILE_KEYS[2]])
 
-    return State(player, obstacles, player_pieces)
+    return make_state(player, obstacles, player_pieces)
+
+
+def make_state(cur_player, obstacles, pieces):
+    """ return State given data read from json file
+    :param cur_player: player is playing
+    :param obstacles: obstacles in part a
+    :param pieces: player's pieces
+    :return: a State object
+    """
+    from State import State
+
+    player_pieces = []
+
+    # set other two player with empty pieces
+    for player in PLAYER_PLAYING_ORDER.keys():
+        if player == cur_player:
+            player_pieces.append(pieces)
+        else:
+            player_pieces.append([])
+
+    return State(PLAYER_PLAYING_ORDER[cur_player], obstacles, player_pieces)
 
 
 def vector_add(a, b):
@@ -124,6 +150,7 @@ def on_board(hexe):
 
     cube = axial_to_cube(hexe)
 
+    # check each bound
     for axis in cube:
         if abs(axis) > BOARD_BOUND:
             return False

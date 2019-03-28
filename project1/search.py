@@ -76,7 +76,8 @@ def a_star_search(root):
 
         # find solution and reconstruct action path
         if not current_state.has_remaining_pieces():
-            print(len(close_set))
+            print("# open list size:", open_set.qsize())
+            print("# close list size:", len(close_set))
             return reconstruct_path(came_from, current_state)
 
         close_set.add(current_state)
