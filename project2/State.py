@@ -16,7 +16,7 @@ class State:
     """ class used to store information of pieces on board and player is playing
     """
 
-    def __init__(self, playing_player, player_pieces=EMPTY_BOARD, turns = 0):
+    def __init__(self, playing_player, player_pieces=EMPTY_BOARD, turns=0):
         """ initialize a state
         :param playing_player: the  player is going to perform an action
         :param player_pieces: player's corresponding pieces
