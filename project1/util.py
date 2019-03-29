@@ -28,9 +28,10 @@ def main():
 
     # test a* running time
     from datetime import datetime
-    print("#", datetime.now())
+    print("#")
+    print("# a* start at", datetime.now())
     search_res = a_star_search(state)
-    print("#", datetime.now())
+    print("# a* end at", datetime.now())
 
     print("# solution path length =", len(search_res) - 1, "\n#")
 
