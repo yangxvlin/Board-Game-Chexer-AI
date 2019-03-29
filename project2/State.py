@@ -19,7 +19,6 @@ class State:
     def __init__(self, playing_player, player_pieces=EMPTY_BOARD, turns = 0):
         """ initialize a state
         :param playing_player: the  player is going to perform an action
-        :param obstacles: obstacles in part a
         :param player_pieces: player's corresponding pieces
         :param turns: turns has played in game
         """
@@ -38,7 +37,7 @@ class State:
         # action from previous state to current state
         self.action = None
         self.turns = turns
-        self.score = INITIAL_SCORE
+        self.score = deepcopy(INITIAL_SCORE)
 
     def __repr__(self):
         """ str(State)
