@@ -5,6 +5,9 @@ Date:        2019-3-18 19:23:57
 Description: Constants used in program
 """
 
+""" an empty board """
+EMPTY_BOARD = [[], [], []]
+
 """ size of the chexer board """
 BOARD_BOUND = 3
 

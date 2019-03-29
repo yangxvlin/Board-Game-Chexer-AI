@@ -9,14 +9,14 @@ from copy import deepcopy
 from math import ceil
 from Constants import MOVE_DELTA, MOVE, JUMP, EXIT, PLAYER_GOAL, \
     PLAYER_PLAYING_ORDER, PLAYING_ORDER_PLAYER_MAP, N_PLAYER, PLAYER_ORDER, \
-    PLAYER_WIN_THRESHOLD, MAX_TURN
+    PLAYER_WIN_THRESHOLD, MAX_TURN, EMPTY_BOARD
 from util import vector_add, on_board, is_in_goal_hexe, action_to_string
 
 class State:
     """ class used to store information of pieces on board and player is playing
     """
 
-    def __init__(self, playing_player, player_pieces=[], turns = 0):
+    def __init__(self, playing_player, player_pieces=EMPTY_BOARD, turns = 0):
         """ initialize a state
         :param playing_player: the  player is going to perform an action
         :param obstacles: obstacles in part a
@@ -35,6 +35,7 @@ class State:
                 for piece in player_pieces[player]:
                     self.pieces_player_dict[piece] = player
 
+        # action from previous state to current state
         self.action = None
         self.turns = turns
         self.score = [0 for _ in range(0, N_PLAYER)]
