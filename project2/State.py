@@ -303,7 +303,7 @@ class State:
         return self.turns <= MAX_TURN
 
     def is_terminate(self):
-        return self.has_turns_reamining() and self.has_winner()
+        return (not self.has_turns_reamining()) and self.has_winner()
 
     def evaluate(self):
         # TODO a long road to go :(
