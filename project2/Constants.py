@@ -5,6 +5,9 @@ Date:        2019-3-18 19:23:57
 Description: Constants used in program
 """
 
+""" initial score for players """
+INITIAL_SCORE = [0, 0, 0]
+
 """ an empty board """
 EMPTY_BOARD = [[], [], []]
 
