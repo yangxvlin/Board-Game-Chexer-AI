@@ -25,4 +25,6 @@
 # date
 # time python search.py ./input/sample10.json
 
-time python search.py ./input/sample11.json
+# time python search.py ./input/sample11.json
+
+time python search.py ./input/sample12.json

@@ -102,9 +102,9 @@ class State:
         # in a focusing on particular piece. Which means the second one is
         # closer to real world logic consider process. As a result, lead to 
         # a better practical performance.
-        # player_pieces = self.player_pieces_list[self.playing_player]
-        player_pieces = [k for k, v in self.pieces_player_dict.items()
-                         if v == self.playing_player]
+        player_pieces = self.player_pieces_list[self.playing_player]
+        # player_pieces = [k for k, v in self.pieces_player_dict.items()
+        #                  if v == self.playing_player][::-1]
 
         # foreach movable piece
         for piece in player_pieces:
@@ -152,7 +152,7 @@ class State:
                     if next_state not in res:
                         res.append(next_state)
 
-        return res
+        return sorted(res, key=lambda x: x.action)
 
     def update_action(self, action, from_hexe, to_hexe=None, jumped_hexe=None):
         """ update a state by action
@@ -231,16 +231,30 @@ class State:
                     abs(a[1] - b[1])) / 2
 
         total_dist = 0
+
+        if (self.action is not None) and (self.action[0:4] == EXIT):
+            return total_dist
+
         goal_hexes = PLAYER_GOAL[self.playing_player]
 
         # for each remaining pieces
         for piece in self.player_pieces_list[self.playing_player]:
             final_dist = []
 
-            # closest dist to exit
-            for goal_hexe in goal_hexes:
-                # /2 for always jumping; 1 for exit action
-                final_dist.append(ceil(hex_distance(piece, goal_hexe) / 2) + 1)
+            # if piece in goal_hexes:
+            #     return 1
+
+            if ((self.playing_player==0) and (piece[0] < 0)) and \
+                ((self.playing_player==1) and (piece[1] > 0)) and \
+                ((self.playing_player==2) and (piece[0] + piece[1] >= 0)):
+                # closest dist to exit
+                for goal_hexe in goal_hexes:
+                    # /2 for always jumping; 1 for exit action
+                    final_dist.append(ceil(hex_distance(piece, goal_hexe) / 2) + 1)
+            else:
+                for goal_hexe in goal_hexes:
+                    # /2 for always jumping; 1 for exit action
+                    final_dist.append(ceil(hex_distance(piece, goal_hexe)) + 1)
 
             total_dist += min(final_dist)
 

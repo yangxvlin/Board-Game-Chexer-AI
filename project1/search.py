@@ -23,7 +23,7 @@ def a_star_search(root):
     :return: search result with [root, state, state, ...] or None
     """
 
-    @lru_cache(maxsize=20000)
+    @lru_cache(maxsize=200000)
     def f(state, state_g_score):
         """ f(state)
         :param state: input state
@@ -32,7 +32,7 @@ def a_star_search(root):
         """
         return state_g_score + h(state)
 
-    @lru_cache(maxsize=20000)
+    @lru_cache(maxsize=200000)
     def h(state):
         """ h(state)
         :param state: input state

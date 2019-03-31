@@ -8,7 +8,7 @@ Description: Some helper function used in program
 import os
 import sys
 from Constants import JSON_FILE_KEYS, PLAYER_PLAYING_ORDER, PLAYER_GOAL, \
-    BOARD_BOUND
+    BOARD_BOUND, PLAYER_GOAL
 import json
 
 """ enable pause in state replay """
@@ -92,6 +92,10 @@ def read_state_from_json(filename):
         player = data[JSON_FILE_KEYS[0]]
         player_pieces = element_to_tuple(data[JSON_FILE_KEYS[1]])
         obstacles = element_to_tuple(data[JSON_FILE_KEYS[2]])
+
+    for obstacle in obstacles:
+        if obstacle in PLAYER_GOAL[PLAYER_PLAYING_ORDER[player]]:
+            PLAYER_GOAL[PLAYER_PLAYING_ORDER[player]].remove(obstacle)
 
     return make_state(player, obstacles, player_pieces)
 
