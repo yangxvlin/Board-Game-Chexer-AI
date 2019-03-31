@@ -26,8 +26,9 @@ A* expands the least(or as least as others) number of nodes(states in this proje
     - worst case ∈ O(b<sup>d</sup>) (because it is uniform cost search now)
 - Space Complexity ∈ O(b<sup>δd</sup>) (because "keep all nodes in memory")
 - Completeness
-    - Yes, as we are guaranteed in the specification "at least one winning sequence of actions exists"  
-    (A* search is guaranteed to find a solution if one exists. According to the project spec, there must be at least one solution. Hence, A* search is complete in this scenario)
+    - A* search is guaranteed to find a solution if one exists. 
+    As it is guaranteed in the specification that there is at 
+    least one solution, A* search is complete in the project.
 - Optimality
     - Yes, as long as h(s) ≤ h*(s) ∀ s ∈ state space  
     (A* search is optimal if the heuristic is admissible(required in tree search) and consistent(required in graph search))
@@ -54,14 +55,19 @@ A* expands the least(or as least as others) number of nodes(states in this proje
 ## Problem Feature Impact
 ### Search Tree
 - branching factor
+    - In this project, the board is hexagonal, which has a higher
+    branching factor, compared with a square board. According to the
+    the analysis above, both time and space complexity will be higher.
 - depth 
 
-### other features of the input impact on search algorithm
-- Not Sure: The input(initial information) of our program comes from a json file in the disk. Another way
-of giving input(initial information) is through command line argument(CLA).
-The complexity of algorithm remains the same for both input methods, but the execution time
-of the program is affected. There is one I/O operation for the first method, whereas using CLA,
-the information goes directly into the memory, ready for much faster reading for CPU.
-
+### Other features of the input which have impact on program
+ - Input Method:  
+    - The input (initial information) of our program comes from a json 
+    file in the disk. Another way of giving input (initial information)
+    is through command line argument (CLA).  
+    The time complexity of our program is affected by different
+    input methods. There is one I/O operation for the first method, 
+    whereas using CLA, the information goes directly into the memory, 
+    enabling CPU to fetch data more quickly.
 - time complexity 
 - space complexity
