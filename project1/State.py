@@ -44,7 +44,7 @@ class State:
         # action from previous state to current state
         self.action = None
 
-
+        # initialize static attribute for h()
         try:
             State.minimum_actions
         except AttributeError:
@@ -102,22 +102,9 @@ class State:
 
         res = []
 
-        all_piece_on_board = self.all_pieces()
+        all_piece = self.all_pieces()
 
-        # These two line of code give same output and nearly same run time, but
-        # the second has a better practical performance.
-        # Because the first one give in piece order (e.g. always [piece No.1, 
-        # piece No.2, ...] no matter the change in axial coordinates due to my 
-        # implementation). 
-        # The second one give in last modified time order (e.g. [most hasn't 
-        # moved piece, second most hasn't moved piece, ...])
-        # As a result, the true solution tends to move piece respectively not
-        # in a focusing on particular piece. Which means the second one is
-        # closer to real world logic consider process. As a result, lead to 
-        # a better practical performance.
         player_pieces = self.player_pieces_list[self.playing_player]
-        # player_pieces = [k for k, v in self.pieces_player_dict.items()
-        #                  if v == self.playing_player][::-1]
 
         # foreach movable piece
         for piece in player_pieces:
@@ -127,7 +114,7 @@ class State:
                 # move action: on board & not occupied
                 if on_board(adj_piece):
                     # not occupied
-                    if adj_piece not in all_piece_on_board:
+                    if adj_piece not in all_piece:
                         # create next state
                         next_state = self._copy()
 
@@ -143,8 +130,8 @@ class State:
                         jump_piece = vector_add(adj_piece, delta)
 
                         # not occupied & on board
-                        if (jump_piece not in all_piece_on_board) & \
-                                (on_board(jump_piece)):
+                        if (jump_piece not in all_piece) & \
+                                on_board(jump_piece):
                             # create next state
                             next_state = self._copy()
 
@@ -164,7 +151,7 @@ class State:
 
                     if next_state not in res:
                         res.append(next_state)
-        # return res
+        # sort the output to process exit action first then jump then move
         return sorted(res, key=lambda x: x.action)
 
     def update_action(self, action, from_hexe, to_hexe=None, jumped_hexe=None):
@@ -233,12 +220,12 @@ class State:
         """
         total_dist = 0
 
+        # exit state has highest priority
         if (self.action is not None) and (self.action[0:4] == EXIT):
             return total_dist
 
         # for each remaining pieces
         for piece in self.player_pieces_list[self.playing_player]:
             total_dist += State.minimum_actions[piece]
-
 
         return total_dist

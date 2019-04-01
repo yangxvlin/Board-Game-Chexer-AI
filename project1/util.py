@@ -83,6 +83,13 @@ def print_result(search_result, debug=True, replay_mode=PAUSE,
 
 
 def piece_min_action_to_finish(obstacles, player):
+    """ preprocess the board calculate minimum action for each hexe is not 
+    occupied by a block to exit and returns a {hexe axial coordinate: minimum 
+    action to exit}
+    :param player: player is playing
+    :param obstacles: obstacles in part a
+    :return: {(q, r): int}
+    """
     min_action = {}
     goal_hexes = PLAYER_GOAL[player]
 
@@ -110,31 +117,34 @@ def piece_min_action_to_finish(obstacles, player):
             piece_one_move = vector_add(piece, delta)
 
             # moved to place is on board
-            if on_board(piece_one_move) and (piece_one_move not in obstacles):
+            if on_board(piece_one_move):
                 tentative_cost = cost_so_far + 1
 
-                try:
-                    if (tentative_cost < min_action[piece_one_move]):
-                        # +1 for one action
-                        # min(one move to cur piece, original action)
+                # moved to place not occupied
+                if piece_one_move not in obstacles:
+                    try:
+                        if (tentative_cost < min_action[piece_one_move]):
+                            # +1 for one action
+                            # min(one move to cur piece, original action)
+                            min_action[piece_one_move] = tentative_cost
+                            priority_queue.put(PriorityItem(
+                                                min_action[piece_one_move], 
+                                                piece_one_move))
+                    # not explored
+                    except KeyError:
                         min_action[piece_one_move] = tentative_cost
                         priority_queue.put(PriorityItem(
                                             min_action[piece_one_move], 
                                             piece_one_move))
-                # not explored
-                except KeyError:
-                    min_action[piece_one_move] = tentative_cost
-                    priority_queue.put(PriorityItem(min_action[piece_one_move], 
-                                                    piece_one_move))
 
-                # update jumped to place is on board
+                # update jumped to place is on board and not occupied
                 piece_one_jump = vector_add(piece_one_move, delta)
                 if on_board(piece_one_jump) and \
                         (piece_one_jump not in obstacles):
                     try:
                         if (tentative_cost < min_action[piece_one_jump]):
                             # +1 for one action
-                            # min(one move to cur piece, original action)
+                            # min(one jump to cur piece, original action)
                             min_action[piece_one_jump] = tentative_cost
                             priority_queue.put(PriorityItem(
                                                 min_action[piece_one_jump], 
@@ -145,6 +155,8 @@ def piece_min_action_to_finish(obstacles, player):
                         priority_queue.put(PriorityItem(
                                             min_action[piece_one_jump], 
                                             piece_one_jump))
+        # print(priority_queue.qsize())
+    # print(min_action)
     return min_action
 
 
