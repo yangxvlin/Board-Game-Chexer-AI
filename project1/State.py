@@ -9,12 +9,17 @@ from copy import deepcopy
 from math import ceil
 from Constants import MOVE_DELTA, MOVE, JUMP, EXIT, PLAYER_GOAL, \
     PLAYER_PLAYING_ORDER, PLAYING_ORDER_PLAYER_MAP, EMPTY_BOARD
-from util import vector_add, on_board, is_in_goal_hexe, action_to_string
+from util import vector_add, on_board, is_in_goal_hexe, action_to_string, \
+    piece_min_action_to_finish
 
 
 class State:
     """ class used to store information of pieces on board and player is playing
     """
+
+    """ """
+    # minimum_actions
+    
 
     def __init__(self, playing_player, obstacles, player_pieces=EMPTY_BOARD):
         """ initialize a state
@@ -38,6 +43,14 @@ class State:
 
         # action from previous state to current state
         self.action = None
+
+
+        try:
+            State.minimum_actions
+        except AttributeError:
+            State.minimum_actions = piece_min_action_to_finish(self.obstacles, 
+                                        self.playing_player)
+
 
     def __repr__(self):
         """ str(State)
@@ -151,7 +164,7 @@ class State:
 
                     if next_state not in res:
                         res.append(next_state)
-
+        # return res
         return sorted(res, key=lambda x: x.action)
 
     def update_action(self, action, from_hexe, to_hexe=None, jumped_hexe=None):
@@ -218,44 +231,14 @@ class State:
         """ h(state)
         :return: distance from current state to goal state
         """
-        
-        def hex_distance(a, b):
-            """ calculate hexe distance
-            modified from https://www.redblobgames.com/grids/hexagons/#distance
-            :param a: piece 1
-            :param b: piece 2
-            :return: hexe distance between two hexe
-            """
-            return (abs(a[0] - b[0]) +
-                    abs(a[0] + a[1] - b[0] - b[1]) +
-                    abs(a[1] - b[1])) / 2
-
         total_dist = 0
 
         if (self.action is not None) and (self.action[0:4] == EXIT):
             return total_dist
 
-        goal_hexes = PLAYER_GOAL[self.playing_player]
-
         # for each remaining pieces
         for piece in self.player_pieces_list[self.playing_player]:
-            final_dist = []
+            total_dist += State.minimum_actions[piece]
 
-            # if piece in goal_hexes:
-            #     return 1
-
-            if ((self.playing_player==0) and (piece[0] < 0)) and \
-                ((self.playing_player==1) and (piece[1] > 0)) and \
-                ((self.playing_player==2) and (piece[0] + piece[1] >= 0)):
-                # closest dist to exit
-                for goal_hexe in goal_hexes:
-                    # /2 for always jumping; 1 for exit action
-                    final_dist.append(ceil(hex_distance(piece, goal_hexe) / 2) + 1)
-            else:
-                for goal_hexe in goal_hexes:
-                    # /2 for always jumping; 1 for exit action
-                    final_dist.append(ceil(hex_distance(piece, goal_hexe)) + 1)
-
-            total_dist += min(final_dist)
 
         return total_dist

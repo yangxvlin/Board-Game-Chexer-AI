@@ -70,7 +70,7 @@ def a_star_search(root):
 
     open_set.put(PriorityItem(f_score[root], root))
 
-    while open_set:
+    while not open_set.empty():
         # the node in open_set having the lowest f_score[] value
         current_state = open_set.get().get_item()
 

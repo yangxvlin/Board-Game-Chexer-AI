@@ -8,8 +8,10 @@ Description: Some helper function used in program
 import os
 import sys
 from Constants import JSON_FILE_KEYS, PLAYER_PLAYING_ORDER, PLAYER_GOAL, \
-    BOARD_BOUND, PLAYER_GOAL
+    BOARD_BOUND, MOVE_DELTA
 import json
+from queue import PriorityQueue
+from PriorityItem import PriorityItem
 
 """ enable pause in state replay """
 PAUSE = False
@@ -78,6 +80,72 @@ def print_result(search_result, debug=True, replay_mode=PAUSE,
         # enable step by step play
         if replay_mode:
             os.system('pause')
+
+
+def piece_min_action_to_finish(obstacles, player):
+    min_action = {}
+    goal_hexes = PLAYER_GOAL[player]
+
+    # priority queue used to do dijkstra
+    priority_queue = PriorityQueue()
+
+    for goal_hexe in goal_hexes:
+        if goal_hexe not in obstacles:
+            # 1 action for exit
+            min_action[goal_hexe] = 1
+
+            priority_queue.put(PriorityItem(min_action[goal_hexe], goal_hexe))
+
+    # run dijkstra to update cost for place around the investigating piece
+    while not priority_queue.empty():
+        # get stored item with min priority
+        item = priority_queue.get()
+        # current piece's min number of action to exit
+        cost_so_far = item.get_priority()
+        # piece used to update all its neighbor within 2 move
+        piece = item.get_item()
+
+        for delta in MOVE_DELTA:
+            # update one moved to piece
+            piece_one_move = vector_add(piece, delta)
+
+            # moved to place is on board
+            if on_board(piece_one_move) and (piece_one_move not in obstacles):
+                tentative_cost = cost_so_far + 1
+
+                try:
+                    if (tentative_cost < min_action[piece_one_move]):
+                        # +1 for one action
+                        # min(one move to cur piece, original action)
+                        min_action[piece_one_move] = tentative_cost
+                        priority_queue.put(PriorityItem(
+                                            min_action[piece_one_move], 
+                                            piece_one_move))
+                # not explored
+                except KeyError:
+                    min_action[piece_one_move] = tentative_cost
+                    priority_queue.put(PriorityItem(min_action[piece_one_move], 
+                                                    piece_one_move))
+
+                # update jumped to place is on board
+                piece_one_jump = vector_add(piece_one_move, delta)
+                if on_board(piece_one_jump) and \
+                        (piece_one_jump not in obstacles):
+                    try:
+                        if (tentative_cost < min_action[piece_one_jump]):
+                            # +1 for one action
+                            # min(one move to cur piece, original action)
+                            min_action[piece_one_jump] = tentative_cost
+                            priority_queue.put(PriorityItem(
+                                                min_action[piece_one_jump], 
+                                                piece_one_jump))
+                    # not explored
+                    except KeyError:
+                        min_action[piece_one_jump] = tentative_cost
+                        priority_queue.put(PriorityItem(
+                                            min_action[piece_one_jump], 
+                                            piece_one_jump))
+    return min_action
 
 
 def read_state_from_json(filename):
