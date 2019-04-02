@@ -105,10 +105,36 @@ def a_star_search(root):
                 # if next_state not in open_set:
                 open_set.put(PriorityItem(f_score[next_state], next_state))
 
-    return None
+    return None, None, None
 
 
 if __name__ == '__main__':
     """ when this module is executed, run the `main` function:
     """
-    main()
+
+    import sys
+    from util import read_state_from_json, print_result
+
+    # get filename
+    filename = sys.argv[1]
+
+    # read state
+    state = read_state_from_json(filename)
+
+    # test a* running time
+    from datetime import datetime
+    print("#")
+    print("# a* start at", datetime.now())
+    search_res, path_length, average_branching_factor = a_star_search(state)
+    print("# a* end at", datetime.now())
+
+    print("# solution path length =", len(search_res) - 1, "\n#")
+
+    # submission output
+    print_result(search_res, True)
+
+    with open('output.txt', 'w') as the_file:
+        the_file.write("{}\n".format(path_length))
+        the_file.write("{}\n".format(average_branching_factor))
+        the_file.write("{}\n".format(abs(path_length - state.cost_to_finish())))
+

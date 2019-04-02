@@ -92,6 +92,7 @@ def piece_min_action_to_finish(obstacles, player):
     """
     min_action = {}
     goal_hexes = PLAYER_GOAL[player]
+    visited = set()
 
     # priority queue used to do dijkstra
     priority_queue = PriorityQueue()
