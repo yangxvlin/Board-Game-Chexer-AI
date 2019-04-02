@@ -160,8 +160,7 @@ def piece_min_action_to_finish(obstacles, player):
                             priority_queue.put(PriorityItem(
                                                 min_action[piece_one_jump], 
                                                 piece_one_jump))
-        # print(priority_queue.qsize())
-    # print(min_action)
+
     return min_action
 
 
