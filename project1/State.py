@@ -237,6 +237,8 @@ class State:
                 the_file.write("None\n")
                 the_file.write("None\n")
                 the_file.write("None\n")
+                the_file.write("None\n")
+                the_file.write("None\n")
             exit(0)
 
         return total_dist
