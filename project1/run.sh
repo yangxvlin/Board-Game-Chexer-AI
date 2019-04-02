@@ -18,6 +18,7 @@
 # python search.py ./input/sample5.json
 # time python search.py ./input/sample8.json
 # date
+# time python search.py ./input/sample8.json
 
 # date
 # time python search.py ./input/sample9.json
@@ -25,10 +26,9 @@
 # date
 # time python search.py ./input/sample10.json
 
-time python search.py ./input/sample13.json
 
 # time python search.py ./input/sample12.json
 
 # time python search.py ./input/sample13.json
 
-# time python search.py ./input/sample14.json
+time python search.py ./input/sample14.json

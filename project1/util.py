@@ -123,39 +123,43 @@ def piece_min_action_to_finish(obstacles, player):
 
                 # moved to place not occupied
                 if piece_one_move not in obstacles:
-                    try:
-                        if (tentative_cost < min_action[piece_one_move]):
-                            # +1 for one action
-                            # min(one move to cur piece, original action)
+                    if piece_one_move not in visited:
+                        visited.add(piece_one_move)
+                        try:
+                            if (tentative_cost < min_action[piece_one_move]):
+                                # +1 for one action
+                                # min(one move to cur piece, original action)
+                                min_action[piece_one_move] = tentative_cost
+                                priority_queue.put(PriorityItem(
+                                                    min_action[piece_one_move], 
+                                                    piece_one_move))
+                        # not explored
+                        except KeyError:
                             min_action[piece_one_move] = tentative_cost
                             priority_queue.put(PriorityItem(
                                                 min_action[piece_one_move], 
                                                 piece_one_move))
-                    # not explored
-                    except KeyError:
-                        min_action[piece_one_move] = tentative_cost
-                        priority_queue.put(PriorityItem(
-                                            min_action[piece_one_move], 
-                                            piece_one_move))
 
                 # update jumped to place is on board and not occupied
                 piece_one_jump = vector_add(piece_one_move, delta)
                 if on_board(piece_one_jump) and \
                         (piece_one_jump not in obstacles):
-                    try:
-                        if (tentative_cost < min_action[piece_one_jump]):
-                            # +1 for one action
-                            # min(one jump to cur piece, original action)
+                    if piece_one_jump not in visited:
+                        visited.add(piece_one_jump)
+                        try:
+                            if (tentative_cost < min_action[piece_one_jump]):
+                                # +1 for one action
+                                # min(one jump to cur piece, original action)
+                                min_action[piece_one_jump] = tentative_cost
+                                priority_queue.put(PriorityItem(
+                                                    min_action[piece_one_jump], 
+                                                    piece_one_jump))
+                        # not explored
+                        except KeyError:
                             min_action[piece_one_jump] = tentative_cost
                             priority_queue.put(PriorityItem(
                                                 min_action[piece_one_jump], 
                                                 piece_one_jump))
-                    # not explored
-                    except KeyError:
-                        min_action[piece_one_jump] = tentative_cost
-                        priority_queue.put(PriorityItem(
-                                            min_action[piece_one_jump], 
-                                            piece_one_jump))
         # print(priority_queue.qsize())
     # print(min_action)
     return min_action
