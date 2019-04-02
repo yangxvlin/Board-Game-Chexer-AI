@@ -15,11 +15,7 @@ from util import vector_add, on_board, is_in_goal_hexe, action_to_string, \
 
 class State:
     """ class used to store information of pieces on board and player is playing
-    """
-
-    """ """
-    # minimum_actions
-    
+    """    
 
     def __init__(self, playing_player, obstacles, player_pieces=EMPTY_BOARD):
         """ initialize a state
