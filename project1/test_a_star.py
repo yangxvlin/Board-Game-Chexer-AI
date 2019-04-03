@@ -145,4 +145,4 @@ if __name__ == '__main__':
         # delta
         the_file.write("{}\n".format(abs(path_length - state.cost_to_finish())))
         # #MB used
-        the_file.write("{}\n".format(mb_mempey_used)
+        the_file.write("{}\n".format(mb_mempey_used))
