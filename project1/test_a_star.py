@@ -15,6 +15,10 @@ from queue import PriorityQueue
 from PriorityItem import PriorityItem
 from util import main
 import psutil
+import timeit
+
+N_iter = 5
+N_digit = 4
 
 def a_star_search(root):
     """ a* algorithm modified from
@@ -81,7 +85,7 @@ def a_star_search(root):
 
             search_res = reconstruct_path(came_from, current_state)
             # for test retrun search result, d, average b, memory used (mb)
-            return search_res, len(search_res) - 1, (open_set.qsize() + len(close_set)) / len(close_set), psutil.virtual_memory()[0] / 1000000
+            return search_res, len(search_res) - 1, (open_set.qsize() + len(close_set)) / len(close_set), psutil.virtual_memory()[0] >> 20
 
         close_set.add(current_state)
 
