@@ -14,7 +14,7 @@ from collections import deque
 from queue import PriorityQueue
 from PriorityItem import PriorityItem
 from util import main
-
+import psutil
 
 def a_star_search(root):
     """ a* algorithm modified from
@@ -80,8 +80,8 @@ def a_star_search(root):
             print("# close list size:", len(close_set))
 
             search_res = reconstruct_path(came_from, current_state)
-            # for test retrun search result, d, average b
-            return search_res, len(search_res) - 1, (open_set.qsize() + len(close_set)) / len(close_set)
+            # for test retrun search result, d, average b, memory used (mb)
+            return search_res, len(search_res) - 1, (open_set.qsize() + len(close_set)) / len(close_set), psutil.virtual_memory()[0] / 1000000
 
         close_set.add(current_state)
 
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     from datetime import datetime
     print("#")
     print("# a* start at", datetime.now())
-    search_res, path_length, average_branching_factor = a_star_search(state)
+    search_res, path_length, average_branching_factor, mb_mempey_used = a_star_search(state)
     print("# a* end at", datetime.now())
 
     print("# solution path length =", len(search_res) - 1, "\n#")
@@ -134,8 +134,15 @@ if __name__ == '__main__':
     print_result(search_res, True)
 
     with open('output.txt', 'w') as the_file:
-        the_file.write("{}\n".format(path_length))
-        the_file.write("{}\n".format(average_branching_factor))
-        the_file.write("{}\n".format(abs(path_length - state.cost_to_finish())))
+        # #player piece
         the_file.write("{}\n".format(len(state.player_pieces_list[state.playing_player])))
+        # #block
         the_file.write("{}\n".format(len(state.obstacles)))
+        # avg b
+        the_file.write("{}\n".format(average_branching_factor))
+        # d
+        the_file.write("{}\n".format(path_length))
+        # delta
+        the_file.write("{}\n".format(abs(path_length - state.cost_to_finish())))
+        # #MB used
+        the_file.write("{}\n".format(mb_mempey_used)
