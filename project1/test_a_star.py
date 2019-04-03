@@ -134,15 +134,15 @@ if __name__ == '__main__':
     print_result(search_res, True)
 
     with open('output.txt', 'w') as the_file:
-        # d
-        the_file.write("{}\n".format(path_length))
-        # avg b
-        the_file.write("{}\n".format(average_branching_factor))
-        # delta
-        the_file.write("{}\n".format(abs(path_length - state.cost_to_finish())))
         # #player piece
         the_file.write("{}\n".format(len(state.player_pieces_list[state.playing_player])))
         # #block
         the_file.write("{}\n".format(len(state.obstacles)))
+        # avg b
+        the_file.write("{}\n".format(average_branching_factor))
+        # d
+        the_file.write("{}\n".format(path_length))
+        # delta
+        the_file.write("{}\n".format(abs(path_length - state.cost_to_finish())))
         # #MB used
         the_file.write("{}\n".format(mb_mempey_used)
