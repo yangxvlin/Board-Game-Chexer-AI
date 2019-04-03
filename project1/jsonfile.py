@@ -19,21 +19,25 @@ def generate_json_file(np, nb):
         [-3, 3], [-2, 3], [-1, 3], [0, 3]
     ]
 
+    player_used = []
+    block_used = []
+
     count = 0
     while True:
         if count == SAMPLE_SIZE:
             break
 
-        player = sample(pieces, np)
-        temp = deepcopy(pieces)
-        for i in player:
-            try:
+        while True:
+            player = sorted(sample(pieces, np))
+            temp = deepcopy(pieces)
+            for i in player:
                 temp.remove(i)
-            except:
-                print(i)
-                print(temp)
-                exit(0)
-        block = sample(temp, nb)
+            block = sorted(sample(temp, nb))
+
+            if player not in player_used and block not in block_used:
+                player_used.append(player)
+                block_used.append(block_used)
+                break
 
         out = {}
         out["colour"] = "red"
