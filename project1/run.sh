@@ -27,5 +27,6 @@
 # time python search.py ./input/sample12.json
 # time python search.py ./input/sample13.json
 
-# time python search.py ./input/sample14.json
-python test_a_star.py ./input/sample8.json
+time python search.py ./input/sample14.json
+# python test_a_star.py ./input/sample8.json
+# python test_a_star.py ./input/sample13.json

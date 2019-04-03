@@ -221,11 +221,12 @@ class State:
             return total_dist
 
         # for each remaining pieces
-        for piece in self.player_pieces_list[self.playing_player]:
-            total_dist += State.minimum_actions[piece]
+        # for piece in self.player_pieces_list[self.playing_player]:
+        #     total_dist += State.minimum_actions[piece]
 
         # used for testing to respond to case with no solution
         try:
+            total_dist = 0
             # for each remaining pieces
             for piece in self.player_pieces_list[self.playing_player]:
                 total_dist += State.minimum_actions[piece]
