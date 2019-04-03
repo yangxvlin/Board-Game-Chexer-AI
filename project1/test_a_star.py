@@ -139,4 +139,3 @@ if __name__ == '__main__':
         the_file.write("{}\n".format(abs(path_length - state.cost_to_finish())))
         the_file.write("{}\n".format(len(state.player_pieces_list[state.playing_player])))
         the_file.write("{}\n".format(len(state.obstacles)))
-
