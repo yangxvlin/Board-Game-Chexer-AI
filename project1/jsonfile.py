@@ -10,8 +10,10 @@ def ncr(n, r):
     return numer / denom
 
 from itertools import combinations
-import json
+from itertools import product
 from random import randint
+from random import choices
+import json
 
 SAMPLE_SIZE = 30
 
@@ -28,56 +30,47 @@ def generate_json_file(np, nb):
         [-3, 3], [-2, 3], [-1, 3], [0, 3]
     ]
 
-    player_possible_com = ncr(37, np)
-    block_possible_com = ncr(37 - np, nb)
-    total_possible_com = player_possible_com * block_possible_com
+    player_pieces = [i for i in combinations(pieces, np)]
+    block_pieces = [i for i in combinations(pieces, nb)]
+    # possible_com = [i for i in product(player_pieces, block_pieces)]
 
-    # if count in the list, generate the file
-    to_choose = [randint(0, total_possible_com) for i in range(SAMPLE_SIZE)]
-
+    name = 0
     count = 0
-    if total_possible_com > SAMPLE_SIZE:
-        for player_pieces in combinations(pieces, np):
-            player_pieces = list(player_pieces)
-            temp = pieces.copy()
-            # remove hex occupied by player
-            for i in player_pieces:
-                temp.remove(i)
-            # block can choose all the rest
-            for block_pieces in combinations(temp, nb):
-                block_pieces = list(block_pieces)
-                if count in to_choose:
-                    out = {}
-                    out["colour"] = "red"
-                    out["pieces"] = player_pieces
-                    out["blocks"] = block_pieces
-                    with open("fullTestCase/" + str(np) + "p/" + str(nb) + "b" + str(count) + ".json", "w") as output:
-                        json.dump(out, output)
+    while True:
+        if count == SAMPLE_SIZE:
+            break
+
+        player = list(choices(player_pieces, k=2))
+        while True:
+            block = list(choices(block_pieces, k=2))
+
+            if no_duplicate(player, block):
                 count += 1
-    # not enough position to choose, have all
-    else:
-        for player_pieces in combinations(pieces, np):
-            player_pieces = list(player_pieces)
-            temp = pieces.copy()
-            for i in player_pieces:
-                temp.remove(i)
-            for block_pieces in combinations(temp, nb):
-                block_pieces = list(block_pieces)
-                out = {}
-                out["colour"] = "red"
-                out["pieces"] = player_pieces
-                out["blocks"] = block_pieces
-                with open("fullTestCase/" + str(np) + "p/" + str(nb) + "b" + str(count) + ".json", "w") as output:
-                    json.dump(out, output)
-                count += 1
+                break
+
+        out = {}
+        out["colour"] = "red"
+        out["pieces"] = player
+        out["blocks"] = block
+        with open("fullTestCase/" + str(np) + "p/" + str(nb) + "b" + str(name) + ".json", "w") as output:
+            json.dump(out, output)
+        name += 1
+
+
+# check if ls2 contains elements that are in ls1
+def no_duplicate(ls1, ls2):
+    for i in ls2:
+        if i in ls1:
+            return False
+    return True
 
 
 def main():
     MAX_NP = 4
 
     # for num_p in range(MAX_NP):
-    for num_b in range(37 - 1):
-        generate_json_file(1, num_b)
+    for num_b in range(37 - 2):
+        generate_json_file(2, num_b)
 
 
 if __name__ == '__main__':
