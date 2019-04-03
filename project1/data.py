@@ -8,7 +8,7 @@ import subprocess
 import json
 
 df = pd.DataFrame(columns = ['number of pieces', 'number of blocks', 'average branching factor', 'depth of search tree', 
-                             'relative error', 'runtime(in ms)', 'space used(in MB)', "preprocess time(in ms)"])
+                             'relative error', 'runtime(in ms)', 'space used(in MB)', "preprocess time(in ms)", "file name"])
 
 N_iter = 5
 N_digit = 4
@@ -30,7 +30,7 @@ root_path = os.getcwd()
 
 files = []
 
-for np in range(1, 2):
+for np in range(1, 5):
     path = './fullTestCase/' + str(np) + 'p/'
 #     print(os.getcwd())
     
@@ -76,6 +76,7 @@ for i in range(len(files)):
             continue
         else:
             temp.append(preprocess_time)
+            temp.append(fn)
             temp.insert(5, time)
             df.loc[index] = temp
             index += 1
