@@ -2,6 +2,7 @@
 import json
 from copy import deepcopy
 from random import sample
+from random import shuffle
 
 SAMPLE_SIZE = 30
 MAX_NP = 4
@@ -41,7 +42,9 @@ def generate_json_file(np, nb):
 
         out = {}
         out["colour"] = "red"
+        shuffle(player)
         out["pieces"] = player
+        shuffle(block)
         out["blocks"] = block
         with open("fullTestCase/" + str(np) + "p/" + str(nb) + "b" + str(count) + ".json", "w") as output:
             json.dump(out, output)
