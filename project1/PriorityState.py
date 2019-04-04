@@ -3,10 +3,11 @@ Author:      XuLin Yang
 Student id:  904904
 Date:        2019-3-19 00:10:39
 Description: Customized class for PriorityQueue<priority, item>
+             But designed for compare State
 """
 
 
-class PriorityItem:
+class PriorityState:
     """ class used to customized object in builtin python PriorityQueue
     """
 
@@ -22,8 +23,21 @@ class PriorityItem:
         """ compare two PriorityItem
         :param other: the other PriorityItem
         :return: True if self.priority < other.priority
+                 compare state's remaining pieces if priority equals
         """
-        return self._priority < other.get_priority()
+        from State import State
+
+        if self._priority == other.get_priority():
+            self_state = self._item
+            # print(self_state)
+            self_player_pieces = self_state.player_pieces_list[
+                                    self_state.playing_player]
+            other_state = other.get_item()
+            other_player_pieces = other_state.player_pieces_list[
+                                    other_state.playing_player]
+            return len(self_player_pieces) < len(other_player_pieces)
+        else:
+            return self._priority < other.get_priority()
 
     def get_item(self):
         """ return PriorityItem's item

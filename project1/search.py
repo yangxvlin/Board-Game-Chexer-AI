@@ -12,7 +12,7 @@ Description: search algorithm for part a
 from functools import lru_cache
 from collections import deque
 from queue import PriorityQueue
-from PriorityItem import PriorityItem
+from PriorityState import PriorityState
 from util import main
 
 
@@ -68,7 +68,7 @@ def a_star_search(root):
     # f(state)
     f_score = {root: f(root, g_score[root])}
 
-    open_set.put(PriorityItem(f_score[root], root))
+    open_set.put(PriorityState(f_score[root], root))
 
     while not open_set.empty():
         # the node in open_set having the lowest f_score[] value
@@ -100,7 +100,7 @@ def a_star_search(root):
                 f_score[next_state] = f(next_state, g_score[next_state])
 
                 # if next_state not in open_set:
-                open_set.put(PriorityItem(f_score[next_state], next_state))
+                open_set.put(PriorityState(f_score[next_state], next_state))
 
     return None
 

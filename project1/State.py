@@ -102,6 +102,8 @@ class State:
 
         player_pieces = self.player_pieces_list[self.playing_player]
 
+        # if there is an exit action, then current state has only this 
+        # next state
         for piece in player_pieces:
             if is_in_goal_hexe(piece, self.playing_player):
                 # create next state
@@ -147,15 +149,6 @@ class State:
                             if next_state not in res:
                                 res.append(next_state)
 
-                # exit action: move out board from goal hexe
-                # elif is_in_goal_hexe(piece, self.playing_player):
-                #     # create next state
-                #     next_state = self._copy()
-                #     # update action
-                #     next_state.update_action(EXIT, piece)
-
-                #     if next_state not in res:
-                #         res.append(next_state)
         # sort the output to process exit action first then jump then move
         return sorted(res, key=lambda x: x.action)
         # return res
