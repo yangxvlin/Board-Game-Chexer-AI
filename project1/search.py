@@ -68,7 +68,7 @@ def a_star_search(root):
     # f(state)
     f_score = {root: f(root, g_score[root])}
 
-    open_set.put(PriorityState(f_score[root], root))
+    open_set.put(PriorityState(f_score[root], root, g_score[root]))
 
     while not open_set.empty():
         # the node in open_set having the lowest f_score[] value
@@ -100,7 +100,8 @@ def a_star_search(root):
                 f_score[next_state] = f(next_state, g_score[next_state])
 
                 # if next_state not in open_set:
-                open_set.put(PriorityState(f_score[next_state], next_state))
+                open_set.put(PriorityState(f_score[next_state], next_state, 
+                                           g_score[next_state]))
 
     return None
 

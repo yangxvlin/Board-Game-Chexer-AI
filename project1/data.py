@@ -10,7 +10,7 @@ import json
 df = pd.DataFrame(columns = ['number of pieces', 'number of blocks', 'average branching factor', 'depth of search tree', 
                              'relative error', 'runtime(in ms)', 'space used(in MB)', "preprocess time(in ms)", "file name"])
 
-N_iter = 5
+N_iter = 1
 N_digit = 4
 PYTHON = "python"
 PYTHON_FILE = "test_a_star.py"

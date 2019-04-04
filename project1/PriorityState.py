@@ -11,13 +11,14 @@ class PriorityState:
     """ class used to customized object in builtin python PriorityQueue
     """
 
-    def __init__(self, priority, item):
+    def __init__(self, priority, item, state_g_score):
         """ initialize a PriorityItem
         :param priority: float for item's priority
         :param item:
         """
         self._priority = priority
         self._item = item
+        self._g = state_g_score
 
     def __lt__(self, other):
         """ compare two PriorityItem
@@ -35,7 +36,12 @@ class PriorityState:
             other_state = other.get_item()
             other_player_pieces = other_state.player_pieces_list[
                                     other_state.playing_player]
-            return len(self_player_pieces) < len(other_player_pieces)
+
+            if len(self_player_pieces) == len(other_player_pieces):
+                # return self._g < other.get_g()
+                return self._g < other.get_g()
+            else:
+                return len(self_player_pieces) < len(other_player_pieces)
         else:
             return self._priority < other.get_priority()
 
@@ -50,3 +56,6 @@ class PriorityState:
         :return: return priority
         """
         return self._priority
+
+    def get_g(self):
+        return self._g
