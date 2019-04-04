@@ -52,7 +52,7 @@ def generate_json_file(np, nb):
         with open("fullTestCase/" + str(np) + "p/" + str(nb) + "b" + str(count) + ".json", "w") as output:
             json.dump(out, output)
         count += 1
-
+    # print(count)
 
 def main():
 
