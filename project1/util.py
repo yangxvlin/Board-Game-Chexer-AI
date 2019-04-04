@@ -38,9 +38,9 @@ def main():
     print("# solution path length =", len(search_res) - 1, "\n#")
 
     # submission output
-    # print_result(search_res, True)
+    print_result(search_res, True)
     # debug output: enable state pause, board printed
-    print_result(search_res, True, True, True)
+    # print_result(search_res, True, True, True)
 
     # testing
     # from test import test1

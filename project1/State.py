@@ -102,6 +102,15 @@ class State:
 
         player_pieces = self.player_pieces_list[self.playing_player]
 
+        for piece in player_pieces:
+            if is_in_goal_hexe(piece, self.playing_player):
+                # create next state
+                next_state = self._copy()
+                # update action
+                next_state.update_action(EXIT, piece)
+
+                return [next_state]
+
         # foreach movable piece
         for piece in player_pieces:
             for delta in MOVE_DELTA:
@@ -139,16 +148,17 @@ class State:
                                 res.append(next_state)
 
                 # exit action: move out board from goal hexe
-                elif is_in_goal_hexe(piece, self.playing_player):
-                    # create next state
-                    next_state = self._copy()
-                    # update action
-                    next_state.update_action(EXIT, piece)
+                # elif is_in_goal_hexe(piece, self.playing_player):
+                #     # create next state
+                #     next_state = self._copy()
+                #     # update action
+                #     next_state.update_action(EXIT, piece)
 
-                    if next_state not in res:
-                        res.append(next_state)
+                #     if next_state not in res:
+                #         res.append(next_state)
         # sort the output to process exit action first then jump then move
         return sorted(res, key=lambda x: x.action)
+        # return res
 
     def update_action(self, action, from_hexe, to_hexe=None, jumped_hexe=None):
         """ update a state by action

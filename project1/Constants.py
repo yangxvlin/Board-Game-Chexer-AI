@@ -33,10 +33,10 @@ PLAYER_PLAYING_ORDER = {"red": 0, "green": 1, "blue": 2}
 PLAYING_ORDER_PLAYER_MAP = {0: "red", 1: "green", 2: "blue"}
 
 """ each player's goal hexes' axial coordinates """
-PLAYER_GOAL = {0: [(BOARD_BOUND, -i) for i in range(0, PLAYER_WIN_THRESHOLD)],
-               1: [(i-BOARD_BOUND, BOARD_BOUND)
-                   for i in range(0, PLAYER_WIN_THRESHOLD)],
-               2: [(-i, i-BOARD_BOUND) for i in range(0, PLAYER_WIN_THRESHOLD)]}
+PLAYER_GOAL = {0: set([(BOARD_BOUND, -i) for i in range(0, PLAYER_WIN_THRESHOLD)]),
+               1: set([(i-BOARD_BOUND, BOARD_BOUND)
+                   for i in range(0, PLAYER_WIN_THRESHOLD)]),
+               2: set([(-i, i-BOARD_BOUND) for i in range(0, PLAYER_WIN_THRESHOLD)])}
 
 """ keys for information stored in json file """
 JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
