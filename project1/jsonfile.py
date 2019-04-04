@@ -4,7 +4,8 @@ from copy import deepcopy
 from random import sample
 from random import shuffle
 
-SAMPLE_SIZE = 30
+SAMPLE_SIZE = 400
+MAX_LOOP = 500
 MAX_NP = 4
 
 # given number of player
@@ -24,21 +25,21 @@ def generate_json_file(np, nb):
     block_used = []
 
     count = 0
-    while True:
+    for _ in range(0, MAX_LOOP):
         if count == SAMPLE_SIZE:
             break
 
-        while True:
-            player = sorted(sample(pieces, np))
-            temp = deepcopy(pieces)
-            for i in player:
-                temp.remove(i)
-            block = sorted(sample(temp, nb))
+        player = sorted(sample(pieces, np))
+        temp = deepcopy(pieces)
+        for i in player:
+            temp.remove(i)
+        block = sorted(sample(temp, nb))
 
-            if player not in player_used and block not in block_used:
-                player_used.append(player)
-                block_used.append(block_used)
-                break
+        if (player not in player_used) and (block not in block_used):
+            player_used.append(player)
+            block_used.append(block_used)
+        else:
+            continue
 
         out = {}
         out["colour"] = "red"
@@ -46,6 +47,8 @@ def generate_json_file(np, nb):
         out["pieces"] = player
         shuffle(block)
         out["blocks"] = block
+        print("generating " + "fullTestCase/" + str(np) + "p/" + str(nb) + "b" + str(count) + ".json")
+
         with open("fullTestCase/" + str(np) + "p/" + str(nb) + "b" + str(count) + ".json", "w") as output:
             json.dump(out, output)
         count += 1
