@@ -1,7 +1,8 @@
 {
-    "colour": "green",
+    "colour": "red",
     "pieces": [
-        [1, -3]
+        [-2, 3],
+        [3, -2]
     ],
     "blocks": [
         [-1, 0],

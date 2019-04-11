@@ -3,10 +3,10 @@
 
 # python file.py -flag input.txt > output.txt
 
-# for i in {1..10}; do
-    # date
-    # python search.py "./input/one_piece/depth$i.json"
-    # date
+# for i in {1..20}; do
+    
+#     python search.py "./tests/part_a/sample$i.json"
+    
 # done
 
 # python search.py ./input/sample1.json
@@ -27,6 +27,8 @@
 # time python search.py ./input/sample12.json
 # time python search.py ./input/sample13.json
 
-time python search.py ./input/sample14.json
+time python search.py ./tests/part_a/sample21.json
+
+# time python search.py ./input/sample14.json
 # python test_a_star.py ./input/sample8.json
 # python test_a_star.py ./input/sample13.json
