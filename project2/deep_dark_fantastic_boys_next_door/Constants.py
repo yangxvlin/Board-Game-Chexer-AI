@@ -26,6 +26,8 @@ JUMP = "JUMP"
 """ exit action """
 EXIT = "EXIT"
 
+PASS = "PASS"
+
 """ player win when 4 pieces exit """
 PLAYER_WIN_THRESHOLD = 4
 

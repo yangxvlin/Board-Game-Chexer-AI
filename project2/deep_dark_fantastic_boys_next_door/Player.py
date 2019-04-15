@@ -8,7 +8,7 @@ Description: Player class
 
 # from MaxnAgent import get_next_move
 from .agent.RandomAgent import (RandomAgent)
-from .Constants import (MOVE, JUMP, EXIT, PLAYER_PLAYING_ORDER)
+from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER)
 from .util import (calculate_jumped_hexe)
 
 
@@ -81,15 +81,16 @@ class Player:
         next_state = previous_state.copy()
         next_state.playing_player = previous_state.get_next_player_index()
 
-        if action[0] == MOVE:
-            next_state.update_action(action[0], previous_state.playing_player,
-                                     action[1][0], action[1][1])
-        elif action[0] == EXIT:
-            next_state.update_action(action[0], previous_state.playing_player,
-                                     action[1])
-        else:
-            jumped_hexe = calculate_jumped_hexe(action[1][0], action[1][1])
-            next_state.update_action(action[0], previous_state.playing_player,
-                                     action[1][0], action[1][1], jumped_hexe)
+        if action[0] != PASS:
+            if action[0] == MOVE:
+                next_state.update_action(action[0], previous_state.playing_player,
+                                         action[1][0], action[1][1])
+            elif action[0] == EXIT:
+                next_state.update_action(action[0], previous_state.playing_player,
+                                         action[1])
+            else:
+                jumped_hexe = calculate_jumped_hexe(action[1][0], action[1][1])
+                next_state.update_action(action[0], previous_state.playing_player,
+                                         action[1][0], action[1][1], jumped_hexe)
 
         self.states_history.append(next_state)

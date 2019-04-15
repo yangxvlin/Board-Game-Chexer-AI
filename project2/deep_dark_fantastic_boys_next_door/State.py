@@ -6,8 +6,8 @@ Description: State to store information about the environment
 """
 
 from copy import deepcopy
-from .Constants import (MOVE_DELTA, MOVE, JUMP, EXIT, PLAYER_PLAYING_ORDER,
-                        EMPTY_BOARD)
+from .Constants import (MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
+                        PLAYER_PLAYING_ORDER, EMPTY_BOARD)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple)
 
 
@@ -139,7 +139,7 @@ class State:
             next_state = self.copy()
             next_state.playing_player = \
                 self.get_next_player_index()
-            next_state.action = ("PASS", None)
+            next_state.action = (PASS, None)
             return [next_state]
         else:
             # sort the output to process exit action first then jump then move
