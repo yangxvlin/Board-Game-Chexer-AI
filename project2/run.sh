@@ -1,7 +1,7 @@
-# Author: XuLin Yang 
-# Date: 2019-3-28 17:31:29
+# python -m referee --help
 
-# python file.py -flag < input.txt > output.txt
-python test.py
+# python -m referee -D -v3 deep_dark_fantastic_boys_next_door deep_dark_fantastic_boys_next_door deep_dark_fantastic_boys_next_door
 
 
+
+python -m referee -D -v3 your_team_name your_team_name your_team_name

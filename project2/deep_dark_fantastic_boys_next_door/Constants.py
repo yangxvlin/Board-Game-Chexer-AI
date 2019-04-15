@@ -47,8 +47,5 @@ PLAYER_GOAL = {0: [(BOARD_BOUND, -i) for i in range(0, PLAYER_WIN_THRESHOLD)],
                    for i in range(0, PLAYER_WIN_THRESHOLD)],
                2: [(-i, i-BOARD_BOUND) for i in range(0, PLAYER_WIN_THRESHOLD)]}
 
-""" keys for information stored in json file """
-JSON_FILE_KEYS = ["colour", "pieces", "blocks"]
-
 """ number of players in game """
 N_PLAYER = 3
