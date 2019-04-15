@@ -1,0 +1,16 @@
+/tmp
+.dist
+/project2/.idea
+/project1/.idea
+/project1/__pycache__
+/project2/__pycache__
+/project1/.ipynb_checkpoints
+/project1/~$report.docx
+/project1/upload.sh
+/project2/upload.sh
+/project1/test.py
+latex_formula.txt
+/project2/latex_formula.txt
+/project1/fullTestCase
+/project1
+/project2/your_team_name
