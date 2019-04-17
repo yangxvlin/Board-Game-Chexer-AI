@@ -148,8 +148,8 @@ class QLearningAgent:
                 # ********************* get turn census ***********************
                 [player0_reward, player1_reward, player2_reward], done = \
                     env.step([player0_next_state,
-                             player1_next_state,
-                             player2_next_state])
+                              player1_next_state,
+                              player2_next_state])
 
                 # ********************* update q table ************************
                 self.update_player_q_table(0, player0_state_key,
@@ -171,9 +171,6 @@ class QLearningAgent:
                                            player2_reward,
                                            discount_factor, alpha)
 
-                print(self.players_q_table)
-                return
-
                 # ******************* next round in epsoides ******************
                 if done:
                     break
@@ -185,16 +182,16 @@ class QLearningAgent:
                               next_actions, action, reward, discount_factor,
                               alpha):
         # TD Update
-        print(next_state_key, self.players_q_table[playing_player])
-        print(next_state_key in self.players_q_table[playing_player])
-        if next_state_key in self.players_q_table[playing_player]:
+
+        if next_state_key in self.players_q_table[playing_player].keys():
             best_next_action_index = np.argmax(
                     self.players_q_table[playing_player][state_key].values())
-            print(self.players_q_table[playing_player][
-                    state_key].keys())
-            print(best_next_action_index)
-            best_next_action = list(self.players_q_table[playing_player][
-                    state_key].keys())[best_next_action_index]
+            # self.print_player_q_table()
+            print(best_next_action_index, playing_player)
+            print(self.players_q_table[playing_player])
+            print(playing_player, state_key, action, next_state_key)
+            best_next_action = self.players_q_table[playing_player][
+                    state_key].keys()[best_next_action_index]
             # TODO should we have OrderedDict?
         else:
             # no visited
@@ -212,6 +209,7 @@ class QLearningAgent:
                                                                     action]
         self.players_q_table[playing_player][state_key][action] \
             += alpha * td_delta
+        print(state_key, playing_player, action, "\n", next_state_key)
 
     def print_player_q_table(self):
         print("[")

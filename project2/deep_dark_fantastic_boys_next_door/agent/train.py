@@ -13,7 +13,6 @@ env = GameEnv()
 
 q_learning = QLearningAgent()
 q_learning.print_player_q_table()
-print(q_learning.players_q_table)
 q_learning.q_learning(env)
 
 q_learning.print_player_q_table()
