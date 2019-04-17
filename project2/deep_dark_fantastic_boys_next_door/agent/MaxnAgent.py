@@ -8,7 +8,7 @@ Page 20 index 34/205
 """
 
 import numpy as np
-from Constants import N_PLAYER, PLAYER_OEDER_DICT
+from deep_dark_fantastic_boys_next_door.Constants import (N_PLAYER)
 
 SEARCH_DEPTH = 4
 
@@ -18,40 +18,48 @@ NEGATIVE_INFINITY = float('-inf')
 U = 12  # 12 for 12 pieces on board
 
 
-def get_next_move(state):
-    next_state, _ = maxn(state, SEARCH_DEPTH, state.playing_player, 
-                        NEGATIVE_INFINITY)
+class MaxnAgent:
 
-    return next_state.action
+    # TODO Lazy evaluation
 
-# TODO check my recursion return correct move
-def maxn(s, depth, root_player, alpha):
-    # s:cur state
-    next_state = None
+    def __init__(self, depth=SEARCH_DEPTH, u=U):
+        self.depth = depth
+        self.u = u
 
-    if depth <= 0 or s.is_terminate():
-        return next_state, s.evaluate()
+    def get_next_move(self, state):
+        next_state, _ = self.maxn(state, self.depth, state.playing_player,
+                                  NEGATIVE_INFINITY)
+        assert next_state is not None
+        return next_state.action
 
-    best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]
+    # TODO check my recursion return correct move
+    def maxn(self, s, depth, root_player, alpha):
+        # s:cur state
+        my_next_state = None
 
-    cur_player = s.playing_player
-    cur_player_index = PLAYER_OEDER_DICT[cur_player]
+        if depth <= 0 or s.is_terminate():
+            return my_next_state, s.evaluate()
 
-    next_states = s.all_next_state()
+        best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]
 
-    for next_state in next_states:
-        next_player = next_state.playing_player
+        cur_player = s.playing_player
 
-        _, result = maxn(next_state, depth - 1, root_player, best[next_player])
-        if result[cur_player_index] > best[cur_player_index]:
-            best = result
+        next_states = s.all_next_state()
 
-            # TODO place need check
-            # our player
-            if (depth == SEARCH_DEPTH) and (cur_player == root_player):
-                my_next_state = next_state
+        for next_state in next_states:
+            next_player = next_state.playing_player
 
-        if result[cur_player_index] >= U - alpha:
-            return next_state, result
+            _, result = self.maxn(next_state, depth - 1, root_player,
+                                  best[next_player])
+            if result[cur_player] > best[cur_player]:
+                best = result
 
-    return my_next_state, best
+                # TODO place need check
+                # our player
+                if (depth == SEARCH_DEPTH) and (cur_player == root_player):
+                    my_next_state = next_state
+
+            if result[cur_player] >= U - alpha:
+                return next_state, result
+
+        return my_next_state, best

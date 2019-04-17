@@ -5,11 +5,12 @@ Date:        2019-3-11 21:33:12
 Description: Player class
 """
 
+import sys
 
 # from MaxnAgent import get_next_move
 from .agent.RandomAgent import (RandomAgent)
 from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER)
-from .util import (calculate_jumped_hexe)
+from .util import (calculate_jumped_hexe, initial_state)
 
 
 class Player:
@@ -27,10 +28,12 @@ class Player:
 
         :param colour: representing the player that control this game
         """
-        from .util import initial_state
-
-        self.agent = RandomAgent()
         self.colour = PLAYER_PLAYING_ORDER[colour]
+        # use sts.argv to control the agent for player
+        # or
+        # https://softwareengineering.stackexchange.com/questions/351389/dynamic-dispatch-from-a-string-python
+        self.agent = RandomAgent()
+
         self.states_history = [initial_state()]
 
     def action(self):
@@ -79,7 +82,6 @@ class Player:
         assert previous_state.playing_player == PLAYER_PLAYING_ORDER[colour]
         # generate state | action
         next_state = previous_state.copy()
-        next_state.playing_player = previous_state.get_next_player_index()
 
         if action[0] != PASS:
             if action[0] == MOVE:
@@ -94,3 +96,4 @@ class Player:
                                          action[1][0], action[1][1], jumped_hexe)
 
         self.states_history.append(next_state)
+

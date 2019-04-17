@@ -7,7 +7,7 @@ Description: State to store information about the environment
 
 from copy import deepcopy
 from .Constants import (MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
-                        PLAYER_PLAYING_ORDER, EMPTY_BOARD)
+                        PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple)
 
 
@@ -31,14 +31,14 @@ class State:
 
         # action from previous state to current state
         self.action = None
-
+        self.turns = 0
         self.finished_pieces = deepcopy(scores)
 
     def __repr__(self):
         """ str(State)
         :return: state.toString()
         """
-        return str(self.pieces_player_dict)
+        return str(self.player_pieces_list)
 
     def __hash__(self):
         """ hash(State)
@@ -62,6 +62,7 @@ class State:
         copyed = State(self.playing_player, EMPTY_BOARD, self.finished_pieces)
         copyed.player_pieces_list = deepcopy(self.player_pieces_list)
         copyed.pieces_player_dict = deepcopy(self.pieces_player_dict)
+        copyed.turns = self.turns
 
         return copyed
 
@@ -85,13 +86,11 @@ class State:
             if is_in_goal_hexe(piece, self.playing_player):
                 # create next state
                 next_state = self.copy()
-                # update next playing player info
-                next_state.playing_player = \
-                    self.get_next_player_index()
                 # update action
                 next_state.update_action(EXIT, self.playing_player, piece)
 
-                return [next_state]
+                if next_state not in res:
+                    res.append(next_state)
 
         # foreach movable piece
         for piece in player_pieces:
@@ -104,9 +103,6 @@ class State:
                     if adj_piece not in all_piece:
                         # create next state
                         next_state = self.copy()
-                        # update next playing player info
-                        next_state.playing_player = \
-                            self.get_next_player_index()
                         # update action
                         next_state.update_action(MOVE, self.playing_player,
                                                  piece, adj_piece)
@@ -124,9 +120,6 @@ class State:
                                 on_board(jump_piece):
                             # create next state
                             next_state = self.copy()
-                            # update next playing player info
-                            next_state.playing_player = \
-                                self.get_next_player_index()
                             # update action
                             next_state.update_action(JUMP, self.playing_player,
                                                      piece, jump_piece,
@@ -155,6 +148,8 @@ class State:
         :param to_hexe: new hexe piece coordinate
         :param jumped_hexe: piece was jumped over
         """
+        # update next playing player info
+        self.playing_player = self.get_next_player_index()
 
         # mov and jump
         if to_hexe is not None:
@@ -197,6 +192,10 @@ class State:
             # update player's score
             self.finished_pieces[previous_player] += 1
 
+        # update turns
+        if previous_player == 2:
+            self.turns += 1
+
     def get_next_player_index(self):
         if self.playing_player != 2:
             return self.playing_player + 1
@@ -220,3 +219,14 @@ class State:
         :return: distance from current state to goal state
         """
         pass
+
+    def evaluate(self, lazy_evaluation=False):
+        pass
+
+    def get_key(self):
+        return tuple(element_to_tuple(self.player_pieces_list))
+
+    def is_player_finished(self):
+        return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
+
+    # def is_other_player_finished(self):
