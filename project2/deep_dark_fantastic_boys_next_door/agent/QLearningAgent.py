@@ -69,7 +69,7 @@ class QLearningAgent:
             """
         for i_episode in range(num_episodes):
             # Print out which episode we're on, useful for debugging.
-            if (i_episode + 1) % 100 == 0:
+            if (i_episode + 1) % 5 == 0:
                 print("\rEpisode {}/{}.".format(i_episode + 1, num_episodes),
                       end="")
                 sys.stdout.flush()
@@ -183,15 +183,15 @@ class QLearningAgent:
                               alpha):
         # TD Update
 
-        if next_state_key in self.players_q_table[playing_player].keys():
+        if (next_state_key in self.players_q_table[playing_player].keys()) and \
+           (len(self.players_q_table[playing_player][state_key].values()) > 0):
             best_next_action_index = np.argmax(
                     self.players_q_table[playing_player][state_key].values())
             # self.print_player_q_table()
-            print(best_next_action_index, playing_player)
-            print(self.players_q_table[playing_player])
-            print(playing_player, state_key, action, next_state_key)
-            best_next_action = self.players_q_table[playing_player][
-                    state_key].keys()[best_next_action_index]
+            # print(best_next_action_index, self.players_q_table[playing_player])
+            # print(reward, playing_player, state_key, action, next_state_key)
+            best_next_action = list(self.players_q_table[playing_player][
+                    state_key].keys())[best_next_action_index]
             # TODO should we have OrderedDict?
         else:
             # no visited
@@ -209,7 +209,10 @@ class QLearningAgent:
                                                                     action]
         self.players_q_table[playing_player][state_key][action] \
             += alpha * td_delta
-        print(state_key, playing_player, action, "\n", next_state_key)
+        # print(state_key, playing_player, action, "\n", next_state_key, "=>",
+        # self.players_q_table[playing_player][state_key],
+        #       "\nnext_state _key:",
+        #       self.players_q_table[playing_player][next_state_key])
 
     def print_player_q_table(self):
         print("[")

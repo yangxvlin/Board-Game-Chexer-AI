@@ -130,16 +130,14 @@ class State:
 
         if len(res) == 0:
             next_state = self.copy()
-            next_state.playing_player = \
-                self.get_next_player_index()
-            next_state.action = (PASS, None)
+            next_state.update_action(PASS, self.playing_player)
             return [next_state]
         else:
             # sort the output to process exit action first then jump then move
             return sorted(res, key=lambda x: x.action[0])
         # return res
 
-    def update_action(self, action, previous_player, from_hexe, to_hexe=None,
+    def update_action(self, action, previous_player, from_hexe=None, to_hexe=None,
                       jumped_hexe=None):
         """ update a state by action
         :param previous_player: player playing in previous state
@@ -150,51 +148,53 @@ class State:
         """
         # update next playing player info
         self.playing_player = self.get_next_player_index()
-
-        # mov and jump
-        if to_hexe is not None:
-            # get player's original piece index
-            from_index = self.player_pieces_list[previous_player].index(
-                from_hexe)
-            # update player's new piece info over original piece
-            self.player_pieces_list[previous_player][from_index] = to_hexe
-            # update location of piece
-            self.pieces_player_dict.pop(from_hexe)
-            self.pieces_player_dict.update({to_hexe: previous_player})
-
-            # jump need to update jumped piece info
-            if action == JUMP:
-                # jumped other player's piece
-                if jumped_hexe not in self.player_pieces_list[previous_player]:
-                    # get jumped piece's player index
-                    jumped_hexe_player = self.pieces_player_dict[jumped_hexe]
-                    # update player's new piece info over original piece
-                    self.player_pieces_list[jumped_hexe_player].remove(
-                        jumped_hexe)
-                    self.player_pieces_list[previous_player].append(jumped_hexe)
-
-                    # update location of piece
-                    self.pieces_player_dict.pop(jumped_hexe)
-                    self.pieces_player_dict.update(
-                        {jumped_hexe: previous_player})
-
-            # update action
-            self.action = (action, (from_hexe, to_hexe))
-
-        # exit
-        else:
-            # delete player's original piece info
-            self.player_pieces_list[previous_player].remove(from_hexe)
-            # delete location of piece
-            self.pieces_player_dict.pop(from_hexe)
-            # update action
-            self.action = (action, from_hexe)
-            # update player's score
-            self.finished_pieces[previous_player] += 1
-
         # update turns
         if previous_player == 2:
             self.turns += 1
+
+        if action != PASS:
+            # mov and jump
+            if to_hexe is not None:
+                # get player's original piece index
+                from_index = self.player_pieces_list[previous_player].index(
+                    from_hexe)
+                # update player's new piece info over original piece
+                self.player_pieces_list[previous_player][from_index] = to_hexe
+                # update location of piece
+                self.pieces_player_dict.pop(from_hexe)
+                self.pieces_player_dict.update({to_hexe: previous_player})
+
+                # jump need to update jumped piece info
+                if action == JUMP:
+                    # jumped other player's piece
+                    if jumped_hexe not in self.player_pieces_list[previous_player]:
+                        # get jumped piece's player index
+                        jumped_hexe_player = self.pieces_player_dict[jumped_hexe]
+                        # update player's new piece info over original piece
+                        self.player_pieces_list[jumped_hexe_player].remove(
+                            jumped_hexe)
+                        self.player_pieces_list[previous_player].append(jumped_hexe)
+
+                        # update location of piece
+                        self.pieces_player_dict.pop(jumped_hexe)
+                        self.pieces_player_dict.update(
+                            {jumped_hexe: previous_player})
+            # exit
+            else:
+                # delete player's original piece info
+                self.player_pieces_list[previous_player].remove(from_hexe)
+                # delete location of piece
+                self.pieces_player_dict.pop(from_hexe)
+                # update action
+                self.action = (action, from_hexe)
+                # update player's score
+                self.finished_pieces[previous_player] += 1
+
+            # update action
+            self.action = (action, (from_hexe, to_hexe))
+        else:
+            # update action
+            self.action = (action, None)
 
     def get_next_player_index(self):
         if self.playing_player != 2:

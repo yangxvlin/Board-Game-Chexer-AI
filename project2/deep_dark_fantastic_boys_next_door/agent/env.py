@@ -45,10 +45,15 @@ class GameEnv:
             # calculate player gain/lose piece rewards
             player_reward[player] += \
                 player_next_state.finished_pieces[player] + \
-                len(player_next_state.player_pieces_list) - PLAYER_WIN_THRESHOLD
+                len(player_next_state.player_pieces_list[player]) - PLAYER_WIN_THRESHOLD
+            # no piece to keeps fighting == Lose
+            if len(player_next_state.player_pieces_list[player]) == 0:
+                player_reward[player] = LOSE_REWARD
+            # print(player,  player_next_state.finished_pieces[player],
+            #     len(player_next_state.player_pieces_list[player]))
 
         # turn ends
         if players_next_state[0].turns == MAX_TURN:
             is_done = True
-
+        # print(player_reward)
         return player_reward, is_done
