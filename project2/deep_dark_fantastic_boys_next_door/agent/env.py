@@ -55,5 +55,6 @@ class GameEnv:
         # turn ends
         if players_next_state[0].turns == MAX_TURN:
             is_done = True
+            return [0, 0, 0], is_done
         # print(player_reward)
         return player_reward, is_done
