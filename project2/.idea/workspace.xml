@@ -10,7 +10,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/project2$Main.coverage" NAME="Main Coverage Results" MODIFIED="1555304364881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/project2$QLearn.coverage" NAME="QLearn Coverage Results" MODIFIED="1555521035227" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent" />
+    <SUITE FILE_PATH="coverage/project2$QLearn.coverage" NAME="QLearn Coverage Results" MODIFIED="1555563092970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -46,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/State.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="34" column="47" lean-forward="true" selection-start-line="34" selection-start-column="47" selection-end-line="34" selection-end-column="47" />
+            <state relative-caret-position="171">
+              <caret line="69" column="12" selection-start-line="69" selection-start-column="12" selection-end-line="69" selection-end-column="12" />
               <folding>
                 <element signature="e#147#172#0" expanded="true" />
               </folding>
@@ -61,7 +61,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/Player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
+            <state relative-caret-position="893">
               <caret line="86" column="33" selection-start-line="86" selection-start-column="33" selection-end-line="86" selection-end-column="33" />
               <folding>
                 <element signature="e#111#121#0" expanded="true" />
@@ -82,11 +82,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/QLearningAgent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1330">
-              <caret line="75" selection-start-line="75" selection-end-line="75" />
+            <state relative-caret-position="329">
+              <caret line="240" column="37" selection-start-line="240" selection-start-column="37" selection-end-line="240" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -94,8 +94,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="18" selection-start-line="18" selection-end-line="18" />
+            <state relative-caret-position="323">
+              <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
               <folding>
                 <element signature="e#81#145#0" expanded="true" />
               </folding>
@@ -104,15 +104,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="mock://C:\Users\dell\.PyCharm2018.3\system\snapshots\project29.pstat">
-          <provider selected="true" editor-type-id="profiler-session-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/env.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="376">
-              <caret line="58" column="30" selection-start-line="58" selection-start-column="30" selection-end-line="58" selection-end-column="30" />
+            <state relative-caret-position="286">
+              <caret line="56" column="26" lean-forward="true" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -146,6 +141,9 @@
       <find>self.turns</find>
       <find>self.player</find>
       <find>PASS</find>
+      <find>('MOVE', ((-1, 0), (0, 0)))</find>
+      <find>('JUMP', ((2, -2), (2, 0)))</find>
+      <find>('JUMP', ((-2, 0), (0, -2)))</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -177,13 +175,13 @@
         <option value="$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/Player.py" />
         <option value="$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/env.py" />
         <option value="$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/train.py" />
-        <option value="$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/QLearningAgent.py" />
         <option value="$PROJECT_DIR$/train.py" />
         <option value="$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/State.py" />
+        <option value="$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/QLearningAgent.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="105" />
     <option name="y" value="35" />
     <option name="width" value="1750" />
@@ -306,23 +304,24 @@
       <workItem from="1555245335702" duration="14862000" />
       <workItem from="1555329364070" duration="5692000" />
       <workItem from="1555493592584" duration="20870000" />
-      <workItem from="1555521557615" duration="194000" />
+      <workItem from="1555521557615" duration="368000" />
+      <workItem from="1555555483967" duration="9051000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71709000" />
+    <option name="totallyTimeSpent" value="80934000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17091152" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17292225" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3427762" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.57932013" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -474,40 +473,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/QLearningAgent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1330">
-          <caret line="75" selection-start-line="75" selection-end-line="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-          <folding>
-            <element signature="e#81#145#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/env.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="376">
-          <caret line="58" column="30" selection-start-line="58" selection-start-column="30" selection-end-line="58" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/TDAgent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/Player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
+        <state relative-caret-position="893">
           <caret line="86" column="33" selection-start-line="86" selection-start-column="33" selection-end-line="86" selection-end-column="33" />
           <folding>
             <element signature="e#111#121#0" expanded="true" />
@@ -518,13 +486,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/TDAgent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/env.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="56" column="26" lean-forward="true" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
+          <folding>
+            <element signature="e#81#145#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/State.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="34" column="47" lean-forward="true" selection-start-line="34" selection-start-column="47" selection-end-line="34" selection-end-column="47" />
+        <state relative-caret-position="171">
+          <caret line="69" column="12" selection-start-line="69" selection-start-column="12" selection-end-line="69" selection-end-column="12" />
           <folding>
             <element signature="e#147#172#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep_dark_fantastic_boys_next_door/agent/QLearningAgent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="240" column="37" selection-start-line="240" selection-start-column="37" selection-end-line="240" selection-end-column="37" />
         </state>
       </provider>
     </entry>

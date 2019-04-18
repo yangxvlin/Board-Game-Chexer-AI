@@ -66,6 +66,9 @@ class State:
 
         return copyed
 
+    def all_next_action(self):
+        pass
+
     def all_next_state(self):
         """ find all possible states
         :return: list of state after performed one action
@@ -73,7 +76,6 @@ class State:
         additional note: state's copy should inside each if condition as copy
         is an expensive operation
         """
-
         res = []
 
         all_piece = self.all_pieces()

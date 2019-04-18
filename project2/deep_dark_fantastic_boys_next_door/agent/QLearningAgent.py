@@ -18,7 +18,7 @@ class QLearningAgent:
     def __init__(self):
         # {state: {action: v(s) "which is value"}}
         # TODO should we use Ordered Dict for action?
-        self.players_q_table = {player: defaultdict(lambda: defaultdict(int))
+        self.players_q_table = {player: {}
                                 for player in PLAYER_PLAYING_ORDER.values()}
 
     def make_epsilon_greedy_policy(self, Q, epsilon, nA):
@@ -39,11 +39,8 @@ class QLearningAgent:
 
         def policy_fn(observation):
             A = np.ones(nA, dtype=float) * epsilon / nA
-            # TODO is this correct? if not yet visited, do a random move
-            if len(Q[observation].values()) == 0:
-                best_action = np.random.choice(np.arange(nA))
-            else:
-                best_action = np.argmax(Q[observation].values())
+            assert len(Q[observation].values()) > 0
+            best_action = np.argmax(Q[observation].values())
             A[best_action] += (1.0 - epsilon)
             return A
 
@@ -89,6 +86,24 @@ class QLearningAgent:
                 player0_next_actions = [next_state.action
                                         for next_state in player0_next_states]
 
+                # insert empty action to q_table
+                if player0_state_key not in self.players_q_table[0]:
+                    self.players_q_table[0][player0_state_key] = {}
+                for action in player0_next_actions:
+                    if action not in self.players_q_table[0][player0_state_key]:
+                        self.players_q_table[0][player0_state_key][action] = 0
+                # insert empty next state's action to q_table
+                for player0_next_state in player0_next_states:
+                    player0_next_state_key = player0_next_state.get_key()
+                    if player0_next_state_key not in self.players_q_table[0]:
+                        self.players_q_table[0][player0_next_state_key] = {}
+                    for action in [player0_next_state_next_state.action
+                                   for player0_next_state_next_state in
+                                   player0_next_state.all_next_state()]:
+                        if action not in self.players_q_table[0][
+                                player0_next_state_key]:
+                            self.players_q_table[0][player0_next_state_key][action] = 0
+
                 # terminology:
                 # player's q_table = self.players_q_table[state.playing_player]
                 player0_policy = self.make_epsilon_greedy_policy(
@@ -113,6 +128,25 @@ class QLearningAgent:
                 player1_next_actions = [next_state.action
                                         for next_state in player1_next_states]
 
+                # insert empty action to q_table
+                if player1_state_key not in self.players_q_table[1]:
+                    self.players_q_table[1][player1_state_key] = {}
+                for action in player1_next_actions:
+                    if action not in self.players_q_table[1][player1_state_key]:
+                        self.players_q_table[1][player1_state_key][action] = 0
+                # insert empty next state's action to q_table
+                for player1_next_state in player1_next_states:
+                    player1_next_state_key = player1_next_state.get_key()
+                    if player1_next_state_key not in self.players_q_table[1]:
+                        self.players_q_table[1][player1_next_state_key] = {}
+                    for action in [player1_next_state_next_state.action
+                                   for player1_next_state_next_state in
+                                   player1_next_state.all_next_state()]:
+                        if action not in self.players_q_table[1][
+                                player1_next_state_key]:
+                            self.players_q_table[1][player1_next_state_key][
+                                action] = 0
+
                 player1_policy = self.make_epsilon_greedy_policy(
                     self.players_q_table[player1_state.playing_player], epsilon,
                     len(player1_next_actions))
@@ -133,6 +167,25 @@ class QLearningAgent:
                 player2_next_actions = [next_state.action
                                         for next_state in player2_next_states]
 
+                # insert empty action to q_table
+                if player2_state_key not in self.players_q_table[2]:
+                    self.players_q_table[2][player2_state_key] = {}
+                for action in player2_next_actions:
+                    if action not in self.players_q_table[2][player2_state_key]:
+                        self.players_q_table[2][player2_state_key][action] = 0
+                # insert empty next state's action to q_table
+                for player2_next_state in player2_next_states:
+                    player2_next_state_key = player2_next_state.get_key()
+                    if player2_next_state_key not in self.players_q_table[2]:
+                        self.players_q_table[2][player2_next_state_key] = {}
+                    for action in [player2_next_state_next_state.action
+                                   for player2_next_state_next_state in
+                                   player2_next_state.all_next_state()]:
+                        if action not in self.players_q_table[2][
+                                player2_next_state_key]:
+                            self.players_q_table[2][player2_next_state_key][
+                                action] = 0
+
                 player2_policy = self.make_epsilon_greedy_policy(
                     self.players_q_table[player2_state.playing_player], epsilon,
                     len(player2_next_actions))
@@ -151,6 +204,7 @@ class QLearningAgent:
                               player1_next_state,
                               player2_next_state])
 
+                # self.print_player_q_table()
                 # ********************* update q table ************************
                 self.update_player_q_table(0, player0_state_key,
                                            player0_next_state_key,
@@ -181,29 +235,20 @@ class QLearningAgent:
     def update_player_q_table(self, playing_player, state_key, next_state_key,
                               next_actions, action, reward, discount_factor,
                               alpha):
+        assert len(self.players_q_table[playing_player][
+                       next_state_key].values()) > 0
+        assert len(self.players_q_table[playing_player][state_key].values()) > 0
+        assert action in next_actions
+
         # TD Update
+        best_next_action_index = np.argmax(
+                self.players_q_table[playing_player][next_state_key].values())
+        best_next_action = list(self.players_q_table[playing_player][
+                next_state_key].keys())[best_next_action_index]
+        # TODO should we have OrderedDict?
 
-        if (next_state_key in self.players_q_table[playing_player].keys()) and \
-           (len(self.players_q_table[playing_player][state_key].values()) > 0):
-            best_next_action_index = np.argmax(
-                    self.players_q_table[playing_player][state_key].values())
-            # self.print_player_q_table()
-            # print(best_next_action_index, self.players_q_table[playing_player])
-            # print(reward, playing_player, state_key, action, next_state_key)
-            best_next_action = list(self.players_q_table[playing_player][
-                    state_key].keys())[best_next_action_index]
-            # TODO should we have OrderedDict?
-        else:
-            # no visited
-            best_next_action_index = np.random.choice(
-                                        np.arange(len(next_actions)))
-            best_next_action = next_actions[best_next_action_index]
-
-        if next_state_key in self.players_q_table[playing_player]:
-            td_target = reward + discount_factor * self.players_q_table[
-                            playing_player][next_state_key][best_next_action]
-        else:
-            td_target = reward
+        td_target = reward + discount_factor * self.players_q_table[
+                        playing_player][next_state_key][best_next_action]
 
         td_delta = td_target - self.players_q_table[playing_player][state_key][
                                                                     action]
