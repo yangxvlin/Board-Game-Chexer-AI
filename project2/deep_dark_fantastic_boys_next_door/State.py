@@ -67,7 +67,44 @@ class State:
         return copyed
 
     def all_next_action(self):
-        pass
+        res = []
+
+        all_piece = self.all_pieces()
+
+        player_pieces = self.player_pieces_list[self.playing_player]
+
+        # if there is an exit action, then current state has only this
+        # next state
+        for piece in player_pieces:
+            if is_in_goal_hexe(piece, self.playing_player):
+                res.append((EXIT, piece))
+
+        # foreach movable piece
+        for piece in player_pieces:
+            for delta in MOVE_DELTA:
+                adj_piece = vector_add(piece, delta)
+
+                # move action: on board & not occupied
+                if on_board(adj_piece):
+                    # not occupied
+                    if adj_piece not in all_piece:
+                        res.append((MOVE, (piece, adj_piece)))
+
+                    # jump action: occupied adj piece & not occupied & on board
+                    else:
+                        # jump is just move same direction again
+                        jump_piece = vector_add(adj_piece, delta)
+
+                        # not occupied & on board
+                        if (jump_piece not in all_piece) & \
+                                on_board(jump_piece):
+                            res.append((JUMP, (piece, jump_piece)))
+
+        if len(res) == 0:
+            return [(PASS, None)]
+        else:
+            # sort the output to process exit action first then jump then move
+            return res
 
     def all_next_state(self):
         """ find all possible states
@@ -165,6 +202,8 @@ class State:
                 # update location of piece
                 self.pieces_player_dict.pop(from_hexe)
                 self.pieces_player_dict.update({to_hexe: previous_player})
+                # update action
+                self.action = (action, (from_hexe, to_hexe))
 
                 # jump need to update jumped piece info
                 if action == JUMP:
@@ -181,6 +220,7 @@ class State:
                         self.pieces_player_dict.pop(jumped_hexe)
                         self.pieces_player_dict.update(
                             {jumped_hexe: previous_player})
+
             # exit
             else:
                 # delete player's original piece info
@@ -191,9 +231,7 @@ class State:
                 self.action = (action, from_hexe)
                 # update player's score
                 self.finished_pieces[previous_player] += 1
-
-            # update action
-            self.action = (action, (from_hexe, to_hexe))
+        # pass
         else:
             # update action
             self.action = (action, None)

@@ -83,7 +83,8 @@ class Player:
         # generate state | action
         next_state = previous_state.copy()
 
-        if action[0] != PASS:
+        if action[0] == PASS:
+            assert action[1] is None
             next_state.update_action(action[0], previous_state.playing_player)
         elif action[0] == MOVE:
             next_state.update_action(action[0], previous_state.playing_player,

@@ -3,9 +3,13 @@ Author:      XuLin Yang
 Student id:  904904
 Date:        
 Description: modify from https://github.com/dennybritz/reinforcement-learning/blob/master/TD/Q-Learning%20Solution.ipynb
+
+if want to study https://www.cse.unsw.edu.au/~cs9417ml/RL1/algorithms.html
+
+terminology: "round" == "turn"
 """
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import numpy as np
 import sys
 import itertools
@@ -34,7 +38,6 @@ class QLearningAgent:
         Returns:
             A function that takes the observation as an argument and returns
             the probabilities for each action in the form of a numpy array of length nA.
-
         """
 
         def policy_fn(observation):
@@ -46,8 +49,57 @@ class QLearningAgent:
 
         return policy_fn
 
-    def q_learning(self, env, num_episodes=1, discount_factor=1.0, alpha=0.5,
-                   epsilon=0.1):
+    def choose_action(self, player, player_round_i_state, player_round_i_state_key, epsilon):
+        player_round_i_actions = player_round_i_state.all_next_action()
+        # initialize Q(s, a) in q_table
+        self.initialize_state_action_in_q_table(player, player_round_i_state_key, player_round_i_actions)
+        assert len(self.players_q_table[player][player_round_i_state_key].keys()) > 0
+        assert len(player_round_i_actions) == len(self.players_q_table[player][player_round_i_state_key].keys())
+
+        # terminology: player's q_table = self.players_q_table[state.playing_player]
+        # make an action based on policy
+        player_policy = self.make_epsilon_greedy_policy(
+            self.players_q_table[player], epsilon, len(player_round_i_actions))
+        # Take a step for player
+        player_round_i_action_probs = player_policy(player_round_i_state_key)
+        player_round_i_action_index = np.random.choice(
+            np.arange(len(player_round_i_action_probs)),
+            p=player_round_i_action_probs)
+        player_round_i_action = list(self.players_q_table[player][player_round_i_state_key].keys())[player_round_i_action_index]
+        return player_round_i_action
+
+    def generate_round(self, state, epsilon, env):
+        # *********************** player0 *****************************
+        player0_round_i_state = state
+        player0_round_i_state_key = player0_round_i_state.get_key()
+        player0_round_i_action = self.choose_action(0, player0_round_i_state, player0_round_i_state_key, epsilon)
+
+        # *********************** player1 *****************************
+        player1_round_i_state = env.update(player0_round_i_state, player0_round_i_action)
+        player1_round_i_state_key = player1_round_i_state.get_key()
+        player1_round_i_actions = player1_round_i_state.all_next_action()
+        player1_round_i_action = self.choose_action(1, player1_round_i_state, player1_round_i_state_key, epsilon)
+
+        # *********************** player2 *****************************
+        player2_round_i_state = env.update(player1_round_i_state, player1_round_i_action)
+        player2_round_i_state_key = player2_round_i_state.get_key()
+        player2_round_i_actions = player2_round_i_state.all_next_action()
+        player2_round_i_action = self.choose_action(2, player2_round_i_state, player2_round_i_state_key, epsilon)
+
+        return player0_round_i_state, player0_round_i_state_key, player0_round_i_action, \
+               player1_round_i_state, player1_round_i_state_key, player1_round_i_action, \
+               player2_round_i_state, player2_round_i_state_key, player2_round_i_action
+
+    def initialize_state_action_in_q_table(self, player, state_key, actions):
+        if state_key not in self.players_q_table[player]:
+            self.players_q_table[player][state_key] = {}
+            # self.players_q_table[player][state_key] = OrderedDict()
+        # Q(s, a) = 0
+        for action in actions:
+            if action not in self.players_q_table[player][state_key]:
+                self.players_q_table[player][state_key][action] = 0
+
+    def q_learning(self, env, num_episodes=1, discount_factor=1.0, alpha=0.5, epsilon=0.1):
         """
             Q-Learning algorithm: Off-policy TD control. Finds the optimal greedy policy
             while following an epsilon-greedy policy
@@ -72,192 +124,85 @@ class QLearningAgent:
                 sys.stdout.flush()
 
             # Reset the environment and pick the first action
-            state = env.reset()  # TODO env
+            state = env.reset()
 
             # One step in the environment
-            # total_reward = 0.0
-            for t in itertools.count():
-                # get states for a round
-                # *********************** player0 *****************************
-                player0_state = state
-                assert player0_state.playing_player == 0
-                player0_state_key = player0_state.get_key()
-                player0_next_states = player0_state.all_next_state()
-                player0_next_actions = [next_state.action
-                                        for next_state in player0_next_states]
+            for i in itertools.count():
+                # first turn
+                if i == 0:
+                    player0_round_i_state, player0_round_i_state_key, player0_round_i_action, \
+                    player1_round_i_state, player1_round_i_state_key, player1_round_i_action, \
+                    player2_round_i_state, player2_round_i_state_key, player2_round_i_action = \
+                    self.generate_round(state, epsilon, env)
+                    assert player0_round_i_state.playing_player == 0
+                    assert player1_round_i_state.playing_player == 1
+                    assert player2_round_i_state.playing_player == 2
 
-                # insert empty action to q_table
-                if player0_state_key not in self.players_q_table[0]:
-                    self.players_q_table[0][player0_state_key] = {}
-                for action in player0_next_actions:
-                    if action not in self.players_q_table[0][player0_state_key]:
-                        self.players_q_table[0][player0_state_key][action] = 0
-                # insert empty next state's action to q_table
-                for player0_next_state in player0_next_states:
-                    player0_next_state_key = player0_next_state.get_key()
-                    if player0_next_state_key not in self.players_q_table[0]:
-                        self.players_q_table[0][player0_next_state_key] = {}
-                    for action in [player0_next_state_next_state.action
-                                   for player0_next_state_next_state in
-                                   player0_next_state.all_next_state()]:
-                        if action not in self.players_q_table[0][
-                                player0_next_state_key]:
-                            self.players_q_table[0][player0_next_state_key][action] = 0
-
-                # terminology:
-                # player's q_table = self.players_q_table[state.playing_player]
-                player0_policy = self.make_epsilon_greedy_policy(
-                    self.players_q_table[player0_state.playing_player], epsilon,
-                    len(player0_next_actions))
-                # Take a step for player 0
-                player0_action_probs = player0_policy(player0_state_key)
-                player0_action_index = np.random.choice(
-                    np.arange(len(player0_action_probs)),
-                    p=player0_action_probs)
-                player0_action = player0_next_actions[player0_action_index]
-                # next_state, reward, done, _ = env.step(action)  # TODO env
-                # player0_reward, done, _ = env.step(player0_next_state)
-                player0_next_state = player0_next_states[player0_action_index]
-                player0_next_state_key = player0_next_state.get_key()
-
-                # *********************** player1 *****************************
-                player1_state = player0_next_state
-                assert player1_state.playing_player == 1
-                player1_state_key = player1_state.get_key()
-                player1_next_states = player1_state.all_next_state()
-                player1_next_actions = [next_state.action
-                                        for next_state in player1_next_states]
-
-                # insert empty action to q_table
-                if player1_state_key not in self.players_q_table[1]:
-                    self.players_q_table[1][player1_state_key] = {}
-                for action in player1_next_actions:
-                    if action not in self.players_q_table[1][player1_state_key]:
-                        self.players_q_table[1][player1_state_key][action] = 0
-                # insert empty next state's action to q_table
-                for player1_next_state in player1_next_states:
-                    player1_next_state_key = player1_next_state.get_key()
-                    if player1_next_state_key not in self.players_q_table[1]:
-                        self.players_q_table[1][player1_next_state_key] = {}
-                    for action in [player1_next_state_next_state.action
-                                   for player1_next_state_next_state in
-                                   player1_next_state.all_next_state()]:
-                        if action not in self.players_q_table[1][
-                                player1_next_state_key]:
-                            self.players_q_table[1][player1_next_state_key][
-                                action] = 0
-
-                player1_policy = self.make_epsilon_greedy_policy(
-                    self.players_q_table[player1_state.playing_player], epsilon,
-                    len(player1_next_actions))
-                # Take a step for player 1
-                player1_action_probs = player1_policy(player1_state_key)
-                player1_action_index = np.random.choice(
-                    np.arange(len(player1_action_probs)),
-                    p=player1_action_probs)
-                player1_action = player1_next_actions[player1_action_index]
-                player1_next_state = player1_next_states[player1_action_index]
-                player1_next_state_key = player1_next_state.get_key()
-
-                # *********************** player2 *****************************
-                player2_state = player1_next_state
-                assert player2_state.playing_player == 2
-                player2_state_key = player2_state.get_key()
-                player2_next_states = player2_state.all_next_state()
-                player2_next_actions = [next_state.action
-                                        for next_state in player2_next_states]
-
-                # insert empty action to q_table
-                if player2_state_key not in self.players_q_table[2]:
-                    self.players_q_table[2][player2_state_key] = {}
-                for action in player2_next_actions:
-                    if action not in self.players_q_table[2][player2_state_key]:
-                        self.players_q_table[2][player2_state_key][action] = 0
-                # insert empty next state's action to q_table
-                for player2_next_state in player2_next_states:
-                    player2_next_state_key = player2_next_state.get_key()
-                    if player2_next_state_key not in self.players_q_table[2]:
-                        self.players_q_table[2][player2_next_state_key] = {}
-                    for action in [player2_next_state_next_state.action
-                                   for player2_next_state_next_state in
-                                   player2_next_state.all_next_state()]:
-                        if action not in self.players_q_table[2][
-                                player2_next_state_key]:
-                            self.players_q_table[2][player2_next_state_key][
-                                action] = 0
-
-                player2_policy = self.make_epsilon_greedy_policy(
-                    self.players_q_table[player2_state.playing_player], epsilon,
-                    len(player2_next_actions))
-                # Take a step for player 1
-                player2_action_probs = player2_policy(player2_state_key)
-                player2_action_index = np.random.choice(
-                    np.arange(len(player2_action_probs)),
-                    p=player2_action_probs)
-                player2_action = player2_next_actions[player2_action_index]
-                player2_next_state = player2_next_states[player2_action_index]
-                player2_next_state_key = player2_next_state.get_key()
+                player0_round_j_state = env.update(player2_round_i_state, player2_round_i_action)
+                player0_round_j_state, player0_round_j_state_key, player0_round_j_action, \
+                player1_round_j_state, player1_round_j_state_key, player1_round_j_action, \
+                player2_round_j_state, player2_round_j_state_key, player2_round_j_action = \
+                    self.generate_round(player0_round_j_state, epsilon, env)
+                assert player0_round_j_state.playing_player == 0
+                assert player1_round_j_state.playing_player == 1
+                assert player2_round_j_state.playing_player == 2
 
                 # ********************* get turn census ***********************
                 [player0_reward, player1_reward, player2_reward], done = \
-                    env.step([player0_next_state,
-                              player1_next_state,
-                              player2_next_state])
+                    env.step([player0_round_i_state, player1_round_i_state, player2_round_i_state])
 
                 # self.print_player_q_table()
                 # ********************* update q table ************************
-                self.update_player_q_table(0, player0_state_key,
-                                           player0_next_state_key,
-                                           player0_next_actions,
-                                           player0_action,
+                self.update_player_q_table(0,
+                                           player0_round_i_state_key,
+                                           player0_round_j_state_key,
+                                           player0_round_i_action,
                                            player0_reward,
                                            discount_factor, alpha)
-                self.update_player_q_table(1, player1_state_key,
-                                           player1_next_state_key,
-                                           player1_next_actions,
-                                           player1_action,
+                self.update_player_q_table(1,
+                                           player1_round_i_state_key,
+                                           player1_round_j_state_key,
+                                           player1_round_i_action,
                                            player1_reward,
                                            discount_factor, alpha)
-                self.update_player_q_table(2, player2_state_key,
-                                           player2_next_state_key,
-                                           player2_next_actions,
-                                           player2_action,
+                self.update_player_q_table(2,
+                                           player2_round_i_state_key,
+                                           player2_round_j_state_key,
+                                           player2_round_i_action,
                                            player2_reward,
                                            discount_factor, alpha)
 
-                # ******************* next round in epsoides ******************
+                # ******************* next round in episodes ******************
                 if done:
                     break
-                if t > 256:
-                    print("t > 256")
-                state = player2_next_state
+                if i >= 256:
+                    print("t >= 256")
 
-    def update_player_q_table(self, playing_player, state_key, next_state_key,
-                              next_actions, action, reward, discount_factor,
-                              alpha):
-        assert len(self.players_q_table[playing_player][
-                       next_state_key].values()) > 0
-        assert len(self.players_q_table[playing_player][state_key].values()) > 0
-        assert action in next_actions
+                # swap i j; to process round j as next turn
+                player0_round_i_state, player0_round_i_state_key, player0_round_i_action, \
+                player1_round_i_state, player1_round_i_state_key, player1_round_i_action, \
+                player2_round_i_state, player2_round_i_state_key, player2_round_i_action = \
+                    player0_round_j_state, player0_round_j_state_key, player0_round_j_action, \
+                    player1_round_j_state, player1_round_j_state_key, player1_round_j_action, \
+                    player2_round_j_state, player2_round_j_state_key, player2_round_j_action
 
+    def update_player_q_table(self, playing_player, state_key, next_state_key, action, reward, discount_factor, alpha):
         # TD Update
-        best_next_action_index = np.argmax(
-                self.players_q_table[playing_player][next_state_key].values())
-        best_next_action = list(self.players_q_table[playing_player][
-                next_state_key].keys())[best_next_action_index]
-        # TODO should we have OrderedDict?
+        # Q(s, a) <- Q(s, a) + alpha * [reward + gamma * max(Q(s', a' for all a')) - Q(s, a)]
+        #                                                      ^ note for s' in this case, we need player#X's new round state to be next state for player#X in this case
+        assert len(self.players_q_table[playing_player][next_state_key].values()) > 0
+        assert len(self.players_q_table[playing_player][state_key].values()) > 0
 
-        td_target = reward + discount_factor * self.players_q_table[
-                        playing_player][next_state_key][best_next_action]
+        # max(Q(s', a' for all a'))
+        best_next_action_index = np.argmax(self.players_q_table[playing_player][next_state_key].values())
+        best_next_action = list(self.players_q_table[playing_player][next_state_key].keys())[best_next_action_index]
 
-        td_delta = td_target - self.players_q_table[playing_player][state_key][
-                                                                    action]
-        self.players_q_table[playing_player][state_key][action] \
-            += alpha * td_delta
-        # print(state_key, playing_player, action, "\n", next_state_key, "=>",
-        # self.players_q_table[playing_player][state_key],
-        #       "\nnext_state _key:",
-        #       self.players_q_table[playing_player][next_state_key])
+        # reward + gamma * max(Q(s', a' for all a'))
+        td_target = reward + discount_factor * self.players_q_table[playing_player][next_state_key][best_next_action]
+        # [reward + gamma * max(Q(s', a' for all a')) - Q(s, a)]
+        td_delta = td_target - self.players_q_table[playing_player][state_key][action]
+        # Q(s, a) <- Q(s, a) + alpha * [reward + gamma * max(Q(s', a' for all a')) - Q(s, a)]
+        self.players_q_table[playing_player][state_key][action] += alpha * td_delta
 
     def print_player_q_table(self):
         print("[")
