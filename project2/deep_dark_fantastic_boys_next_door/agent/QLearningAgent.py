@@ -138,6 +138,7 @@ class QLearningAgent:
                     assert player1_round_i_state.playing_player == 1
                     assert player2_round_i_state.playing_player == 2
 
+                # j = i+1
                 player0_round_j_state = env.update(player2_round_i_state, player2_round_i_action)
                 player0_round_j_state, player0_round_j_state_key, player0_round_j_action, \
                 player1_round_j_state, player1_round_j_state_key, player1_round_j_action, \
