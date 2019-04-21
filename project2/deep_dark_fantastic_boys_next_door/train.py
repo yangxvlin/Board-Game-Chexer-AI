@@ -17,8 +17,8 @@ q_learning = QLearningAgent()
 discount_factor=1.0
 alpha=0.5
 epsilon=0.1
-num_episodes = 10
-num_batch = 2
+num_episodes = 50000
+num_batch = 20
 
 
 for batch in range(0, num_batch):
@@ -47,10 +47,10 @@ for batch in range(0, num_batch):
         q_learning.players_q_table = pickle.load(pickle_file)
 
     # q_learning.print_player_q_table()
-    q_learning.q_learning(env, num_episodes, discount_factor, alpha, epsilon)
+    q_learning.q_learning(env, batch, num_batch, num_episodes, discount_factor, alpha, epsilon)
 
     with open(new_filename, 'wb') as pickle_file:
         pickle.dump(q_learning.players_q_table, pickle_file)
     old_file_name = new_filename
 
-q_learning.print_player_q_table()
+# q_learning.print_player_q_table()

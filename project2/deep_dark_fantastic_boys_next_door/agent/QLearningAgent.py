@@ -77,13 +77,11 @@ class QLearningAgent:
         # *********************** player1 *****************************
         player1_round_i_state = env.update(player0_round_i_state, player0_round_i_action)
         player1_round_i_state_key = player1_round_i_state.get_key()
-        player1_round_i_actions = player1_round_i_state.all_next_action()
         player1_round_i_action = self.choose_action(1, player1_round_i_state, player1_round_i_state_key, epsilon)
 
         # *********************** player2 *****************************
         player2_round_i_state = env.update(player1_round_i_state, player1_round_i_action)
         player2_round_i_state_key = player2_round_i_state.get_key()
-        player2_round_i_actions = player2_round_i_state.all_next_action()
         player2_round_i_action = self.choose_action(2, player2_round_i_state, player2_round_i_state_key, epsilon)
 
         return player0_round_i_state, player0_round_i_state_key, player0_round_i_action, \
@@ -99,7 +97,7 @@ class QLearningAgent:
             if action not in self.players_q_table[player][state_key]:
                 self.players_q_table[player][state_key][action] = 0
 
-    def q_learning(self, env, num_episodes=1, discount_factor=1.0, alpha=0.5, epsilon=0.1):
+    def q_learning(self, env, cur_batch, num_batch, num_episodes=1, discount_factor=1.0, alpha=0.5, epsilon=0.1):
         """
             Q-Learning algorithm: Off-policy TD control. Finds the optimal greedy policy
             while following an epsilon-greedy policy
@@ -119,7 +117,7 @@ class QLearningAgent:
         for i_episode in range(num_episodes):
             # Print out which episode we're on, useful for debugging.
             if (i_episode + 1) % 5 == 0:
-                print("\rEpisode {}/{}.".format(i_episode + 1, num_episodes),
+                print("\rEpisode {}/{}#Batch {}/{}\n".format(i_episode + 1, num_episodes, cur_batch, num_batch),
                       end="")
                 sys.stdout.flush()
 
@@ -175,6 +173,11 @@ class QLearningAgent:
 
                 # ******************* next round in episodes ******************
                 if done:
+                    rewards = [player0_reward, player1_reward, player2_reward]
+                    if 12 in rewards:
+                        print("one winner", rewards)
+                    else:
+                        print("draw", rewards)
                     break
                 if i >= 256:
                     print("t >= 256")

@@ -264,7 +264,7 @@ class State:
         pass
 
     def get_key(self):
-        return tuple(element_to_tuple(self.player_pieces_list))
+        return tuple(element_to_tuple(self.player_pieces_list)) + tuple(self.finished_pieces)
 
     def is_player_finished(self):
         return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
