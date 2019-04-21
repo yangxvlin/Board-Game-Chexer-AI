@@ -22,8 +22,8 @@ epsilon=0.1
 # num_episodes = 10
 # num_batch = 2
 # run
-num_episodes = 50000
-num_batch = 20
+num_episodes = 30000
+num_batch = 2
 
 for batch in range(0, num_batch):
     if batch == 0:
