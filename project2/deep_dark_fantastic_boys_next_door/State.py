@@ -20,6 +20,7 @@ class State:
         :param playing_player: the  player is going to perform an action
         :param player_pieces: player's corresponding pieces
         """
+        # TODO: to identify state, include piece on board and piece exit
         # playing_player
         self.playing_player = playing_player
         # [[(q, r), ...], ...]  list planned for project 2

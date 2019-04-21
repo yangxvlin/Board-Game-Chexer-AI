@@ -14,3 +14,5 @@ latex_formula.txt
 /project1/fullTestCase
 /project1
 /project2/your_team_name
+/project2/*.pickle
+/project2/deep_dark_fantastic_boys_next_door/*.pickle
