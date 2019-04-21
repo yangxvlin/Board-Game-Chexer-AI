@@ -173,11 +173,11 @@ class QLearningAgent:
 
                 # ******************* next round in episodes ******************
                 if done:
-                    rewards = [player0_reward, player1_reward, player2_reward]
-                    if 12 in rewards:
-                        print("one winner", rewards)
-                    else:
-                        print("draw", rewards)
+                    # rewards = [player0_reward, player1_reward, player2_reward]
+                    # if 12 in rewards:
+                    #     print("one winner", rewards)
+                    # else:
+                    #     print("draw", rewards)
                     break
                 if i >= 256:
                     print("t >= 256")
