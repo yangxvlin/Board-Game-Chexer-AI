@@ -10,6 +10,7 @@ from deep_dark_fantastic_boys_next_door.agent.QLearningAgent import QLearningAge
 import pickle
 
 END = ".pickle"
+# PATH = "./train_output/"
 
 env = GameEnv()
 q_learning = QLearningAgent()
@@ -17,9 +18,12 @@ q_learning = QLearningAgent()
 discount_factor=1.0
 alpha=0.5
 epsilon=0.1
+# test
+# num_episodes = 10
+# num_batch = 2
+# run
 num_episodes = 50000
 num_batch = 20
-
 
 for batch in range(0, num_batch):
     if batch == 0:
