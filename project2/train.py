@@ -58,3 +58,17 @@ for batch in range(0, num_batch):
     old_file_name = new_filename
 
 # q_learning.print_player_q_table()
+##############################################
+
+# storing data to file
+import ast
+filename = "***" + ".txt"
+output = open(filename, "w")
+output.write(str(QLearningAgent.players_q_table))
+output.close()
+
+# reading data from file
+filename = "*" + ".txt"
+inp = open(filename, "r")
+to_use = inp.read()
+dic = ast.literal_eval(to_use)
