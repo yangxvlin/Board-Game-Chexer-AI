@@ -261,7 +261,10 @@ class State:
         """
         pass
 
-    def evaluate(self, lazy_evaluation=False):
+    def evaluate(self, player, function_index):
+        pass
+
+    def _evaluate1(self, player):
         pass
 
     def get_key(self):

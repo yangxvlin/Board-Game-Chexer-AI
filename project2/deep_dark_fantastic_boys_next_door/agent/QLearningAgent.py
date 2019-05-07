@@ -9,12 +9,10 @@ if want to study https://www.cse.unsw.edu.au/~cs9417ml/RL1/algorithms.html
 terminology: "round" == "turn"
 """
 
-from collections import defaultdict, OrderedDict
 import numpy as np
 import sys
 import itertools
 from deep_dark_fantastic_boys_next_door.Constants import (PLAYER_PLAYING_ORDER)
-from deep_dark_fantastic_boys_next_door.util import (element_to_tuple)
 
 
 class QLearningAgent:

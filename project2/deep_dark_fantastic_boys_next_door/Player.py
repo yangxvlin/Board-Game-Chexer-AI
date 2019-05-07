@@ -32,6 +32,7 @@ class Player:
         # use sts.argv to control the agent for player
         # or
         # https://softwareengineering.stackexchange.com/questions/351389/dynamic-dispatch-from-a-string-python
+        # TODO json to identify out strategy
         self.agent = RandomAgent()
 
         self.states_history = [initial_state()]
