@@ -60,6 +60,7 @@ class Player:
         # print(previous_state.playing_player, "next player make an action")
         # print("all actions:", [s.action for s in previous_state
         # .all_next_state()])
+        # TODO case for maxn no pieces
         return self.agent.get_next_action(previous_state)
 
     def update(self, colour, action):

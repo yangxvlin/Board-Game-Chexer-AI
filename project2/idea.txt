@@ -1,0 +1,12 @@
+1. whether #my pieces have changed
+2. my friend near me or not
+3. total dist to exit
+
+things wanna happen:
+1. closer to goal
+
+*. eat other pieces
+
+things not wanna happen:
+1. lose piece
+2. 

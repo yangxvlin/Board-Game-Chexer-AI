@@ -9,17 +9,12 @@ from copy import deepcopy
 from .Constants import (MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
                         PLAYER_GOAL)
-from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple)
+from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple, normalize)
 
 
 class State:
     """ class used to store information of pieces on board and player is playing
     """
-
-    # red, green, blue
-    DEST = [[(-3, 0), (-3, 1), (-3, 2), (-3, 3)],
-            [(0, -3), (1, -3), (2, -3), (3, -3)],
-            [(3, 0), (2, 1), (1, 2), (0, 3)]]
 
     def __init__(self, playing_player, player_pieces, scores):
         """ initialize a state
@@ -59,7 +54,7 @@ class State:
         :return: True if state has same board configuration. otherwise False
         """
         return set(self.pieces_player_dict.items()) == \
-                set(other.pieces_player_dict.items())
+               set(other.pieces_player_dict.items())
 
     def copy(self):
         """ copy(state)
@@ -274,7 +269,6 @@ class State:
         """ h(state)
         :return: distance from current state to goal state
         """
-        # TODO implement dijkstra to estimate the cost
         # hex distance right now
         total_dist = 0
         for i in self.player_pieces_list[player]:
@@ -293,12 +287,64 @@ class State:
 
     def evaluate(self, player, eval_function_name):
         # return eval_function_name(player)
-        return self._evaluate1(player)
+        return self._evaluate2(player)
 
     def _evaluate1(self, player):
         # feature dist to destination, number of player's pieces(include player and finished)
         # eval func = 1 * distance +  1 * num_all_pieces
-        return - 0.1 * self._cost_to_finish(player) + self.finished_pieces[player] + len(self.player_pieces_list[player])
+        return - 0.1 * self._cost_to_finish(player) + \
+               self.finished_pieces[player] + \
+               len(self.player_pieces_list[player])
+
+    def _evaluate2(self, player):
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+        TOTAL_NUM_PIECES_AROUND_MIN = 0
+        # TODO solitary max score {1:..., 2:..., 3:..., }
+        ONE_NUM_PIECES_AROUND_MAX = 6
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) + \
+               normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
+               normalize(self._solitary_score1(player), 10, TOTAL_NUM_PIECES_AROUND_MIN)
+
+    # number of friends
+    def _solitary_score1(self, player):
+        num_friends = 0
+        for my_hexe in self.player_pieces_list[player]:
+            num_friends += self._get_hex_around_num(my_hexe, player)
+        return num_friends
+
+    def _get_hex_around(self, my_hexe, player):
+        res = []
+        for delta in MOVE_DELTA:x
+            move_to = vector_add(my_hexe, delta)
+
+            if on_board(move_to) and self.pieces_player_dict[move_to] == player:
+                res.append(move_to)
+        return res
+
+    def _get_hex_around_num(self, my_hexe, player):
+        count = 0
+        for delta in MOVE_DELTA:
+            move_to = vector_add(my_hexe, delta)
+            try:
+                if on_board(move_to) and self.pieces_player_dict[move_to] == player:
+                    count += 1
+            except KeyError:
+                pass
+        return count
+
+    # total dist between friends
+    def _ssolitary_score2(self, player):
+        total_dist = 0
+        for i in range(len(self.player_pieces_list[player])):
+            for j in range(i + 1, len(self.player_pieces_list[player])):
+                total_dist += self._hex_dist(self.player_pieces_list[player][i],
+                                             self.player_pieces_list[player][j])
+        return total_dist
 
     def get_key(self):
         return tuple(element_to_tuple(self.player_pieces_list)) + tuple(self.finished_pieces)

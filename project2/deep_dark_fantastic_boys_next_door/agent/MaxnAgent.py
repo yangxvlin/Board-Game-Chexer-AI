@@ -30,7 +30,7 @@ class MaxnAgent:
         # print("1", state)
         next_state, _ = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY)
         # print(state, "->", next_state)
-        print(">>>> ", state.evaluate(state.playing_player, ""))
+        print(">>>> ", state.evaluate(state.playing_player, ""), "->", next_state.evaluate(state.playing_player, ""))
         assert next_state is not None
         return next_state.action
 

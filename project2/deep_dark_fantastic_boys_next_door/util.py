@@ -103,3 +103,7 @@ def calculate_jumped_hexe(from_hexe, to_hexe):
         # from_hexe jumped over correct piece to to_hexe
         if tmp_to_hexe == to_hexe:
             return jumped_hexe
+
+
+def normalize(x, x_max, x_min):
+    return (x - x_min) / (x_max - x_min)
