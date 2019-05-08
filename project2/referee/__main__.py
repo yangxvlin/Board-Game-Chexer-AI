@@ -73,9 +73,9 @@ def play(players, options, out):
     curr_player, next_player, prev_player = players
     while not game.over():
         if options.delay == -1:
-            time.sleep(options.delay)
-        else:
             input()
+        else:
+            time.sleep(options.delay)
 
         out.section(f"{curr_player.name}'s turn")
 

@@ -14,6 +14,7 @@ class StarLog:
     def __init__(self, level=1, file=sys.stdout, time=None,
                 star='*', pad='  ', title="**"):
         self.kwargs = {"file": file, "flush": True}
+        # self.kwargs = {"file": file, "flush": False}
         self.level = level
         self.timef = time
         self.star  = star

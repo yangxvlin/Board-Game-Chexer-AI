@@ -7,8 +7,8 @@ Description: State to store information about the environment
 
 from copy import deepcopy
 from .Constants import (MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
-                        PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER
-                        )
+                        PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
+                        PLAYER_GOAL)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple)
 
 
@@ -16,7 +16,7 @@ class State:
     """ class used to store information of pieces on board and player is playing
     """
 
-    # rea, green, blue
+    # red, green, blue
     DEST = [[(-3, 0), (-3, 1), (-3, 2), (-3, 3)],
             [(0, -3), (1, -3), (2, -3), (3, -3)],
             [(3, 0), (2, 1), (1, 2), (0, 3)]]
@@ -268,7 +268,7 @@ class State:
 
     def is_terminate(self):
         return ((self.turns == MAX_TURN) and (self.playing_player == 2)) or \
-               (self.get_winner is not None)
+               (self.get_winner() is not None)
 
     def _cost_to_finish(self, player):
         """ h(state)
@@ -279,8 +279,8 @@ class State:
         total_dist = 0
         for i in self.player_pieces_list[player]:
             min_dist = 10
-            for j in State.DEST[player]:
-                curr_dist = self._hex_dist(i, j)
+            for j in PLAYER_GOAL[player]:
+                curr_dist = self._hex_dist(i, j) + 1
                 if curr_dist < min_dist:
                     min_dist = curr_dist
             total_dist += min_dist
