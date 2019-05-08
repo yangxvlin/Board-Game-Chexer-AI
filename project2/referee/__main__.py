@@ -5,6 +5,7 @@ and conduct a game of Chexers between them.
 
 import time
 
+import os
 from referee.log import StarLog
 from referee.game import Chexers, IllegalActionException
 from referee.player import PlayerWrapper, ResourceLimitException, set_space_line
@@ -71,7 +72,11 @@ def play(players, options, out):
     # (starting with Red as the current player, then alternating):
     curr_player, next_player, prev_player = players
     while not game.over():
-        time.sleep(options.delay)
+        if options.delay == -1:
+            time.sleep(options.delay)
+        else:
+            input()
+
         out.section(f"{curr_player.name}'s turn")
 
         # Ask the current player for their next action (calling their .action() 
