@@ -15,12 +15,16 @@ class State:
     """ class used to store information of pieces on board and player is playing
     """
 
+    # rea, green, blue
+    DEST = [[(-3, 0), (-3, 1), (-3, 2), (-3, 3)],
+            [(0, -3), (1, -3), (2, -3), (3, -3)],
+            [(3, 0), (2, 1), (1, 2), (0, 3)]]
+
     def __init__(self, playing_player, player_pieces, scores):
         """ initialize a state
         :param playing_player: the  player is going to perform an action
         :param player_pieces: player's corresponding pieces
         """
-        # TODO: to identify state, include piece on board and piece exit
         # playing_player
         self.playing_player = playing_player
         # [[(q, r), ...], ...]  list planned for project 2
@@ -255,17 +259,35 @@ class State:
         """
         return self.pieces_player_dict.keys()
 
-    def cost_to_finish(self):
+    def _cost_to_finish(self, player):
         """ h(state)
         :return: distance from current state to goal state
         """
-        pass
+        # TODO implement dijkstra to estimate the cost
+        # hex distance right now
+        total_dist = 0
+        for i in self.player_pieces_list[player]:
+            min_dist = 10
+            for j in State.DEST[player]:
+                curr_dist = self._hex_dist(i, j)
+                if curr_dist < min_dist:
+                    min_dist = curr_dist
+            total_dist += min_dist
+        return total_dist/2
 
-    def evaluate(self, player, function_index):
-        pass
+    @staticmethod
+    def _hex_dist(hex1, hex2):
+        return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
+                   abs(hex1[1] - hex2[1]))
+
+    def evaluate(self, player, eval_function_name):
+        # return eval_function_name(player)
+        return self._evaluate1(player)
 
     def _evaluate1(self, player):
-        pass
+        # feature dist to destination, number of player's pieces(include player and finished)
+        # eval func = 1 * distance +  1 * num_all_pieces
+        return self._cost_to_finish(player) + self.finished_pieces
 
     def get_key(self):
         return tuple(element_to_tuple(self.player_pieces_list)) + tuple(self.finished_pieces)
