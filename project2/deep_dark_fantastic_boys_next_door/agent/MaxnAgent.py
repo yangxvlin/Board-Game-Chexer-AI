@@ -38,7 +38,7 @@ class MaxnAgent:
         my_next_state = None
 
         if depth <= 0 or s.is_terminate():
-            return my_next_state, s.evaluate()
+            return my_next_state, [s.evaluate(i, "") for i in range(0, 3)]
 
         best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]
 
@@ -59,7 +59,7 @@ class MaxnAgent:
                 if (depth == SEARCH_DEPTH) and (cur_player == root_player):
                     my_next_state = next_state
 
-            if result[cur_player] >= U - alpha:
+            if result[cur_player] >= U - alpha[cur_player]:
                 return next_state, result
 
         return my_next_state, best

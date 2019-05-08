@@ -8,7 +8,8 @@ Description: Player class
 import sys
 
 # from MaxnAgent import get_next_move
-from .agent.RandomAgent import (RandomAgent)
+from .agent.RandomAgent import RandomAgent
+from .agent.MaxnAgent import MaxnAgent
 from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER)
 from .util import (calculate_jumped_hexe, initial_state)
 
@@ -33,7 +34,10 @@ class Player:
         # or
         # https://softwareengineering.stackexchange.com/questions/351389/dynamic-dispatch-from-a-string-python
         # TODO json to identify out strategy
-        self.agent = RandomAgent()
+        if self.colour == "red":
+            self.agent = MaxnAgent()
+        else:
+            self.agent = RandomAgent()
 
         self.states_history = [initial_state()]
 
