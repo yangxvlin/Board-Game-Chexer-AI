@@ -298,7 +298,7 @@ class State:
     def _evaluate1(self, player):
         # feature dist to destination, number of player's pieces(include player and finished)
         # eval func = 1 * distance +  1 * num_all_pieces
-        return -self._cost_to_finish(player) + self.finished_pieces[player] + len(self.player_pieces_list[player])
+        return - 0.1 * self._cost_to_finish(player) + self.finished_pieces[player] + len(self.player_pieces_list[player])
 
     def get_key(self):
         return tuple(element_to_tuple(self.player_pieces_list)) + tuple(self.finished_pieces)
