@@ -10,7 +10,7 @@ Page 20 index 34/205
 import numpy as np
 from deep_dark_fantastic_boys_next_door.Constants import (N_PLAYER)
 
-SEARCH_DEPTH = 3
+SEARCH_DEPTH = 4
 
 NEGATIVE_INFINITY = float('-inf')
 

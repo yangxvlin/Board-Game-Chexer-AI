@@ -35,11 +35,10 @@ class Player:
         # https://softwareengineering.stackexchange.com/questions/351389/dynamic-dispatch-from-a-string-python
         # TODO json to identify out strategy
         if colour == "red":
-            # print(">>>>>>>>>>>>>>>> manx", colour)
             self.agent = MaxnAgent()
         else:
-            # print(">>>>>>>>>>>>>>>> random", colour)
             self.agent = RandomAgent()
+        # self.agent = MaxnAgent()
 
         self.states_history = [initial_state()]
 
@@ -61,7 +60,12 @@ class Player:
         # print("all actions:", [s.action for s in previous_state
         # .all_next_state()])
         # TODO case for maxn no pieces
-        return self.agent.get_next_action(previous_state)
+        previous_state = self.states_history[-1]
+
+        if len(previous_state.player_pieces_list[previous_state.playing_player])==0:
+            return ("PASS", None)
+        else:
+            return self.agent.get_next_action(previous_state)
 
     def update(self, colour, action):
         """

@@ -287,8 +287,9 @@ class State:
 
     def evaluate(self, player, eval_function_name):
         # return eval_function_name(player)
-        return self._evaluate2(player)
+        return self._evaluate6(player)
 
+    # first attempt for eval f()
     def _evaluate1(self, player):
         # feature dist to destination, number of player's pieces(include player and finished)
         # eval func = 1 * distance +  1 * num_all_pieces
@@ -296,6 +297,7 @@ class State:
                self.finished_pieces[player] + \
                len(self.player_pieces_list[player])
 
+    # normalize for easier weight discovery; consider solitary pattern
     def _evaluate2(self, player):
         TOTAL_DIST_MIN = 0
         TOTAL_DIST_MAX = 12
@@ -310,6 +312,106 @@ class State:
                normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
                normalize(self._solitary_score1(player), 10, TOTAL_NUM_PIECES_AROUND_MIN)
 
+    # average dist to solve unwilling to attack to increase total dist
+    def _evaluate3(self, player):
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+        TOTAL_NUM_PIECES_AROUND_MIN = 0
+        # TODO solitary max score {1:..., 2:..., 3:..., }
+        ONE_NUM_PIECES_AROUND_MAX = 6
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) / my_pieces_num + \
+               normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
+               normalize(self._solitary_score1(player), 10, TOTAL_NUM_PIECES_AROUND_MIN)
+
+    # add finish score feature to solve unwilling to exit even though lot of
+    # pieces can exit;
+    # solve when evaluating self, has eaten one opponent's last remaining
+    # pieces, cause divide by zero -> lose reward and winning reward +/- 12
+    def _evaluate4(self, player):
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+        TOTAL_NUM_PIECES_AROUND_MIN = 0
+        # TODO solitary max score {1:..., 2:..., 3:..., }
+        ONE_NUM_PIECES_AROUND_MAX = 6
+        MIN_SCORE = 0
+        MAX_SCORE = 4
+
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        if my_pieces_num == 0 and self.finished_pieces[player] < MAX_SCORE:
+            return -12
+        elif self.finished_pieces[player] >= MAX_SCORE:
+            return 12
+        else:
+            return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) / my_pieces_num + \
+                   normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
+                   normalize(self._solitary_score1(player), 10, TOTAL_NUM_PIECES_AROUND_MIN) + \
+                   normalize(self.finished_pieces[player], MAX_SCORE, MIN_SCORE)
+
+    # solitary is not good for too many remaining pieces so we have a weight fo solitary
+    def _evaluate5(self, player):
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+        TOTAL_NUM_PIECES_AROUND_MIN = 0
+        # TODO solitary max score {1:..., 2:..., 3:..., }
+        ONE_NUM_PIECES_AROUND_MAX = 6
+        MIN_SCORE = 0
+        MAX_SCORE = 4
+
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        if my_pieces_num == 0 and self.finished_pieces[player] < MAX_SCORE:
+            return -12
+        elif self.finished_pieces[player] >= MAX_SCORE:
+            return 12
+        else:
+            if my_pieces_num <= 5:
+                w3 = 1
+            else:
+                w3 = 0.5
+
+            return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) / my_pieces_num + \
+                   normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
+                   w3 * normalize(self._solitary_score1(player), 10, TOTAL_NUM_PIECES_AROUND_MIN) + \
+                   normalize(self.finished_pieces[player], MAX_SCORE, MIN_SCORE)
+
+    # as we arrive goals in solidarity, we can exit one pieces immediately
+    def _evaluate6(self, player):
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+        TOTAL_NUM_PIECES_AROUND_MIN = 0
+        # TODO solitary max score {1:..., 2:..., 3:..., }
+        ONE_NUM_PIECES_AROUND_MAX = 6
+        MIN_SCORE = 0
+        MAX_SCORE = 4
+
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        if my_pieces_num == 0 and self.finished_pieces[player] < MAX_SCORE:
+            return -12
+        elif self.finished_pieces[player] >= MAX_SCORE:
+            return 12
+        else:
+            if my_pieces_num <= 5:
+                w3 = 1
+            else:
+                w3 = 0.5
+
+            return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) / my_pieces_num + \
+                   normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
+                   w3 * normalize(self._solitary_score1(player), 10, TOTAL_NUM_PIECES_AROUND_MIN) + \
+                   2 * normalize(self.finished_pieces[player], MAX_SCORE, MIN_SCORE)
+
     # number of friends
     def _solitary_score1(self, player):
         num_friends = 0
@@ -319,7 +421,7 @@ class State:
 
     def _get_hex_around(self, my_hexe, player):
         res = []
-        for delta in MOVE_DELTA:x
+        for delta in MOVE_DELTA:
             move_to = vector_add(my_hexe, delta)
 
             if on_board(move_to) and self.pieces_player_dict[move_to] == player:
