@@ -297,6 +297,12 @@ class State:
         return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
                    abs(hex1[1] - hex2[1]))
 
+    # TODO
+    #  how to distinguish state with same score?
+    #  how to switch eval for different phase?
+    #  do we need to move the most not yet moved pieces?
+    #  how about prefer kill strategy(the move can gain pieces)?
+    #  seems blue can always win when all are maxn
     def evaluate(self, player, eval_function_name):
         # return eval_function_name(player)
         return self._evaluate1_3(player)
