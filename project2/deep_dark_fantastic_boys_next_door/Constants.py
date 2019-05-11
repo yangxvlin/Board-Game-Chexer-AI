@@ -15,7 +15,11 @@ EMPTY_BOARD = [[], [], []]
 BOARD_BOUND = 3
 
 """ hexe piece's moving delta """
-MOVE_DELTA = [(-1, 0), (0, -1), (1, -1), (1, 0),  (0, 1),  (-1, 1)]
+MOVE_DELTA = [(-1, 0), (0, -1), (1, -1), (1, 0), (0, 1), (-1, 1)]
+
+PLAYER_PREFERRED_MOVE_DELTA = {0: [(1, -1), (1, 0), (0, -1), (0, 1), (-1, 1), (-1, 0)],
+                               1: [(-1, 1), (0, 1), (-1, 0), (1, 0), (0, -1), (1, -1)],
+                               2: [(-1, 0), (0, -1), (1, -1), (-1, 1), (1, 0), (0, 1)]}
 
 """ move action """
 MOVE = "MOVE"
@@ -27,6 +31,8 @@ JUMP = "JUMP"
 EXIT = "EXIT"
 
 PASS = "PASS"
+
+PASS_ACTION = ("PASS", None)
 
 """ player win when 4 pieces exit """
 PLAYER_WIN_THRESHOLD = 4
@@ -51,3 +57,17 @@ PLAYER_GOAL = {0: [(BOARD_BOUND, -i) for i in range(0, PLAYER_WIN_THRESHOLD)],
 
 """ number of players in game """
 N_PLAYER = 3
+
+OPEN_GAME_TURN_LIMIT = 3
+
+# TODO solitary at higher position (closer/far away) from origin
+""" {player: {turn: action}} """
+OPEN_GAME_AGENT = {0: {0: (MOVE, ((-3, 0), (-2, 0))),
+                       1: (MOVE, ((-2, 0), (-2, 1))),
+                       2: (MOVE, ((-3, 3), (-2, 2)))},
+                   1: {0: (MOVE, ((0, -3), (0, -2))),
+                       1: (MOVE, ((0, -2), (1, -2))),
+                       2: (MOVE, ((3, -3), (2, -2)))},
+                   2: {0: (MOVE, ((0,  3), (0,  2))),
+                       1: (MOVE, ((3,  0), (2,  0))),
+                       2: (MOVE, ((2,  0), (1,  1)))}}

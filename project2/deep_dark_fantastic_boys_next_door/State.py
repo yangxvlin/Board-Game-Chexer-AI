@@ -6,7 +6,7 @@ Description: State to store information about the environment
 """
 
 from copy import deepcopy
-from .Constants import (MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
+from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
                         PLAYER_GOAL)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple, normalize)
@@ -134,7 +134,7 @@ class State:
 
         # foreach movable piece
         for piece in player_pieces:
-            for delta in MOVE_DELTA:
+            for delta in PLAYER_PREFERRED_MOVE_DELTA[self.playing_player]:
                 adj_piece = vector_add(piece, delta)
 
                 # move action: on board & not occupied
@@ -174,8 +174,8 @@ class State:
             return [next_state]
         else:
             # sort the output to process exit action first then jump then move
-            return sorted(res, key=lambda x: x.action[0])
-        # return res
+            # return sorted(res, key=lambda x: x.action[0])
+            return res
 
     def update_action(self, action, previous_player, from_hexe=None, to_hexe=None,
                       jumped_hexe=None):
@@ -262,8 +262,7 @@ class State:
         return None
 
     def is_terminate(self):
-        return ((self.turns == MAX_TURN) and (self.playing_player == 2)) or \
-               (self.get_winner() is not None)
+        return (self.turns == MAX_TURN) or (self.get_winner() is not None)
 
     def _cost_to_finish(self, player):
         """ h(state)
@@ -287,7 +286,7 @@ class State:
 
     def evaluate(self, player, eval_function_name):
         # return eval_function_name(player)
-        return self._evaluate6(player)
+        return self._evaluate1_2(player)
 
     # first attempt for eval f()
     def _evaluate1(self, player):
@@ -296,6 +295,34 @@ class State:
         return - 0.1 * self._cost_to_finish(player) + \
                self.finished_pieces[player] + \
                len(self.player_pieces_list[player])
+
+    # consider for solitary pattern
+    def _evaluate1_1(self, player):
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        if my_pieces_num == 0 and self.finished_pieces[player] < PLAYER_WIN_THRESHOLD:
+            return -100
+        elif self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD:
+            return 100
+
+        return - 0.1 * self._cost_to_finish(player) + \
+               self.finished_pieces[player] + my_pieces_num + \
+               self.finished_pieces[player]
+
+    def _evaluate1_2(self, player):
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        if self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD:
+            return 100
+
+        return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) + \
+               normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
+               2 * normalize(self.finished_pieces[player], 4, 0)
 
     # normalize for easier weight discovery; consider solitary pattern
     def _evaluate2(self, player):
@@ -402,10 +429,10 @@ class State:
         elif self.finished_pieces[player] >= MAX_SCORE:
             return 12
         else:
-            if my_pieces_num <= 5:
-                w3 = 1
-            else:
+            if my_pieces_num <= 4:
                 w3 = 0.5
+            else:
+                w3 = 0
 
             return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) / my_pieces_num + \
                    normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \

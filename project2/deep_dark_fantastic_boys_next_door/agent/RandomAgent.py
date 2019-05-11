@@ -9,6 +9,7 @@ from numpy.random import choice
 
 class RandomAgent:
 
-    def get_next_action(self, state):
-        next_state = choice(state.all_next_state())
-        return next_state.action
+    def get_next_action(self, state, player):
+        # print(state.all_next_action())
+        next_actions = state.all_next_action()
+        return next_actions[choice(len(next_actions))]

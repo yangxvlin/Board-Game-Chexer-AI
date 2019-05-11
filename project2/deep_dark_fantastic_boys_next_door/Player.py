@@ -5,13 +5,14 @@ Date:        2019-3-11 21:33:12
 Description: Player class
 """
 
-import sys
-
 # from MaxnAgent import get_next_move
 from .agent.RandomAgent import RandomAgent
 from .agent.MaxnAgent import MaxnAgent
-from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER)
+from .agent.GreedyAgent import GreedyAgent
+from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
+                        OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION)
 from .util import (calculate_jumped_hexe, initial_state)
+from collections import defaultdict
 
 
 class Player:
@@ -37,7 +38,8 @@ class Player:
         if colour == "red":
             self.agent = MaxnAgent()
         else:
-            self.agent = RandomAgent()
+            self.agent = GreedyAgent()
+            # self.agent = RandomAgent()
         # self.agent = MaxnAgent()
 
         self.states_history = [initial_state()]
@@ -61,11 +63,16 @@ class Player:
         # .all_next_state()])
         # TODO case for maxn no pieces
         previous_state = self.states_history[-1]
+        # print("#######", previous_state.turns)
 
+        # player has no pieces, so no need to search
         if len(previous_state.player_pieces_list[previous_state.playing_player])==0:
-            return ("PASS", None)
+            return PASS_ACTION
         else:
-            return self.agent.get_next_action(previous_state)
+            if previous_state.turns < OPEN_GAME_TURN_LIMIT:
+                return OPEN_GAME_AGENT[previous_state.playing_player][previous_state.turns]
+            else:
+                return self.agent.get_next_action(previous_state, self)
 
     def update(self, colour, action):
         """
@@ -110,4 +117,3 @@ class Player:
                                      action[1][0], action[1][1], jumped_hexe)
 
         self.states_history.append(next_state)
-
