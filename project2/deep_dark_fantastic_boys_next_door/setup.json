@@ -1,0 +1,12 @@
+{
+  "red": {
+    "agent": 0,
+    "depth": 3
+  },
+  "green": {
+    "agent": 1
+  },
+  "blue": {
+    "agent": 1
+  }
+}

@@ -9,13 +9,18 @@ Description: Player class
 from .agent.RandomAgent import RandomAgent
 from .agent.MaxnAgent import MaxnAgent
 from .agent.GreedyAgent import GreedyAgent
+
+from .agent.AgentFactory import AgentFactory
 from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
                         OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION)
 from .util import (calculate_jumped_hexe, initial_state)
 from collections import defaultdict
 
+import json
 
 class Player:
+
+    PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/setup.json"
 
     def __init__(self, colour):
         """
@@ -31,21 +36,16 @@ class Player:
         :param colour: representing the player that control this game
         """
         self.colour = PLAYER_PLAYING_ORDER[colour]
-        # use sts.argv to control the agent for player
-        # or
-        # https://softwareengineering.stackexchange.com/questions/351389/dynamic-dispatch-from-a-string-python
-        # TODO json to identify out strategy
-        # if colour == "red":
-        #     self.agent = MaxnAgent()
-        # else:
-        #     self.agent = GreedyAgent()
-            # self.agent = RandomAgent()
-        self.agent = MaxnAgent()
+
+        # TODO check it can work on dimefox
+        # json to identify out strategy
+        with open(Player.PLAYER_SETUP, 'r') as f:
+            player_setup = json.load(f)
+            self.agent = AgentFactory.create_agent(player_setup[colour]["agent"], **player_setup[colour])
 
         self.states_history = [initial_state()]
 
     def action(self):
-
         """
         This method is called at the beginning of each of your turns to request
         a choice of action from your program.
@@ -57,11 +57,10 @@ class Player:
         actions.
         """
 
-        previous_state = self.states_history[-1]
+        # previous_state = self.states_history[-1]
         # print(previous_state.playing_player, "next player make an action")
         # print("all actions:", [s.action for s in previous_state
         # .all_next_state()])
-        # TODO case for maxn no pieces
         previous_state = self.states_history[-1]
         # print("#######", previous_state.turns)
 
