@@ -2,15 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b59d27ae-c7ec-4de3-ba0f-e221373e3061" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/GreedyAgent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ai-project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ai-project.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Constants.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/State.py" beforeDir="false" afterPath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/State.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/MaxnAgent.py" beforeDir="false" afterPath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/MaxnAgent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/RandomAgent.py" beforeDir="false" afterPath="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/RandomAgent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project2/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/project2/run.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,11 +15,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/State.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="418">
-              <caret line="178" lean-forward="true" selection-start-line="178" selection-end-line="178" />
+            <state relative-caret-position="-256">
+              <caret line="308" column="47" lean-forward="true" selection-start-line="308" selection-start-column="47" selection-end-line="308" selection-end-column="47" />
               <folding>
                 <element signature="e#147#172#0" expanded="true" />
               </folding>
@@ -32,11 +27,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="618">
-              <caret line="51" lean-forward="true" selection-start-line="51" selection-end-line="51" />
+            <state relative-caret-position="390">
+              <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
               <folding>
                 <element signature="e#149#191#0" expanded="true" />
               </folding>
@@ -56,8 +51,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/GreedyAgent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="55" selection-start-line="17" selection-start-column="55" selection-end-line="17" selection-end-column="55" />
+            <state relative-caret-position="342">
+              <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
             </state>
           </provider>
         </entry>
@@ -65,8 +60,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/MaxnAgent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="57" column="95" selection-start-line="57" selection-start-column="95" selection-end-line="57" selection-end-column="95" />
+            <state relative-caret-position="143">
+              <caret line="54" column="17" selection-start-line="54" selection-start-column="17" selection-end-line="54" selection-end-column="17" />
               <folding>
                 <element signature="e#230#248#0" expanded="true" />
               </folding>
@@ -87,7 +82,7 @@
         <entry file="file://$PROJECT_DIR$/project2/run.sh">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="133">
-              <caret line="7" column="2" lean-forward="true" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="136" />
+              <caret line="7" column="2" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="136" />
             </state>
           </provider>
         </entry>
@@ -115,8 +110,8 @@
       <find>print(</find>
       <find>turns</find>
       <find>termi</find>
-      <find>self.board</find>
       <find>MOVE_DELTA</find>
+      <find>self.board</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -127,12 +122,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/project2/run.sh" />
-        <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/MaxnAgent.py" />
         <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/GreedyAgent.py" />
         <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/RandomAgent.py" />
         <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Constants.py" />
-        <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Player.py" />
+        <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/MaxnAgent.py" />
         <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/State.py" />
+        <option value="$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Player.py" />
       </list>
     </option>
   </component>
@@ -242,7 +237,7 @@
       <workItem from="1557308368017" duration="27434000" />
       <workItem from="1557480232108" duration="2952000" />
       <workItem from="1557554997240" duration="170000" />
-      <workItem from="1557569811979" duration="4466000" />
+      <workItem from="1557569811979" duration="7779000" />
     </task>
     <task id="LOCAL-00001" summary="need multiphase">
       <created>1557372565832</created>
@@ -251,21 +246,28 @@
       <option name="project" value="LOCAL" />
       <updated>1557372565832</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add move delta preference">
+      <created>1557577448746</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1557577448746</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="35022000" />
+    <option name="totallyTimeSpent" value="38335000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16957104" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16957104" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3286119" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -330,44 +332,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="need multiphase" />
-    <option name="LAST_COMMIT_MESSAGE" value="need multiphase" />
+    <MESSAGE value="add move delta preference" />
+    <option name="LAST_COMMIT_MESSAGE" value="add move delta preference" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/project2/run.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="2" lean-forward="true" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="136" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/project2/referee/game.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1160">
-          <caret line="142" column="26" selection-start-line="142" selection-start-column="16" selection-end-line="142" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/util.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="361">
           <caret line="19" column="53" lean-forward="true" selection-start-line="19" selection-start-column="53" selection-end-line="19" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/GreedyAgent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" column="55" selection-start-line="17" selection-start-column="55" selection-end-line="17" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/MaxnAgent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="57" column="95" selection-start-line="57" selection-start-column="95" selection-end-line="57" selection-end-column="95" />
-          <folding>
-            <element signature="e#230#248#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -378,6 +350,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/project2/referee/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1160">
+          <caret line="142" column="26" selection-start-line="142" selection-start-column="16" selection-end-line="142" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project2/run.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="2" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="136" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/GreedyAgent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/MaxnAgent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="54" column="17" selection-start-line="54" selection-start-column="17" selection-end-line="54" selection-end-column="17" />
+          <folding>
+            <element signature="e#230#248#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/agent/RandomAgent.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -385,22 +388,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Player.py">
+    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/State.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="618">
-          <caret line="51" lean-forward="true" selection-start-line="51" selection-end-line="51" />
+        <state relative-caret-position="-256">
+          <caret line="308" column="47" lean-forward="true" selection-start-line="308" selection-start-column="47" selection-end-line="308" selection-end-column="47" />
           <folding>
-            <element signature="e#149#191#0" expanded="true" />
+            <element signature="e#147#172#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/State.py">
+    <entry file="file://$PROJECT_DIR$/project2/deep_dark_fantastic_boys_next_door/Player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="178" lean-forward="true" selection-start-line="178" selection-end-line="178" />
+        <state relative-caret-position="390">
+          <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
           <folding>
-            <element signature="e#147#172#0" expanded="true" />
+            <element signature="e#149#191#0" expanded="true" />
           </folding>
         </state>
       </provider>

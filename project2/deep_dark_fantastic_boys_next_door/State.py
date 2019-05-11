@@ -279,6 +279,19 @@ class State:
             total_dist += min_dist
         return total_dist/2
 
+    def _necessary_cost_to_finish(self, player):
+        """ first four pieces' avg distance to finish """
+        total_dist = []
+        for i in self.player_pieces_list[player]:
+            min_dist = 10
+            curr_dist = 0
+            for j in PLAYER_GOAL[player]:
+                curr_dist = self._hex_dist(i, j) + 1
+                if curr_dist < min_dist:
+                    min_dist = curr_dist
+            total_dist.append(curr_dist)
+        return sum(sorted(total_dist[:PLAYER_WIN_THRESHOLD]))
+
     @staticmethod
     def _hex_dist(hex1, hex2):
         return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
@@ -286,7 +299,7 @@ class State:
 
     def evaluate(self, player, eval_function_name):
         # return eval_function_name(player)
-        return self._evaluate1_2(player)
+        return self._evaluate1_3(player)
 
     # first attempt for eval f()
     def _evaluate1(self, player):
@@ -310,6 +323,7 @@ class State:
                self.finished_pieces[player]
 
     def _evaluate1_2(self, player):
+        """ xulin modification """
         TOTAL_DIST_MIN = 0
         TOTAL_DIST_MAX = 12
         NUM_PIECES_MIN = 0
@@ -320,9 +334,25 @@ class State:
         if self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD:
             return 100
 
-        return -1 * normalize(self._cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) + \
+        return -1 * normalize(self._necessary_cost_to_finish(player), TOTAL_DIST_MAX, TOTAL_DIST_MIN) + \
                normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
                2 * normalize(self.finished_pieces[player], 4, 0)
+
+    def _evaluate1_3(self, player):
+        """ xulin modification """
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        if self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD:
+            return 100
+
+        return - 0.1 * self._necessary_cost_to_finish(player) + \
+               self.finished_pieces[player] + my_pieces_num + \
+               self.finished_pieces[player]
 
     # normalize for easier weight discovery; consider solitary pattern
     def _evaluate2(self, player):
@@ -467,7 +497,7 @@ class State:
         return count
 
     # total dist between friends
-    def _ssolitary_score2(self, player):
+    def _solidarity_score2(self, player):
         total_dist = 0
         for i in range(len(self.player_pieces_list[player])):
             for j in range(i + 1, len(self.player_pieces_list[player])):

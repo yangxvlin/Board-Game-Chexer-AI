@@ -35,12 +35,12 @@ class Player:
         # or
         # https://softwareengineering.stackexchange.com/questions/351389/dynamic-dispatch-from-a-string-python
         # TODO json to identify out strategy
-        if colour == "red":
-            self.agent = MaxnAgent()
-        else:
-            self.agent = GreedyAgent()
+        # if colour == "red":
+        #     self.agent = MaxnAgent()
+        # else:
+        #     self.agent = GreedyAgent()
             # self.agent = RandomAgent()
-        # self.agent = MaxnAgent()
+        self.agent = MaxnAgent()
 
         self.states_history = [initial_state()]
 

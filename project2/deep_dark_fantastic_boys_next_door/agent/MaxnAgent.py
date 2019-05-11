@@ -45,14 +45,13 @@ class MaxnAgent:
             return s, [s.evaluate(i, "") if i == s.playing_player else None for i in range(0, 3)]
 
         best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]
-
         cur_player = s.playing_player
 
         next_states = s.all_next_state()
         # print(depth, SEARCH_DEPTH)
         # print("#####", len(next_states))
         for next_state in next_states:
-            # print(next_state, next_state.evaluate(s.playing_player, ""), best, cur_player)
+            # print(depth, cur_player, "{:30s}".format(str(next_state.action)), "{:.4f}".format(next_state.evaluate(s.playing_player, "")), best)
             next_player = next_state.playing_player
 
             _, result = self.maxn(next_state, depth - 1, root_player, best[next_player], player)
