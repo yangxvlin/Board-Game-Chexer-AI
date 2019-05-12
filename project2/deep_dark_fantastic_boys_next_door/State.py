@@ -320,6 +320,8 @@ class State:
             return self._evaluate7(player)
         elif eval_function == 8:
             return self._evaluate8(player)
+        elif eval_function == 9:
+            return self._evaluate9(player)
         else:
             print("unsupported eval!!")
 
@@ -332,7 +334,7 @@ class State:
                len(self.player_pieces_list[player])
 
     # consider for solitary pattern
-    def _evaluate1_1(self, player):
+    def _evaluate7(self, player):
         my_pieces_num = len(self.player_pieces_list[player])
 
         if my_pieces_num == 0 and self.finished_pieces[player] < PLAYER_WIN_THRESHOLD:
@@ -344,7 +346,7 @@ class State:
                self.finished_pieces[player] + my_pieces_num + \
                self.finished_pieces[player]
 
-    def _evaluate1_2(self, player):
+    def _evaluate8(self, player):
         """ xulin modification """
         TOTAL_DIST_MIN = 0
         TOTAL_DIST_MAX = 12
@@ -360,7 +362,7 @@ class State:
                normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
                2 * normalize(self.finished_pieces[player], 4, 0)
 
-    def _evaluate1_3(self, player):
+    def _evaluate9(self, player):
         """ xulin modification """
         TOTAL_DIST_MIN = 0
         TOTAL_DIST_MAX = 12
