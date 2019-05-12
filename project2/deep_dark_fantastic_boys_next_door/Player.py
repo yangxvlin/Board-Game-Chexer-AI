@@ -39,9 +39,11 @@ class Player:
             player_setup = json.load(f)
             self.agent = AgentFactory.create_agent(player_setup[colour]["agent"], **player_setup[colour])
 
-        self.states_history = [initial_state()]
         self.eval = player_setup[colour]["eval"]
+        self.can_binary_game = player_setup[colour]["can_binary"]
+        self.can_single_game = player_setup[colour]["can_single"]
 
+        self.states_history = [initial_state()]
         self.has_player_knock_out = False
         self.is_just_need_to_exit = False
 
@@ -66,11 +68,11 @@ class Player:
         if not previous_state.player_has_win_chance(previous_state.playing_player):
             # TODO switch our game playing strategy
             pass
-        if (not self.has_player_knock_out) and previous_state.is_binary():
+        if self.can_binary_game and (not self.has_player_knock_out) and previous_state.is_binary():
             self.has_player_knock_out = True
             # TODO probably make this to 2-player game
             pass
-        if (not self.is_just_need_to_exit) and previous_state.is_single():
+        if self.can_single_game and (not self.is_just_need_to_exit) and previous_state.is_single():
             self.is_just_need_to_exit = True
             # TODO use project1 search to exit as quick as possible
             pass

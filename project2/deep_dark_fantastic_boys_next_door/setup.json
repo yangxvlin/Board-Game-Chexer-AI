@@ -2,16 +2,22 @@
   "red": {
     "agent": 7,
     "depth": 3,
-    "eval": [10]
+    "eval": [10],
+    "can_binary": false,
+    "can_single": false
   },
   "green": {
     "agent": 2,
     "depth": 3,
-    "eval": [1]
+    "eval": [1],
+    "can_binary": false,
+    "can_single": false
   },
   "blue": {
     "agent": 2,
     "depth": 3,
-    "eval": [1]
+    "eval": [1],
+    "can_binary": false,
+    "can_single": false
   }
 }
