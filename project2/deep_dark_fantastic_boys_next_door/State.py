@@ -553,4 +553,8 @@ class State:
     def is_player_finished(self):
         return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
 
+    def is_binary(self):
+        """ check whether there are only 2 players """
+        return [len(self.player_pieces_list[player]) == 0 for player in range(0, N_PLAYER)].count(True) == 2
+
     # def is_other_player_finished(self):
