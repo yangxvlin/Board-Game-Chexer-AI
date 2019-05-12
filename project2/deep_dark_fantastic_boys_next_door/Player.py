@@ -5,11 +5,6 @@ Date:        2019-3-11 21:33:12
 Description: Player class
 """
 
-# from MaxnAgent import get_next_move
-from .agent.RandomAgent import RandomAgent
-from .agent.MaxnAgent import MaxnAgent
-from .agent.GreedyAgent import GreedyAgent
-
 from .agent.AgentFactory import AgentFactory
 from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
                         OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION)
@@ -58,20 +53,12 @@ class Player:
         actions.
         """
 
-        # previous_state = self.states_history[-1]
-        # print(previous_state.playing_player, "next player make an action")
-        # print("all actions:", [s.action for s in previous_state
-        # .all_next_state()])
         previous_state = self.states_history[-1]
-        # print("#######", previous_state.turns)
 
         # player has no pieces, so no need to search
-        # if len(previous_state.player_pieces_list[previous_state.playing_player])==0:
-        #     return PASS_ACTION
-        # else:
-        #     if previous_state.turns < OPEN_GAME_TURN_LIMIT:
-        #         return OPEN_GAME_AGENT[previous_state.playing_player][previous_state.turns]
-        #     else:
+        if not previous_state.playing_player_has_pieces():
+            return PASS_ACTION
+
         return self.agent.get_next_action(previous_state, self)
 
     def update(self, colour, action):

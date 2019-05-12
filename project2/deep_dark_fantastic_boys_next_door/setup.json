@@ -5,12 +5,12 @@
     "eval": [10]
   },
   "green": {
-    "agent": 7,
+    "agent": 2,
     "depth": 3,
     "eval": [1]
   },
   "blue": {
-    "agent": 7,
+    "agent": 2,
     "depth": 3,
     "eval": [1]
   }

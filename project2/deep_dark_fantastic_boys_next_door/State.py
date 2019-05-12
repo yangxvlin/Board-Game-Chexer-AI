@@ -553,8 +553,14 @@ class State:
     def is_playing_player_finished(self):
         return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
 
+    def playing_player_has_pieces(self):
+        return len(self.player_pieces_list[self.playing_player]) != 0
+
     def is_binary(self):
         """ check whether there are only 2 players """
         return [len(self.player_pieces_list[player]) == 0 for player in range(0, N_PLAYER)].count(True) == 2
+
+    def player_has_win_chance(self, player):
+        return len(self.player_pieces_list[player]) + self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD
 
     # def is_other_player_finished(self):
