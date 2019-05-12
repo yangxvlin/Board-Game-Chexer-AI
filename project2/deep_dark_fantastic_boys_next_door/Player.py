@@ -42,6 +42,7 @@ class Player:
         self.eval = player_setup[colour]["eval"]
         self.can_binary_game = player_setup[colour]["can_binary"]
         self.can_single_game = player_setup[colour]["can_single"]
+        self.human_start = player_setup[colour]["human_start"]
 
         self.states_history = [initial_state()]
         self.has_player_knock_out = False
@@ -65,6 +66,10 @@ class Player:
         # TODO what if maxn is good enough that we won't in lose condition, lol
         if not previous_state.playing_player_has_pieces():
             return PASS_ACTION
+
+        # choose to enable and follow human learned start game strategy
+        if self.human_start and previous_state.turns < OPEN_GAME_TURN_LIMIT:
+            return OPEN_GAME_AGENT[previous_state.playing_player][previous_state.turns]
 
         if not previous_state.player_has_win_chance(previous_state.playing_player):
             # TODO switch our game playing strategy
