@@ -63,8 +63,8 @@ class Player:
         if not previous_state.playing_player_has_pieces():
             return PASS_ACTION
 
-        if previous_state.player_has_win_chance(previous_state.playing_player):
-            # TODO switch out game playing strategy
+        if not previous_state.player_has_win_chance(previous_state.playing_player):
+            # TODO switch our game playing strategy
             pass
         if (not self.has_player_knock_out) and previous_state.is_binary():
             self.has_player_knock_out = True
