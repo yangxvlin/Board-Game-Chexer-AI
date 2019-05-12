@@ -320,6 +320,8 @@ class State:
             return self._evaluate7(player)
         elif eval_function == 8:
             return self._evaluate8(player)
+        else:
+            print("unsupported eval!!")
 
     # first attempt for eval f()
     def _evaluate1(self, player):

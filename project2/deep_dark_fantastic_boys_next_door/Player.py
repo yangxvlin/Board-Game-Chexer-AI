@@ -117,3 +117,6 @@ class Player:
                                      action[1][0], action[1][1], jumped_hexe)
 
         self.states_history.append(next_state)
+
+    def choose_eval(self):
+        return self.eval[0]
