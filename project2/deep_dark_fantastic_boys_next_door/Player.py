@@ -65,13 +65,13 @@ class Player:
         # print("#######", previous_state.turns)
 
         # player has no pieces, so no need to search
-        if len(previous_state.player_pieces_list[previous_state.playing_player])==0:
-            return PASS_ACTION
-        else:
-            if previous_state.turns < OPEN_GAME_TURN_LIMIT:
-                return OPEN_GAME_AGENT[previous_state.playing_player][previous_state.turns]
-            else:
-                return self.agent.get_next_action(previous_state, self)
+        # if len(previous_state.player_pieces_list[previous_state.playing_player])==0:
+        #     return PASS_ACTION
+        # else:
+        #     if previous_state.turns < OPEN_GAME_TURN_LIMIT:
+        #         return OPEN_GAME_AGENT[previous_state.playing_player][previous_state.turns]
+        #     else:
+        return self.agent.get_next_action(previous_state, self)
 
     def update(self, colour, action):
         """

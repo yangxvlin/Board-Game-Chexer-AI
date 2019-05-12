@@ -8,7 +8,7 @@ Description: create Agent
 from .MaxnAgent import MaxnAgent
 from .RandomAgent import RandomAgent
 from .GreedyAgent import GreedyAgent
-
+from .HumanStartMaxnAgent import HumanStartMaxnAgent
 
 class AgentFactory:
 
@@ -20,5 +20,7 @@ class AgentFactory:
             return RandomAgent()
         elif agent_type == 2:
             return GreedyAgent()
+        elif agent_type == 3:
+            return HumanStartMaxnAgent()
         else:
             return RandomAgent()

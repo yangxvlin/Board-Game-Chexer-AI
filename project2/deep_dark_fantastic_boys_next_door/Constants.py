@@ -71,3 +71,5 @@ OPEN_GAME_AGENT = {0: {0: (MOVE, ((-3, 0), (-2, 0))),
                    2: {0: (MOVE, ((0,  3), (0,  2))),
                        1: (MOVE, ((3,  0), (2,  0))),
                        2: (MOVE, ((2,  0), (1,  1)))}}
+
+NEGATIVE_INFINITY = float('-inf')
