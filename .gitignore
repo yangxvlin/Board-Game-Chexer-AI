@@ -3,7 +3,7 @@
 /project2/.idea
 /project1/.idea
 /project1/__pycache__
-/project2/__pycache__
+/project2/__pycache__/*
 /project1/.ipynb_checkpoints
 /project1/~$report.docx
 /project1/upload.sh
@@ -16,4 +16,8 @@ latex_formula.txt
 /project2/your_team_name
 /project2/*.pickle
 /project2/deep_dark_fantastic_boys_next_door/*.pickle
+project2/deep_dark_fantastic_boys_next_door/__pycache__/
+project2/deep_dark_fantastic_boys_next_door/agent/__pycache__/
 /project2/plan.docx
+/project2/mylog.txt
+.idea/
