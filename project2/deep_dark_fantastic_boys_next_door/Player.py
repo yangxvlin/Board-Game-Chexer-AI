@@ -62,6 +62,7 @@ class Player:
         previous_state = self.states_history[-1]
 
         # player has no pieces, so no need to search
+        # TODO what if maxn is good enough that we won't in lose condition, lol
         if not previous_state.playing_player_has_pieces():
             return PASS_ACTION
 
