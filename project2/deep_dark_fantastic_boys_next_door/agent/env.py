@@ -56,7 +56,7 @@ class GameEnv:
             self.states_history.append(player_next_state)
 
             # one player win
-            if player_next_state.is_player_finished():
+            if player_next_state.is_playing_player_finished():
                 player_reward = [LOSE_REWARD, LOSE_REWARD, LOSE_REWARD]
                 player_reward[player] = WIN_REWARD
                 is_done = True
