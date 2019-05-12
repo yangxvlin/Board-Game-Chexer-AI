@@ -303,9 +303,23 @@ class State:
     #  do we need to move the most not yet moved pieces?
     #  how about prefer kill strategy(the move can gain pieces)?
     #  seems blue can always win when all are maxn
-    def evaluate(self, player, eval_function_name):
-        # return eval_function_name(player)
-        return self._evaluate1_3(player)
+    def evaluate(self, player, eval_function):
+        if eval_function == 1:
+            return self._evaluate1(player)
+        elif eval_function == 2:
+            return self._evaluate2(player)
+        elif eval_function == 3:
+            return self._evaluate3(player)
+        elif eval_function == 4:
+            return self._evaluate4(player)
+        elif eval_function == 5:
+            return self._evaluate5(player)
+        elif eval_function == 6:
+            return self._evaluate6(player)
+        elif eval_function == 7:
+            return self._evaluate7(player)
+        elif eval_function == 8:
+            return self._evaluate8(player)
 
     # first attempt for eval f()
     def _evaluate1(self, player):

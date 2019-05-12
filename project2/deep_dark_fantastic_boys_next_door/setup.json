@@ -1,12 +1,15 @@
 {
   "red": {
     "agent": 3,
-    "depth": 3
+    "depth": 3,
+    "eval": [1]
   },
   "green": {
-    "agent": 1
+    "agent": 1,
+    "eval": [1]
   },
   "blue": {
-    "agent": 1
+    "agent": 1,
+    "eval": [1]
   }
 }

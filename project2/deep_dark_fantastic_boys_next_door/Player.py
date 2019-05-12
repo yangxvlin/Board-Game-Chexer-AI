@@ -44,6 +44,7 @@ class Player:
             self.agent = AgentFactory.create_agent(player_setup[colour]["agent"], **player_setup[colour])
 
         self.states_history = [initial_state()]
+        self.eval = player_setup[colour]["eval"]
 
     def action(self):
         """
