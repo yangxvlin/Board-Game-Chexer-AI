@@ -63,7 +63,6 @@ class Player:
         previous_state = self.states_history[-1]
 
         # player has no pieces, so no need to search
-        # TODO what if maxn is good enough that we won't in lose condition, lol
         if not previous_state.playing_player_has_pieces():
             return PASS_ACTION
 
@@ -71,6 +70,7 @@ class Player:
         if self.human_start and previous_state.turns < OPEN_GAME_TURN_LIMIT:
             return OPEN_GAME_AGENT[previous_state.playing_player][previous_state.turns]
 
+        # TODO what if maxn is good enough that we won't in lose condition, lol
         if not previous_state.player_has_win_chance(previous_state.playing_player):
             # TODO switch our game playing strategy
             pass
