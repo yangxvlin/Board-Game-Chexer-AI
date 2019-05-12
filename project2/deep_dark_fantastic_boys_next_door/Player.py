@@ -13,6 +13,7 @@ from collections import defaultdict
 
 import json
 
+
 class Player:
 
     PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/setup.json"
@@ -41,6 +42,9 @@ class Player:
         self.states_history = [initial_state()]
         self.eval = player_setup[colour]["eval"]
 
+        self.has_player_knock_out = False
+        self.is_just_need_to_exit = False
+
     def action(self):
         """
         This method is called at the beginning of each of your turns to request
@@ -58,6 +62,18 @@ class Player:
         # player has no pieces, so no need to search
         if not previous_state.playing_player_has_pieces():
             return PASS_ACTION
+
+        if previous_state.player_has_win_chance(previous_state.playing_player):
+            # TODO switch out game playing strategy
+            pass
+        if (not self.has_player_knock_out) and previous_state.is_binary():
+            self.has_player_knock_out = True
+            # TODO probably make this to 2-player game
+            pass
+        if (not self.is_just_need_to_exit) and previous_state.is_single():
+            self.is_just_need_to_exit = True
+            # TODO use project1 search to exit as quick as possible
+            pass
 
         return self.agent.get_next_action(previous_state, self)
 

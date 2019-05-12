@@ -558,7 +558,11 @@ class State:
 
     def is_binary(self):
         """ check whether there are only 2 players """
-        return [len(self.player_pieces_list[player]) == 0 for player in range(0, N_PLAYER)].count(True) == 2
+        return [len(self.player_pieces_list[player]) != 0 for player in range(0, N_PLAYER)].count(True) == 2
+
+    def is_single(self):
+        """ check whether there is only 1 player left """
+        return [len(self.player_pieces_list[player]) != 0 for player in range(0, N_PLAYER)].count(True) == 1
 
     def player_has_win_chance(self, player):
         return len(self.player_pieces_list[player]) + self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD
