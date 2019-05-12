@@ -1,12 +1,11 @@
 """
 Author:      XuLin Yang
 Student id:  904904
-Date:        2019-3-11 22:08:28
-Description: max^n agent with shadow pruning
-https://project.dke.maastrichtuniversity.nl/games/files/phd/Nijssen_thesis.pdf
-Page 20 index 34/205
+Date:        2019-5-12 20:07:31
+Description: 
 """
 
+from numpy.random import choice
 import numpy as np
 from deep_dark_fantastic_boys_next_door.Constants import (N_PLAYER)
 
@@ -18,9 +17,7 @@ NEGATIVE_INFINITY = float('-inf')
 U = float('inf')  # 12 for 12 pieces on board
 
 
-class MaxnAgent:
-
-    # TODO Lazy evaluation
+class RandomMaxnAgent:
 
     def __init__(self, depth=SEARCH_DEPTH, u=U):
         self.depth = depth
@@ -28,17 +25,18 @@ class MaxnAgent:
 
     def get_next_action(self, state, player):
         # print("1", state)
-        next_state, _ = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY, player)
+        next_states, _ = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY, player)
         # print(state, "->", next_state)
-        # print(">>>> ", state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()))
-        assert next_state is not None
-        return next_state.action
+        assert len(next_states) > 0
+        index = choice(len(next_states))
+        chosen_state = next_states[index]
+        # print(">>>> ", state.evaluate(state.playing_player, player.choose_eval()), "->", chosen_state.evaluate(state.playing_player, player.choose_eval()), "{}/{}".format(index, len(next_states)))
+        return chosen_state.action
 
     # TODO check my recursion return correct move
     def maxn(self, s, depth, root_player, alpha, player):
-        # print(depth, alpha)
         # s:cur state
-        my_next_state = None
+        my_next_states = []
 
         # print("!!!!!!!!!", s.is_terminate())
         if depth <= 0 or s.is_terminate():
@@ -58,18 +56,21 @@ class MaxnAgent:
             if result[cur_player] is None:
                 result[cur_player] = next_state.evaluate(cur_player, player.choose_eval())
 
-            if result[cur_player] > best[cur_player]:
-                best = result
+            if result[cur_player] >= best[cur_player]:
+                if result[cur_player] > best[cur_player]:
+                    best = result
+                    my_next_states = []
 
                 # TODO place need check
                 # our player
                 if (depth == self.depth) and (cur_player == root_player):
-                    my_next_state = next_state
-                    # print(">>>>>>>", next_state.action)
+                    my_next_states.append(next_state)
+
 
             # print(result, alpha, depth)
             if result[cur_player] >= U - alpha:
                 print("pruned!", depth, result, alpha)
-                return next_state, result
+                return my_next_states, result
 
-        return my_next_state, best
+        return my_next_states, best
+

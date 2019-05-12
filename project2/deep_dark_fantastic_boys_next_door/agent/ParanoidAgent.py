@@ -5,39 +5,49 @@ Date:        2019-3-11 22:33:05
 Description: paranoid agent with alpha-beta pruning
              https://project.dke.maastrichtuniversity.nl/games/files/phd/Nijssen_thesis.pdf
 """
-from Agent import Agent
+
+from deep_dark_fantastic_boys_next_door.Constants import (NEGATIVE_INFINITY,
+                                                          POSITIVE_INFINITY)
 
 
-class ParanoidAgent(Agent):
-    SEARCH_DEPTH = 7
+class ParanoidAgent:
+    SEARCH_DEPTH = 4
 
-    def __init__(self, board, depth=SEARCH_DEPTH):
-        self.board = board  # copy board for ai search
+    def __init__(self, depth=SEARCH_DEPTH):
         self.depth = depth
 
-    def get_next_move(self):
-        next_move, _ = self.paranoid(self.board.get_current_state(), self.depth, self.board.get_playing_player(),
-                                     Agent.NEGATIVE_INFINITY, Agent.POSITIVE_INFINITY)
+    def get_next_action(self, state, player):
+        # print(">>>>", self.depth)
+        next_state, alpha = self.paranoid(state,
+                                      self.depth,
+                                      state.playing_player,
+                                      state.playing_player,
+                                      NEGATIVE_INFINITY,
+                                      POSITIVE_INFINITY,
+                                      player)
+        # print("#####", self.depth)
+        print(">>>> ", state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()), alpha)
+        assert next_state is not None
+        return next_state.action
 
-        return next_move
-
-    def paranoid(self, s, depth, cur_player, alpha, beta):
+    def paranoid(self, s, depth, cur_player, root_player, alpha, beta, player):
         # s:cur state
 
-        next_move = None
+        my_next_state = None
 
-        if self.board.is_terminate(s) or depth <= 0:
+        if depth <= 0 or s.is_terminate():
+            # print(">>>>>")
             # if currentPlayer == rootPlayer then
-            if self.board.is_my_player_playing(cur_player):
-                return next_move, self.board.evaluate_player_state(cur_player, s)
+            if cur_player == root_player:
+                return s, s.evaluate(root_player, player.choose_eval())
             else:
-                return next_move, -self.board.evaluate_player_state(cur_player, s)
+                return s, -s.evaluate(root_player, player.choose_eval())
 
-        possible_moves = self.board.get_all_moves(s)
+        next_states = s.all_next_state()
+        for next_state in next_states:
+            next_player = next_state.playing_player
 
-        for possible_move in possible_moves:
-            next_state = self.board.get_next_state(s, possible_move)
-            next_player = self.board.get_cur_player(next_state)
+            # print(depth, cur_player, "->", next_player, "{:30s}".format(str(next_state.action)), "{:.4f}".format(next_state.evaluate(root_player, player.choose_eval())), [alpha, beta])
 
             # TODO max & np.max
             # if currentPlayer == rootPlayer or nextPlayer == rootPlayer then
@@ -45,20 +55,21 @@ class ParanoidAgent(Agent):
             # else
             #     α = max(α, ALPHABETA(c, depth–1, nextPlayer, α, β));
             # end if
-            if self.board.is_my_player_playing(cur_player):
-                _, alpha_next = self.paranoid(next_state, next_player, depth - 1, -beta, -alpha)
+            if cur_player == root_player or next_player == root_player:
+                _, next_alpha = self.paranoid(next_state, depth - 1, next_player, root_player, -beta, -alpha, player)
+                next_alpha = -next_alpha
             else:
-                _, alpha_next = self.paranoid(next_state, next_player, depth - 1, alpha, beta)
-            # TODO check my logic here
-            if -alpha_next > alpha:
-                alpha = -alpha_next
-                next_move = possible_move
-            # alpha = max(alpha, -alpha_next)
+                _, next_alpha = self.paranoid(next_state, depth - 1, next_player, root_player, alpha, beta, player)
+            # alpha = max(alpha, next_alpha)
+            if next_alpha > alpha:
+                alpha = next_alpha
+                my_next_state = next_state
 
             if alpha >= beta:
-                return next_move, beta
+                # my_next_state = next_state
+                return my_next_state, beta
 
-        return next_move, alpha
+        return my_next_state, alpha
 
 
 

@@ -1,17 +1,19 @@
 """
 Author:      XuLin Yang
 Student id:  904904
-Date:        2019-5-12 11:06:22
+Date:        2019-5-12 16:32:19
 Description: 
 """
 
-from .MaxnAgent import MaxnAgent
+from .ParanoidAgent import ParanoidAgent
+
+
 from deep_dark_fantastic_boys_next_door.Constants import (OPEN_GAME_AGENT,
                                                           OPEN_GAME_TURN_LIMIT,
                                                           NEGATIVE_INFINITY)
 
 
-class HumanStartMaxnAgent(MaxnAgent):
+class HumanStartParanoidAgent(ParanoidAgent):
     SEARCH_DEPTH = 3
 
     def __init__(self, depth):

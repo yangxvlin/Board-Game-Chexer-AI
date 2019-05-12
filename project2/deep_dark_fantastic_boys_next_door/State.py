@@ -273,11 +273,11 @@ class State:
         for i in self.player_pieces_list[player]:
             min_dist = 10
             for j in PLAYER_GOAL[player]:
-                curr_dist = self._hex_dist(i, j) + 1
+                curr_dist = self._hex_dist(i, j)/2 + 1
                 if curr_dist < min_dist:
                     min_dist = curr_dist
             total_dist += min_dist
-        return total_dist/2
+        return total_dist
 
     def _necessary_cost_to_finish(self, player):
         """ first four pieces' avg distance to finish """
@@ -286,11 +286,11 @@ class State:
             min_dist = 10
             curr_dist = 0
             for j in PLAYER_GOAL[player]:
-                curr_dist = self._hex_dist(i, j) + 1
+                curr_dist = self._hex_dist(i, j)/2 + 1
                 if curr_dist < min_dist:
                     min_dist = curr_dist
-            total_dist.append(curr_dist)
-        return sum(sorted(total_dist[:PLAYER_WIN_THRESHOLD]))
+            total_dist.append(min_dist)
+        return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD])
 
     @staticmethod
     def _hex_dist(hex1, hex2):
@@ -322,6 +322,8 @@ class State:
             return self._evaluate8(player)
         elif eval_function == 9:
             return self._evaluate9(player)
+        elif eval_function == 10:
+            return self._evaluate10(player)
         else:
             print("unsupported eval!!")
 
@@ -377,6 +379,22 @@ class State:
         return - 0.1 * self._necessary_cost_to_finish(player) + \
                self.finished_pieces[player] + my_pieces_num + \
                self.finished_pieces[player]
+
+    def _evaluate10(self, player):
+        """ xulin modification """
+        TOTAL_DIST_MIN = 0
+        TOTAL_DIST_MAX = 12
+        NUM_PIECES_MIN = 0
+        NUM_PIECES_MAX = 12
+
+        my_pieces_num = len(self.player_pieces_list[player])
+
+        if self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD:
+            return 120
+
+        return - 0.1 * self._cost_to_finish(player) + \
+               self.finished_pieces[player] + my_pieces_num + \
+               self.finished_pieces[player] + 20
 
     # normalize for easier weight discovery; consider solitary pattern
     def _evaluate2(self, player):
