@@ -1,6 +1,6 @@
 /tmp
 .dist
-/project2/.idea
+/project2/.idea/
 /project1/.idea
 /project1/__pycache__
 /project2/__pycache__/*
