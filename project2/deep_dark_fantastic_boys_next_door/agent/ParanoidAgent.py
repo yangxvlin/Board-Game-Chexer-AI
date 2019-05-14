@@ -26,7 +26,7 @@ class ParanoidAgent:
                                       POSITIVE_INFINITY,
                                       player)
         # print("#####", self.depth)
-        print(">>>> ", state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()), alpha)
+        # print(">>>> ", state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()), alpha)
         assert next_state is not None
         return next_state.action
 

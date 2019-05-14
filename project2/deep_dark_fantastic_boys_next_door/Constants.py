@@ -69,8 +69,17 @@ OPEN_GAME_AGENT = {0: {0: (MOVE, ((-3, 0), (-2, 0))),
                        1: (MOVE, ((0, -2), (1, -2))),
                        2: (MOVE, ((3, -3), (2, -2)))},
                    2: {0: (MOVE, ((0,  3), (0,  2))),
-                       1: (MOVE, ((3,  0), (2,  0))),
-                       2: (MOVE, ((2,  0), (1,  1)))}}
+                       1: (MOVE, ((2,  1), (1,  1))),
+                       2: (MOVE, ((3,  0), (2,  1)))}}
+
+THE_ART_OF_WAR = {0: {0: (MOVE, ((-3, 0), (-2, -1)))}}
+
+""" {player: ((upstream points), (downstream points))} """
+STRATEGIC_POINTS = {0: ((0, -3), (-3, 0), (0, 3), (-3, 3)),
+                    1: (),
+                    2: ()}
+
+THE_ART_OF_WAR_TURN_LIMIT = 1
 
 NEGATIVE_INFINITY = float('-inf')
 

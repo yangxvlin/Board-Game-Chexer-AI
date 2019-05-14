@@ -8,7 +8,7 @@ Description: State to store information about the environment
 from copy import deepcopy
 from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
-                        PLAYER_GOAL)
+                        PLAYER_GOAL, STRATEGIC_POINTS)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple, normalize)
 
 
@@ -133,8 +133,9 @@ class State:
                     res.append(next_state)
 
         # foreach movable piece
-        for piece in player_pieces:
-            for delta in PLAYER_PREFERRED_MOVE_DELTA[self.playing_player]:
+        # TODO change the next state preference order
+        for delta in PLAYER_PREFERRED_MOVE_DELTA[self.playing_player]:
+            for piece in player_pieces:
                 adj_piece = vector_add(piece, delta)
 
                 # move action: on board & not occupied
@@ -292,6 +293,36 @@ class State:
             total_dist.append(min_dist)
         return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD])
 
+    def _cost_to_goal(self, player, goals):
+        total_dist = 0
+        for i in self.player_pieces_list[player]:
+            min_dist = 10
+            for j in goals[player]:
+                curr_dist = self._hex_dist(i, j) / 2 + 1
+                if curr_dist < min_dist:
+                    min_dist = curr_dist
+            total_dist += min_dist
+        return total_dist
+
+    def _pieces_cost_to_goal(self, pieces, goals):
+        total_dist = 0
+
+        if len(pieces) >= len(goals):
+            froms = goals
+            tos = pieces
+        else:
+            froms = pieces
+            tos = goals
+
+        for i in froms:
+            min_dist = 10
+            for j in tos:
+                curr_dist = self._hex_dist(i, j) / 2 + 1
+                if curr_dist < min_dist:
+                    min_dist = curr_dist
+            total_dist += min_dist
+        return total_dist
+
     @staticmethod
     def _hex_dist(hex1, hex2):
         return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
@@ -324,8 +355,29 @@ class State:
             return self._evaluate9(player)
         elif eval_function == 10:
             return self._evaluate10(player)
+        elif eval_function == 11:
+            return self._evaluate11(player)
         else:
             print("unsupported eval!!")
+
+    # eval for move to customized goals
+    def _evaluate11(self, player):
+        if (player == self.playing_player):
+            pieces_not_in_strategies_points = []
+            occupied_strategy_points = []
+
+            for piece in self.player_pieces_list[self.playing_player]:
+                if piece not in STRATEGIC_POINTS[self.playing_player]:
+                    pieces_not_in_strategies_points.append(piece)
+                else:
+                    occupied_strategy_points.append(piece)
+
+            unoccupied_strategy_points = list(set(STRATEGIC_POINTS[self.playing_player]) - set(occupied_strategy_points))
+
+            return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
+                   self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player])
+        else:
+            return self._evaluate1(player)
 
     # first attempt for eval f()
     def _evaluate1(self, player):

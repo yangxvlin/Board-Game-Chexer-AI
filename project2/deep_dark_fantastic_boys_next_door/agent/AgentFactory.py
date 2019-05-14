@@ -10,6 +10,7 @@ from .RandomAgent import RandomAgent
 from .GreedyAgent import GreedyAgent
 from .ParanoidAgent import ParanoidAgent
 from .RandomMaxnAgent import RandomMaxnAgent
+from .MoZiAgent import MoZiAgent
 
 
 class AgentFactory:
@@ -26,5 +27,7 @@ class AgentFactory:
             return ParanoidAgent(kwargs["depth"])
         elif agent_type == 5:
             return RandomMaxnAgent(kwargs["depth"])
+        elif agent_type == 6:
+            return MoZiAgent(kwargs["upstream"], kwargs["downstream"], kwargs["depth"])
         else:
             return RandomAgent()

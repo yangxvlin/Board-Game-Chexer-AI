@@ -1,24 +1,26 @@
 {
   "red": {
-    "agent": 5,
+    "agent": 6,
     "depth": 3,
+    "eval": [11],
+    "can_binary": false,
+    "can_single": false,
+    "human_start": false,
+    "upstream": 2,
+    "downstream": 1
+  },
+  "green": {
+    "agent": 4,
+    "depth": 4,
     "eval": [10],
     "can_binary": false,
     "can_single": false,
     "human_start": true
   },
-  "green": {
-    "agent": 2,
-    "depth": 3,
-    "eval": [1],
-    "can_binary": false,
-    "can_single": false,
-    "human_start": true
-  },
   "blue": {
-    "agent": 2,
-    "depth": 3,
-    "eval": [1],
+    "agent": 4,
+    "depth": 4,
+    "eval": [10],
     "can_binary": false,
     "can_single": false,
     "human_start": true
