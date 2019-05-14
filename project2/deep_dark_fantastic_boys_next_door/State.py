@@ -359,12 +359,14 @@ class State:
             return self._evaluate10(player)
         elif eval_function == 11:
             return self._evaluate11(player)
+        elif eval_function == 12:
+            return self._evaluate12(player)
         else:
             print("unsupported eval!!")
 
     # eval for move to customized goals
     def _evaluate11(self, player):
-
+        # print(">>>>> in 111111111111111111")
         if player == self.playing_player:
             # print(self.player_pieces_list[self.playing_player])
             pieces_not_in_strategies_points = []
@@ -382,6 +384,14 @@ class State:
             return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, PLAYER_WALLS[self.playing_player]) + \
                     - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
                    self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player])
+        else:
+            return self._evaluate1(player)
+
+    def _evaluate12(self, player):
+        # print(">>>>>")
+        if player == self.playing_player:
+            return - 0.1 * self._cost_to_finish(player) + \
+                   len(self.player_pieces_list[player])
         else:
             return self._evaluate1(player)
 

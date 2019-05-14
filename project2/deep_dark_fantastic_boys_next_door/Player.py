@@ -9,7 +9,6 @@ from .agent.AgentFactory import AgentFactory
 from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
                         OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION)
 from .util import (calculate_jumped_hexe, initial_state)
-from collections import defaultdict
 
 import json
 
@@ -17,6 +16,7 @@ import json
 class Player:
 
     PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/setup.json"
+    # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/haha.json"
 
     def __init__(self, colour):
         """
@@ -40,6 +40,7 @@ class Player:
             self.agent = AgentFactory.create_agent(player_setup[colour]["agent"], **player_setup[colour])
 
         self.eval = player_setup[colour]["eval"]
+        # print(self.eval)
         self.can_binary_game = player_setup[colour]["can_binary"]
         self.can_single_game = player_setup[colour]["can_single"]
         self.human_start = player_setup[colour]["human_start"]
@@ -132,4 +133,5 @@ class Player:
         self.states_history.append(next_state)
 
     def choose_eval(self, index=0):
+        # print(index)
         return self.eval[index]

@@ -10,7 +10,9 @@ from deep_dark_fantastic_boys_next_door.Constants import (THE_ART_OF_WAR,
                                                           STRATEGIC_POINTS,
                                                           MOVE, JUMP, EXIT, PASS,
                                                           NEGATIVE_INFINITY,
-                                                          STRATEGIC_POINTS)
+                                                          STRATEGIC_POINTS,
+                                                          ALL_STRATEGIC_POINTS,
+                                                          STRATEGY_JUMP_FROM_TO_POINTS)
 from deep_dark_fantastic_boys_next_door.agent.ParanoidAgent import ParanoidAgent
 from deep_dark_fantastic_boys_next_door.agent.MaxnAgent import MaxnAgent
 
@@ -38,13 +40,19 @@ class MoZiAgent:
             else:
                 return (MOVE, ((-2, -1), (-1, -2)))
         elif (not self.arrived_strategy_points) and state.player_pieces_in_strategy_points(state.playing_player):
+            # print("now phase 2 !!!!")
             self.arrived_strategy_points = True
-            # TODO
+            return self.get_second_phase_action(state, player)
         elif self.arrived_strategy_points:
-            # TODO
+            # print("continuous phase 2 !!!!")
+            return self.get_second_phase_action(state, player)
+        elif self.can_wandering(state, player):
 
         else:
             return self.search_agent.get_next_action(state, player)
+
+    def can_wandering(self, state, player):
+
 
     def get_second_phase_action(self, state, player):
         player_arrived_pieces = []
@@ -56,3 +64,26 @@ class MoZiAgent:
             else:
                 player_outside_pieces.append(piece)
 
+        # enemy gift piece check
+        move = self.check_gift_move(state, player_arrived_pieces)
+        if move is not None:
+            return move
+
+        # has free pieces (#pieces > 4)
+        if (len(player_arrived_pieces) == 4) and (len(player_outside_pieces) > 0):
+            copied_state = state.copy()
+            copied_state.player_pieces_list[copied_state.playing_player] = player_outside_pieces
+            return self.search_agent.get_next_action(copied_state, player, 1)
+
+        return self.search_agent.get_next_action(state, player)
+
+    # ((-3, 0), (0, -3), (3, -3), (3, 0), (0, 3), (-3, 3))
+    def check_gift_move(self, state, pieces_in_strategy_points):
+        for piece in pieces_in_strategy_points:
+            for jump_choice in STRATEGY_JUMP_FROM_TO_POINTS:
+                if (piece == jump_choice[0]) and self.check_gift_enemy_piece(state, jump_choice[1], jump_choice[2]):
+                    return JUMP, (jump_choice[0], jump_choice[2])
+        return None
+
+    def check_gift_enemy_piece(self, state, jumped, jumped_to):
+        return (jumped in state.pieces_player_dict) and (jumped_to not in state.pieces_player_dict) and (state.pieces_player_dict[jumped] != state.playing_player)

@@ -2,7 +2,7 @@
   "red": {
     "agent": 6,
     "depth": 3,
-    "eval": [11],
+    "eval": [11, 12],
     "can_binary": false,
     "can_single": false,
     "human_start": false,

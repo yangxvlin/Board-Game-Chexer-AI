@@ -26,16 +26,17 @@ class MaxnAgent:
         self.depth = depth
         self.u = u
 
-    def get_next_action(self, state, player):
+    def get_next_action(self, state, player, eval_index=0):
         # print("1", state)
-        next_state, _ = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY, player)
+        next_state, _ = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY, player, eval_index)
         # print(state, "->", next_state)
         # print(">>>> ", state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()))
         assert next_state is not None
         return next_state.action
 
     # TODO check my recursion return correct move
-    def maxn(self, s, depth, root_player, alpha, player):
+    def maxn(self, s, depth, root_player, alpha, player, eval_index=0):
+        # print(eval_index)
         # print(depth, alpha)
         # s:cur state
         my_next_state = None
@@ -43,7 +44,7 @@ class MaxnAgent:
         # print("!!!!!!!!!", s.is_terminate())
         if depth <= 0 or s.is_terminate():
             # print(">>>>>>")
-            return s, [s.evaluate(i, player.choose_eval()) if i == s.playing_player else None for i in range(0, 3)]
+            return s, [s.evaluate(i, player.choose_eval(eval_index)) if i == s.playing_player else None for i in range(0, 3)]
 
         best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]
         cur_player = s.playing_player
@@ -52,13 +53,13 @@ class MaxnAgent:
         # print(depth, SEARCH_DEPTH)
         # print("#####", len(next_states))
         for next_state in next_states:
-            # print(depth, cur_player, "{:30s}".format(str(next_state.action)), "{:.4f}".format(next_state.evaluate(s.playing_player, player.choose_eval())), best)
+            # print(depth, cur_player, "{:30s}".format(str(next_state.action)), "{:.4f}".format(next_state.evaluate(s.playing_player, player.choose_eval(eval_index))), best)
             next_player = next_state.playing_player
 
-            _, result = self.maxn(next_state, depth - 1, root_player, best[next_player], player)
+            _, result = self.maxn(next_state, depth - 1, root_player, best[next_player], player, eval_index)
             if result[cur_player] is None:
                 # print("!!!!!")
-                result[cur_player] = next_state.evaluate(cur_player, player.choose_eval())
+                result[cur_player] = next_state.evaluate(cur_player, player.choose_eval(eval_index))
 
             if result[cur_player] > best[cur_player]:
                 best = result
