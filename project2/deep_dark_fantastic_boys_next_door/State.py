@@ -5,7 +5,7 @@ Date:        2019-3-14 14:32:08
 Description: State to store information about the environment
 """
 
-from copy import deepcopy
+from copy import deepcopy, copy
 from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
                         PLAYER_GOAL, STRATEGIC_POINTS, PLAYER_WALLS)
@@ -16,7 +16,7 @@ class State:
     """ class used to store information of pieces on board and player is playing
     """
 
-    def __init__(self, playing_player, player_pieces, scores):
+    def __init__(self, playing_player, player_pieces):
         """ initialize a state
         :param playing_player: the  player is going to perform an action
         :param player_pieces: player's corresponding pieces
@@ -33,7 +33,7 @@ class State:
         # action from previous state to current state
         self.action = None
         self.turns = 0
-        self.finished_pieces = deepcopy(scores)
+        self.finished_pieces = [0, 0, 0]
 
     def __repr__(self):
         """ str(State)
@@ -60,10 +60,14 @@ class State:
         """ copy(state)
         :return: deepcopy of current copy
         """
-        copyed = State(self.playing_player, EMPTY_BOARD, self.finished_pieces)
-        copyed.player_pieces_list = deepcopy(self.player_pieces_list)
-        copyed.pieces_player_dict = deepcopy(self.pieces_player_dict)
+        copyed = State(self.playing_player, EMPTY_BOARD)
+        # copyed.pieces_player_dict = deepcopy(self.pieces_player_dict)
+        # copyed.player_pieces_list = deepcopy(self.player_pieces_list)
+        # copyed.player_pieces_list = self.player_pieces_list.copy()
+        copyed.player_pieces_list = [i.copy() for i in self.player_pieces_list]
+        copyed.pieces_player_dict = self.pieces_player_dict.copy()
         copyed.turns = self.turns
+        copyed.finished_pieces = self.finished_pieces.copy()
 
         return copyed
 
@@ -285,13 +289,12 @@ class State:
         total_dist = []
         for i in self.player_pieces_list[player]:
             min_dist = 10
-            curr_dist = 0
             for j in PLAYER_GOAL[player]:
                 curr_dist = self._hex_dist(i, j)/2 + 1
                 if curr_dist < min_dist:
                     min_dist = curr_dist
             total_dist.append(min_dist)
-        return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD])
+        return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD - self.finished_pieces[self.playing_player]])
 
     def _cost_to_goal(self, player, goals):
         total_dist = 0
@@ -434,10 +437,6 @@ class State:
 
     def _evaluate9(self, player):
         """ xulin modification """
-        TOTAL_DIST_MIN = 0
-        TOTAL_DIST_MAX = 12
-        NUM_PIECES_MIN = 0
-        NUM_PIECES_MAX = 12
 
         my_pieces_num = len(self.player_pieces_list[player])
 
@@ -634,6 +633,9 @@ class State:
 
     def player_has_win_chance(self, player):
         return len(self.player_pieces_list[player]) + self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD
+
+    def is_player_knock_out(self, player):
+        return len(self.player_pieces_list[player]) == 0
 
     def player_pieces_in_strategy_points(self, player):
         arrived = 0

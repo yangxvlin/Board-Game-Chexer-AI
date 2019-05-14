@@ -17,7 +17,7 @@ def initial_state():
 
     return State(0, [[(-3, i) for i in range(0, 4)], 
                      [(i, -3) for i in range(0, 4)], 
-                     [(3-i, i) for i in range(0, 4)]], INITIAL_SCORE)
+                     [(3-i, i) for i in range(0, 4)]])
 
 
 def vector_add(a, b):
