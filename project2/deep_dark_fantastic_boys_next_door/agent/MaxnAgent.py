@@ -42,6 +42,7 @@ class MaxnAgent:
 
         # print("!!!!!!!!!", s.is_terminate())
         if depth <= 0 or s.is_terminate():
+            # print(">>>>>>")
             return s, [s.evaluate(i, player.choose_eval()) if i == s.playing_player else None for i in range(0, 3)]
 
         best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]
@@ -56,6 +57,7 @@ class MaxnAgent:
 
             _, result = self.maxn(next_state, depth - 1, root_player, best[next_player], player)
             if result[cur_player] is None:
+                # print("!!!!!")
                 result[cur_player] = next_state.evaluate(cur_player, player.choose_eval())
 
             if result[cur_player] > best[cur_player]:

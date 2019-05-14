@@ -8,7 +8,7 @@ Description: State to store information about the environment
 from copy import deepcopy
 from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
-                        PLAYER_GOAL, STRATEGIC_POINTS)
+                        PLAYER_GOAL, STRATEGIC_POINTS, PLAYER_WALLS)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple, normalize)
 
 
@@ -323,6 +323,8 @@ class State:
             total_dist += min_dist
         return total_dist
 
+
+
     @staticmethod
     def _hex_dist(hex1, hex2):
         return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
@@ -362,7 +364,9 @@ class State:
 
     # eval for move to customized goals
     def _evaluate11(self, player):
-        if (player == self.playing_player):
+
+        if player == self.playing_player:
+            # print(self.player_pieces_list[self.playing_player])
             pieces_not_in_strategies_points = []
             occupied_strategy_points = []
 
@@ -374,7 +378,9 @@ class State:
 
             unoccupied_strategy_points = list(set(STRATEGIC_POINTS[self.playing_player]) - set(occupied_strategy_points))
 
-            return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
+            # print(pieces_not_in_strategies_points, unoccupied_strategy_points)
+            return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, PLAYER_WALLS[self.playing_player]) + \
+                    - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
                    self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player])
         else:
             return self._evaluate1(player)
@@ -618,5 +624,14 @@ class State:
 
     def player_has_win_chance(self, player):
         return len(self.player_pieces_list[player]) + self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD
+
+    def player_pieces_in_strategy_points(self, player):
+        arrived = 0
+
+        for piece in self.player_pieces_list[player]:
+            if piece in STRATEGIC_POINTS[player]:
+                arrived += 1
+
+        return arrived == PLAYER_WIN_THRESHOLD
 
     # def is_other_player_finished(self):

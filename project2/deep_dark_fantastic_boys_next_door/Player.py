@@ -61,6 +61,7 @@ class Player:
         """
 
         previous_state = self.states_history[-1]
+        # print(previous_state.player_pieces_list)
 
         # player has no pieces, so no need to search
         if not previous_state.playing_player_has_pieces():
@@ -83,6 +84,7 @@ class Player:
             # TODO use project1 search to exit as quick as possible
             pass
 
+        previous_state.evaluate(previous_state.playing_player, self.choose_eval())
         return self.agent.get_next_action(previous_state, self)
 
     def update(self, colour, action):
@@ -129,5 +131,5 @@ class Player:
 
         self.states_history.append(next_state)
 
-    def choose_eval(self):
-        return self.eval[0]
+    def choose_eval(self, index=0):
+        return self.eval[index]

@@ -19,12 +19,12 @@ class ParanoidAgent:
     def get_next_action(self, state, player):
         # print(">>>>", self.depth)
         next_state, alpha = self.paranoid(state,
-                                      self.depth,
-                                      state.playing_player,
-                                      state.playing_player,
-                                      NEGATIVE_INFINITY,
-                                      POSITIVE_INFINITY,
-                                      player)
+                                          self.depth,
+                                          state.playing_player,
+                                          state.playing_player,
+                                          NEGATIVE_INFINITY,
+                                          POSITIVE_INFINITY,
+                                          player)
         # print("#####", self.depth)
         # print(">>>> ", state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()), alpha)
         assert next_state is not None
