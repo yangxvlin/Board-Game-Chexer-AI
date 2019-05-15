@@ -74,30 +74,35 @@ class MoZiAgent:
                     return MOVE, ((-1, 3), (-2, 3))
         else:
             strategy_points_arrived = state.player_pieces_in_strategy_points(state.playing_player)
-            if not strategy_points_arrived:
-                self.arrived_strategy_points = False
+            # if not strategy_points_arrived:
+            #     self.arrived_strategy_points = False
 
             if (not self.arrived_strategy_points) and strategy_points_arrived:
                 # print("now phase 2 !!!!")
                 self.arrived_strategy_points = True
-                return self.get_second_phase_action(state, player)
+                return self.get_second_phase_action(state, player, strategy_points_arrived)
+            elif self.arrived_strategy_points:
+                return self.get_second_phase_action(state, player, strategy_points_arrived)
             # elif self.can_wandering(state, player):
-            # agent try to go to strategy points
+            # agent try to go to strategy points 1st time
             else:
                 return self.search_agent.get_next_action(state, player)
 
     # def can_wandering(self, state, player):
 
-    def get_second_phase_action(self, state, player):
+    def get_second_phase_action(self, state, player, strategy_points_arrived):
         player_arrived_pieces, player_outside_pieces = self.divide_pieces(state)
 
         num_player_outside_pieces = len(player_outside_pieces)
-        num_player_arrived_pieces = len(player_arrived_pieces)
+        # num_player_arrived_pieces = len(player_arrived_pieces)
 
         # enemy gift piece check
         move = self.check_gift_move(state, player_arrived_pieces)
         if move is not None:
             return move
+
+        if not strategy_points_arrived:
+            return self.search_agent.get_next_action(state, player)
 
         # has free pieces (#pieces > 4)
         # if (num_player_arrived_pieces == len(self.strategy_points)) and (num_player_outside_pieces > 0):
@@ -115,7 +120,12 @@ class MoZiAgent:
             # otherwise do whatever
             return self.search_agent.get_next_action(state, player)
 
-
+    # (-3, 0), (0, -3), (3, -3), (3, 0), (0, 3), (-3, 3)
+    def choose_safe_move(self, player_arrived_pieces, state, player):
+        for piece in player_arrived_pieces:
+            if piece == ALL_STRATEGIC_POINTS[0]:
+                if ((-3, 1) in state.pieces_player_dict) and ((-3, 2) not in state.pieces_player_dict):
+                    pass
 
     # ((-3, 0), (0, -3), (3, -3), (3, 0), (0, 3), (-3, 3))
     def check_gift_move(self, state, pieces_in_strategy_points):
