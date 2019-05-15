@@ -13,10 +13,14 @@ from deep_dark_fantastic_boys_next_door.Constants import (THE_ART_OF_WAR,
                                                           STRATEGIC_POINTS,
                                                           ALL_STRATEGIC_POINTS,
                                                           STRATEGY_JUMP_FROM_TO_POINTS,
-                                                          PLAYER_WIN_THRESHOLD)
-from deep_dark_fantastic_boys_next_door.agent.ParanoidAgent import ParanoidAgent
+                                                          PLAYER_WIN_THRESHOLD,
+                                                          STRATEGY_POINTS_AND_WALL,
+                                                          PLAYER_WALLS,
+                                                          STRATEGY_JUMP_FROM_TO_OUTSIDE_POINTS,
+                                                          STRATEGY_SAFE_MOVE_TO_OUTSIDE_POINTS)
 from deep_dark_fantastic_boys_next_door.agent.MaxnAgent import MaxnAgent
 from copy import deepcopy
+from numpy.random import choice
 
 class MoZiAgent:
 
@@ -35,12 +39,16 @@ class MoZiAgent:
         if state.is_player_knock_out(self.upstream):
             self.strategy_points = self.strategy_points[2:]
         if state.is_player_knock_out(self.downstream):
-            self.strategy_points = self.strategy_points[:2]
+            if len(self.strategy_points) == 4:
+                self.strategy_points = self.strategy_points[:2]
+            else:
+                self.strategy_points = []
 
     def get_next_action(self, state, player):
         if self.strategy_points is None:
             self.strategy_points = deepcopy(STRATEGIC_POINTS[state.playing_player])
         self.update_strategy_points(state)
+        print(">>>>", self.strategy_points)
         # print(">>>>>", self.strategy_points, (not self.arrived_strategy_points) and state.player_pieces_in_strategy_points(state.playing_player), self.arrived_strategy_points)
 
         # return self.search_agent.get_next_action(state, player)
@@ -71,7 +79,10 @@ class MoZiAgent:
                 elif self.strategy_point_occupied(state, (-2, 3)) and (not self.strategy_point_occupied(state, (-3, 3))):
                     return JUMP, ((-1, 3), (-3, 3))
                 else:
-                    return MOVE, ((-1, 3), (-2, 3))
+                    if (-2, 3) not in state.piece_player_dict:
+                        return MOVE, ((-1, 3), (-2, 3))
+                    else:
+                        return self.search_agent.get_next_action(state, player, 0, 3)
         else:
             strategy_points_arrived = state.player_pieces_in_strategy_points(state.playing_player)
             # if not strategy_points_arrived:
@@ -86,11 +97,25 @@ class MoZiAgent:
             # elif self.can_wandering(state, player):
             # agent try to go to strategy points 1st time
             else:
-                return self.search_agent.get_next_action(state, player)
+                self.update_walls(state)
+                print(PLAYER_WALLS[state.playing_player])
+                return self.search_agent.get_next_action(state, player, 0, 3)
 
+    def update_walls(self, state):
+        upstream_points, downstream_points = state.divide_pieces_to_strategies_points(state.playing_player)
+
+        if len(upstream_points) == 2:
+            for wall in STRATEGY_POINTS_AND_WALL[upstream_points]:
+                if wall in PLAYER_WALLS[state.playing_player]:
+                    PLAYER_WALLS[state.playing_player].remove(wall)
+        if len(downstream_points) == 2:
+            for wall in STRATEGY_POINTS_AND_WALL[downstream_points]:
+                if wall in PLAYER_WALLS[state.playing_player]:
+                    PLAYER_WALLS[state.playing_player].remove(wall)
     # def can_wandering(self, state, player):
 
     def get_second_phase_action(self, state, player, strategy_points_arrived):
+        self.update_walls(state)
         player_arrived_pieces, player_outside_pieces = self.divide_pieces(state)
 
         num_player_outside_pieces = len(player_outside_pieces)
@@ -102,7 +127,7 @@ class MoZiAgent:
             return move
 
         if not strategy_points_arrived:
-            return self.search_agent.get_next_action(state, player)
+            return self.search_agent.get_next_action(state, player, 0, 4)
 
         # has free pieces (#pieces > 4)
         # if (num_player_arrived_pieces == len(self.strategy_points)) and (num_player_outside_pieces > 0):
@@ -111,23 +136,54 @@ class MoZiAgent:
             copied_state.player_pieces_list[copied_state.playing_player] = player_outside_pieces
             # enough to exit, exit as quick as possible
             if copied_state.player_has_win_chance(copied_state.playing_player):
-                return self.search_agent.get_next_action(copied_state, player, 2)
+                return self.search_agent.get_next_action(copied_state, player, 2, 4)
             # not enough to exit, go to goals and wait to exit
-            return self.search_agent.get_next_action(copied_state, player, 1)
+            return self.search_agent.get_next_action(copied_state, player, 1, 4)
         else:
             # choose an safe move
+            enemy_gift = self.choose_safe_jump(state, player_arrived_pieces)
+            if len(enemy_gift) > 0:
+                return enemy_gift[choice(len(enemy_gift))]
+
+            safe_move = self.choose_safe_move(state, player_arrived_pieces)
+            if len(safe_move) > 0:
+                return safe_move[choice(len(safe_move))]
 
             # otherwise do whatever
-            return self.search_agent.get_next_action(state, player)
+            return self.search_agent.get_next_action(state, player, 0, 4)
 
-    # (-3, 0), (0, -3), (3, -3), (3, 0), (0, 3), (-3, 3)
-    def choose_safe_move(self, player_arrived_pieces, state, player):
-        for piece in player_arrived_pieces:
-            if piece == ALL_STRATEGIC_POINTS[0]:
-                if ((-3, 1) in state.pieces_player_dict) and ((-3, 2) not in state.pieces_player_dict):
-                    pass
+    # safe move to outside
+    def choose_safe_move(self, state, pieces_in_strategy_points):
+        safe_move = []
 
-    # ((-3, 0), (0, -3), (3, -3), (3, 0), (0, 3), (-3, 3))
+        for piece in pieces_in_strategy_points:
+            move_choices = STRATEGY_SAFE_MOVE_TO_OUTSIDE_POINTS[piece]
+            for move_choice in move_choices:
+                if move_choice[0] not in state.pieces_player_dict:
+                    has_move = True
+                    for beside_point in move_choice[1:]:
+                        if beside_point in state.pieces_player_dict:
+                            has_move = False
+                            break
+                    if has_move:
+                        safe_move.append((MOVE, (piece, move_choice[0])))
+        print(">>>>>>>>>>>>", safe_move)
+        return safe_move
+    #
+
+    # safe jump to outside
+    def choose_safe_jump(self, state, pieces_in_strategy_points):
+        enemy_gift = []
+
+        for piece in pieces_in_strategy_points:
+            jump_choice = STRATEGY_JUMP_FROM_TO_OUTSIDE_POINTS[piece]
+            if self.check_gift_enemy_piece(state, jump_choice[0], jump_choice[1]) and (jump_choice[2] not in state.piece_player_dict):
+                enemy_gift.append((JUMP, (piece, jump_choice[1])))
+
+        print("<<<<<<<<<<", enemy_gift)
+        return enemy_gift
+
+    # choose gift in trap by enemy
     def check_gift_move(self, state, pieces_in_strategy_points):
         for piece in pieces_in_strategy_points:
             for jump_choice in STRATEGY_JUMP_FROM_TO_POINTS:

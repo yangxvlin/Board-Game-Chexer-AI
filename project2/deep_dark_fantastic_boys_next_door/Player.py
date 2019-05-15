@@ -14,10 +14,12 @@ import json
 
 
 class Player:
-    PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/three.json"
+    # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/three.json"
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/setup.json"
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/haha.json"
-    # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/mozi.json"
+    PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/mozi.json"
+
+    PLAYER_INDEX = -1
 
     def __init__(self, colour):
         """
@@ -33,6 +35,7 @@ class Player:
         :param colour: representing the player that control this game
         """
         self.colour = PLAYER_PLAYING_ORDER[colour]
+        Player.PLAYER_INDEX = PLAYER_PLAYING_ORDER[colour]
 
         # TODO check it can work on dimefox
         # json to identify out strategy

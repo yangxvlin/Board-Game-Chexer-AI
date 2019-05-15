@@ -2,7 +2,7 @@
   "red": {
     "agent": 6,
     "depth": 3,
-    "eval": [11, 12, 9],
+    "eval": [11, 12, 9, 13, 1],
     "can_binary": false,
     "can_single": false,
     "human_start": false,
@@ -12,7 +12,7 @@
   "green": {
     "agent": 6,
     "depth": 3,
-    "eval": [11, 12, 9],
+    "eval": [11, 12, 9, 13, 1],
     "can_binary": false,
     "can_single": false,
     "human_start": false,
@@ -22,7 +22,7 @@
   "blue": {
     "agent": 6,
     "depth": 3,
-    "eval": [11, 12, 9],
+    "eval": [11, 12, 9, 13, 1],
     "can_binary": false,
     "can_single": false,
     "human_start": false,

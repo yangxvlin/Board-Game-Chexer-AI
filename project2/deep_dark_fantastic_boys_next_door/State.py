@@ -294,7 +294,7 @@ class State:
                 if curr_dist < min_dist:
                     min_dist = curr_dist
             total_dist.append(min_dist)
-        return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD - self.finished_pieces[self.playing_player]])
+        return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD - self.finished_pieces[player]])
 
     def _cost_to_goal(self, player, goals):
         total_dist = 0
@@ -340,6 +340,8 @@ class State:
     #  how about prefer kill strategy(the move can gain pieces)?
     #  seems blue can always win when all are maxn
     def evaluate(self, player, eval_function):
+        from .Player import Player
+
         if eval_function == 1:
             return self._evaluate1(player)
         elif eval_function == 2:
@@ -364,6 +366,9 @@ class State:
             return self._evaluate11(player)
         elif eval_function == 12:
             return self._evaluate12(player)
+        elif eval_function == 13:
+            # print(Player.PLAYER_INDEX)
+            return self._evaluate13(Player.PLAYER_INDEX)
         else:
             print("unsupported eval!!")
 
@@ -385,7 +390,7 @@ class State:
 
             # print(pieces_not_in_strategies_points, unoccupied_strategy_points)
             return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, PLAYER_WALLS[self.playing_player]) + \
-                    - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
+                    - 0.2 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
                    self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player])
         else:
             return self._evaluate1(player)
@@ -397,6 +402,12 @@ class State:
                    len(self.player_pieces_list[player])
         else:
             return self._evaluate1(player)
+
+    def _evaluate13(self, player):
+        # print(player)
+        # feature dist to destination, number of player's pieces(include player and finished)
+        # eval func = 1 * distance +  1 * num_all_pieces
+        return - (self.finished_pieces[player] + len(self.player_pieces_list[player]))
 
     # first attempt for eval f()
     def _evaluate1(self, player):
@@ -645,5 +656,18 @@ class State:
                 arrived += 1
 
         return arrived == PLAYER_WIN_THRESHOLD
+
+    def divide_pieces_to_strategies_points(self, player):
+        upstream_points = []
+        downstream_points = []
+
+        for i, piece in enumerate(STRATEGIC_POINTS[player]):
+            if piece in self.player_pieces_list[player]:
+                if i <= 1:
+                    upstream_points.append(piece)
+                else:
+                    downstream_points.append(piece)
+
+        return tuple(upstream_points), tuple(downstream_points)
 
     # def is_other_player_finished(self):
