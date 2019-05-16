@@ -18,7 +18,8 @@ class Player:
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/three.json"
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/setup.json"
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/haha.json"
-    PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/mozi.json"
+    # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/mozi.json"
+    PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/human.json"
 
     PLAYER_INDEX = -1
 
