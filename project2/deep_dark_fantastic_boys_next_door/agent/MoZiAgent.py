@@ -54,7 +54,10 @@ class MoZiAgent:
 
         # return self.search_agent.get_next_action(state, player)
         if state.turns < THE_ART_OF_WAR_TURN_LIMIT:
-            return THE_ART_OF_WAR[state.playing_player][state.turns]
+            if (state.playing_player == 2) and self.strategy_point_occupied(state, (-2, 3)):
+                return self.search_agent.get_next_action(state, player, 0, 3)
+            else:
+                return THE_ART_OF_WAR[state.playing_player][state.turns]
         elif state.turns == 1:
 
             if state.playing_player == 0:
@@ -75,15 +78,15 @@ class MoZiAgent:
 
             else:
                 assert state.playing_player == 2
-                if self.strategy_point_occupied(state, STRATEGIC_POINTS[state.playing_player][0]):
-                    return MOVE, ((1, 2), (0, 3))
-                elif self.strategy_point_occupied(state, (-2, 3)) and (not self.strategy_point_occupied(state, (-3, 3))):
-                    return JUMP, ((-1, 3), (-3, 3))
-                else:
-                    if (-2, 3) not in state.pieces_player_dict:
-                        return MOVE, ((-1, 3), (-2, 3))
+                if (-1, 3) in state.pieces_player_dict:
+                    if self.strategy_point_occupied(state, STRATEGIC_POINTS[state.playing_player][0]):
+                        return MOVE, ((1, 2), (0, 3))
+                    elif self.strategy_point_occupied(state, (-2, 3)) and (not self.strategy_point_occupied(state, (-3, 3))):
+                        return JUMP, ((-1, 3), (-3, 3))
                     else:
-                        return self.search_agent.get_next_action(state, player, 0, 3)
+                        return MOVE, ((-1, 3), (-2, 3))
+                else:
+                    return self.search_agent.get_next_action(state, player, 0, 3)
         else:
             strategy_points_arrived = self.player_pieces_in_strategy_points(state.playing_player, state)
             # if not strategy_points_arrived:
