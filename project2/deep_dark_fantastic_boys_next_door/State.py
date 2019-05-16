@@ -657,6 +657,7 @@ class State:
         return total_dist
 
     def get_key(self):
+        """  """
         return tuple(element_to_tuple(self.player_pieces_list)) + tuple(self.finished_pieces)
 
     def is_playing_player_finished(self):
