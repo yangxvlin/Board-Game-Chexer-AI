@@ -7,7 +7,8 @@ Description: Player class
 
 from .agent.AgentFactory import AgentFactory
 from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
-                        OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION)
+                        OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION,
+                        PLAYER_WALLS)
 from .util import (calculate_jumped_hexe, initial_state)
 
 import json
@@ -53,6 +54,11 @@ class Player:
         self.has_player_knock_out = False
         self.is_just_need_to_exit = False
 
+        # walls pieces should close to
+        self.strategy_points_walls = PLAYER_WALLS[self.colour].copy()
+        # walls pieces should far from
+        self.strategy_traps = []
+
     def action(self):
         """
         This method is called at the beginning of each of your turns to request
@@ -89,7 +95,7 @@ class Player:
             # TODO use project1 search to exit as quick as possible
             pass
 
-        previous_state.evaluate(previous_state.playing_player, self.choose_eval())
+        # previous_state.evaluate(previous_state.playing_player, self.choose_eval())
         return self.agent.get_next_action(previous_state, self)
 
     def update(self, colour, action):

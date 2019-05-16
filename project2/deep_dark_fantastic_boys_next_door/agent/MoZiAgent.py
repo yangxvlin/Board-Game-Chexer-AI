@@ -15,7 +15,6 @@ from deep_dark_fantastic_boys_next_door.Constants import (THE_ART_OF_WAR,
                                                           STRATEGY_JUMP_FROM_TO_POINTS,
                                                           PLAYER_WIN_THRESHOLD,
                                                           STRATEGY_POINTS_AND_WALL,
-                                                          PLAYER_WALLS,
                                                           STRATEGY_JUMP_FROM_TO_OUTSIDE_POINTS,
                                                           STRATEGY_SAFE_MOVE_TO_OUTSIDE_POINTS)
 from deep_dark_fantastic_boys_next_door.agent.MaxnAgent import MaxnAgent
@@ -45,10 +44,11 @@ class MoZiAgent:
                 self.strategy_points = []
 
     def get_next_action(self, state, player):
+        # print("><><", player is None)
         if self.strategy_points is None:
             self.strategy_points = deepcopy(STRATEGIC_POINTS[state.playing_player])
         self.update_strategy_points(state)
-        print(">>>>", self.strategy_points)
+        # print(">>>>", self.strategy_points)
         # print(">>>>>", self.strategy_points, (not self.arrived_strategy_points) and state.player_pieces_in_strategy_points(state.playing_player), self.arrived_strategy_points)
 
         # return self.search_agent.get_next_action(state, player)
@@ -79,7 +79,7 @@ class MoZiAgent:
                 elif self.strategy_point_occupied(state, (-2, 3)) and (not self.strategy_point_occupied(state, (-3, 3))):
                     return JUMP, ((-1, 3), (-3, 3))
                 else:
-                    if (-2, 3) not in state.piece_player_dict:
+                    if (-2, 3) not in state.pieces_player_dict:
                         return MOVE, ((-1, 3), (-2, 3))
                     else:
                         return self.search_agent.get_next_action(state, player, 0, 3)
@@ -97,25 +97,28 @@ class MoZiAgent:
             # elif self.can_wandering(state, player):
             # agent try to go to strategy points 1st time
             else:
-                self.update_walls(state)
-                print(PLAYER_WALLS[state.playing_player])
+                self.update_walls(state, player)
+                print(">>>>>>", player.strategy_points_walls, player.strategy_traps)
                 return self.search_agent.get_next_action(state, player, 0, 3)
 
-    def update_walls(self, state):
+    def update_walls(self, state, player):
         upstream_points, downstream_points = state.divide_pieces_to_strategies_points(state.playing_player)
 
         if len(upstream_points) == 2:
             for wall in STRATEGY_POINTS_AND_WALL[upstream_points]:
-                if wall in PLAYER_WALLS[state.playing_player]:
-                    PLAYER_WALLS[state.playing_player].remove(wall)
+                if wall in player.strategy_points_walls:
+                    player.strategy_points_walls.remove(wall)
+                    player.strategy_traps.append(wall)
         if len(downstream_points) == 2:
             for wall in STRATEGY_POINTS_AND_WALL[downstream_points]:
-                if wall in PLAYER_WALLS[state.playing_player]:
-                    PLAYER_WALLS[state.playing_player].remove(wall)
+                if wall in player.strategy_points_walls:
+                    player.strategy_points_walls.remove(wall)
+                    player.strategy_traps.append(wall)
     # def can_wandering(self, state, player):
 
     def get_second_phase_action(self, state, player, strategy_points_arrived):
-        self.update_walls(state)
+        self.update_walls(state, player)
+        print(">>>>>>", player.strategy_points_walls, player.strategy_traps)
         player_arrived_pieces, player_outside_pieces = self.divide_pieces(state)
 
         num_player_outside_pieces = len(player_outside_pieces)
@@ -177,7 +180,7 @@ class MoZiAgent:
 
         for piece in pieces_in_strategy_points:
             jump_choice = STRATEGY_JUMP_FROM_TO_OUTSIDE_POINTS[piece]
-            if self.check_gift_enemy_piece(state, jump_choice[0], jump_choice[1]) and (jump_choice[2] not in state.piece_player_dict):
+            if self.check_gift_enemy_piece(state, jump_choice[0], jump_choice[1]) and (jump_choice[2] not in state.pieces_player_dict):
                 enemy_gift.append((JUMP, (piece, jump_choice[1])))
 
         print("<<<<<<<<<<", enemy_gift)

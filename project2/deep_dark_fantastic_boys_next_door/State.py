@@ -5,10 +5,9 @@ Date:        2019-3-14 14:32:08
 Description: State to store information about the environment
 """
 
-from copy import deepcopy, copy
 from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
-                        PLAYER_GOAL, STRATEGIC_POINTS, PLAYER_WALLS)
+                        PLAYER_GOAL, STRATEGIC_POINTS)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple, normalize)
 
 
@@ -326,7 +325,16 @@ class State:
             total_dist += min_dist
         return total_dist
 
-
+    def _piece_cost_away_points(self, player, points):
+        total_dist = 0
+        for i in self.player_pieces_list[player]:
+            min_dist = 10
+            for j in points:
+                curr_dist = self._hex_dist(i, j) / 2 + 1
+                if curr_dist < min_dist:
+                    min_dist = curr_dist
+            total_dist += min_dist
+        return total_dist
 
     @staticmethod
     def _hex_dist(hex1, hex2):
@@ -339,33 +347,33 @@ class State:
     #  do we need to move the most not yet moved pieces?
     #  how about prefer kill strategy(the move can gain pieces)?
     #  seems blue can always win when all are maxn
-    def evaluate(self, player, eval_function):
+    def evaluate(self, player_id, eval_function, player=None):
         from .Player import Player
 
         if eval_function == 1:
-            return self._evaluate1(player)
+            return self._evaluate1(player_id)
         elif eval_function == 2:
-            return self._evaluate2(player)
+            return self._evaluate2(player_id)
         elif eval_function == 3:
-            return self._evaluate3(player)
+            return self._evaluate3(player_id)
         elif eval_function == 4:
-            return self._evaluate4(player)
+            return self._evaluate4(player_id)
         elif eval_function == 5:
-            return self._evaluate5(player)
+            return self._evaluate5(player_id)
         elif eval_function == 6:
-            return self._evaluate6(player)
+            return self._evaluate6(player_id)
         elif eval_function == 7:
-            return self._evaluate7(player)
+            return self._evaluate7(player_id)
         elif eval_function == 8:
-            return self._evaluate8(player)
+            return self._evaluate8(player_id)
         elif eval_function == 9:
-            return self._evaluate9(player)
+            return self._evaluate9(player_id)
         elif eval_function == 10:
-            return self._evaluate10(player)
+            return self._evaluate10(player_id)
         elif eval_function == 11:
-            return self._evaluate11(player)
+            return self._evaluate11(player_id, player)
         elif eval_function == 12:
-            return self._evaluate12(player)
+            return self._evaluate12(player_id, player)
         elif eval_function == 13:
             # print(Player.PLAYER_INDEX)
             return self._evaluate13(Player.PLAYER_INDEX)
@@ -373,9 +381,10 @@ class State:
             print("unsupported eval!!")
 
     # eval for move to customized goals
-    def _evaluate11(self, player):
+    def _evaluate11(self, player_id, player):
         # print(">>>>> in 111111111111111111")
-        if player == self.playing_player:
+        # print(player_id, player is None)
+        if player_id == self.playing_player:
             # print(self.player_pieces_list[self.playing_player])
             pieces_not_in_strategies_points = []
             occupied_strategy_points = []
@@ -389,19 +398,20 @@ class State:
             unoccupied_strategy_points = list(set(STRATEGIC_POINTS[self.playing_player]) - set(occupied_strategy_points))
 
             # print(pieces_not_in_strategies_points, unoccupied_strategy_points)
-            return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, PLAYER_WALLS[self.playing_player]) + \
+            return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, player.strategy_points_walls) + \
                     - 0.2 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
                    self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player])
         else:
-            return self._evaluate1(player)
+            return self._evaluate1(player_id)
 
-    def _evaluate12(self, player):
+    def _evaluate12(self, player_id, player):
         # print(">>>>>")
-        if player == self.playing_player:
-            return - 0.1 * self._cost_to_finish(player) + \
-                   len(self.player_pieces_list[player])
+        if player_id == self.playing_player:
+            return - 0.1 * self._cost_to_finish(player_id) + \
+                   len(self.player_pieces_list[player_id]) + \
+                    0.25 * self._piece_cost_away_points(self.playing_player, player.strategy_traps)
         else:
-            return self._evaluate1(player)
+            return self._evaluate1(player_id)
 
     def _evaluate13(self, player):
         # print(player)

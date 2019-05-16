@@ -28,6 +28,7 @@ class MaxnAgent:
 
     def get_next_action(self, state, player, eval_index=0, opponent_index=0):
         # print("1", state)
+        # print("2222222222", player is None)
         next_state, best = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY, player, eval_index, opponent_index)
         # print(state, "->", next_state)
         # print(">>>> ", best, state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()))
@@ -48,7 +49,7 @@ class MaxnAgent:
             for i in range(0, 3):
                 if i == s.playing_player:
                     if i == root_player:
-                        res.append(s.evaluate(i, player.choose_eval(eval_index)))
+                        res.append(s.evaluate(i, player.choose_eval(eval_index), player))
                     else:
                         res.append(s.evaluate(i, player.choose_eval(opponent_index)))
                 else:
@@ -70,7 +71,8 @@ class MaxnAgent:
             if result[cur_player] is None:
                 # print("!!!!!")
                 if cur_player == root_player:
-                    result[cur_player] = next_state.evaluate(cur_player, player.choose_eval(eval_index))
+                    # print("1111111", player is None)
+                    result[cur_player] = next_state.evaluate(cur_player, player.choose_eval(eval_index), player)
                 else:
                     result[cur_player] = next_state.evaluate(cur_player, player.choose_eval(opponent_index))
 
