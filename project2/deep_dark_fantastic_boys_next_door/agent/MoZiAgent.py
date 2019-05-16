@@ -36,19 +36,20 @@ class MoZiAgent:
 
     def update_strategy_points(self, state):
         if state.is_player_knock_out(self.upstream):
-            self.strategy_points = self.strategy_points[2:]
+            for point in STRATEGIC_POINTS[state.playing_player][:2]:
+                if point in self.strategy_points:
+                    self.strategy_points.remove(point)
         if state.is_player_knock_out(self.downstream):
-            if len(self.strategy_points) == 4:
-                self.strategy_points = self.strategy_points[:2]
-            else:
-                self.strategy_points = []
+            for point in STRATEGIC_POINTS[state.playing_player][2:]:
+                if point in self.strategy_points:
+                    self.strategy_points.remove(point)
 
     def get_next_action(self, state, player):
         # print("><><", player is None)
         if self.strategy_points is None:
-            self.strategy_points = deepcopy(STRATEGIC_POINTS[state.playing_player])
+            self.strategy_points = player.strategy_points
         self.update_strategy_points(state)
-        # print(">>>>", self.strategy_points)
+        print(">>>>", player.strategy_points, self.strategy_points)
         # print(">>>>>", self.strategy_points, (not self.arrived_strategy_points) and state.player_pieces_in_strategy_points(state.playing_player), self.arrived_strategy_points)
 
         # return self.search_agent.get_next_action(state, player)
@@ -84,7 +85,7 @@ class MoZiAgent:
                     else:
                         return self.search_agent.get_next_action(state, player, 0, 3)
         else:
-            strategy_points_arrived = state.player_pieces_in_strategy_points(state.playing_player)
+            strategy_points_arrived = self.player_pieces_in_strategy_points(state.playing_player, state)
             # if not strategy_points_arrived:
             #     self.arrived_strategy_points = False
 
@@ -102,7 +103,7 @@ class MoZiAgent:
                 return self.search_agent.get_next_action(state, player, 0, 3)
 
     def update_walls(self, state, player):
-        upstream_points, downstream_points = state.divide_pieces_to_strategies_points(state.playing_player)
+        upstream_points, downstream_points = self.divide_pieces_to_strategies_points(state.playing_player, state)
 
         if len(upstream_points) == 2:
             for wall in STRATEGY_POINTS_AND_WALL[upstream_points]:
@@ -207,3 +208,25 @@ class MoZiAgent:
             else:
                 player_outside_pieces.append(piece)
         return player_arrived_pieces, player_outside_pieces
+
+    def player_pieces_in_strategy_points(self, player_id, state):
+        arrived = 0
+
+        for piece in state.player_pieces_list[player_id]:
+            if piece in self.strategy_points:
+                arrived += 1
+
+        return arrived == len(self.strategy_points)
+
+    def divide_pieces_to_strategies_points(self, player, state):
+        upstream_points = []
+        downstream_points = []
+
+        for i, piece in enumerate(self.strategy_points):
+            if piece in state.player_pieces_list[player]:
+                if i <= 1:
+                    upstream_points.append(piece)
+                else:
+                    downstream_points.append(piece)
+
+        return tuple(upstream_points), tuple(downstream_points)

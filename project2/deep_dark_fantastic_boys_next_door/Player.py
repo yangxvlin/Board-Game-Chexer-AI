@@ -8,7 +8,7 @@ Description: Player class
 from .agent.AgentFactory import AgentFactory
 from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
                         OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION,
-                        PLAYER_WALLS)
+                        PLAYER_WALLS, STRATEGIC_POINTS)
 from .util import (calculate_jumped_hexe, initial_state)
 
 import json
@@ -58,6 +58,9 @@ class Player:
         self.strategy_points_walls = PLAYER_WALLS[self.colour].copy()
         # walls pieces should far from
         self.strategy_traps = []
+
+        # self.strategy_points = []
+        self.strategy_points = STRATEGIC_POINTS[self.colour].copy()
 
     def action(self):
         """

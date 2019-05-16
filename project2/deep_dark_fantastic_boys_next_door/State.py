@@ -390,12 +390,12 @@ class State:
             occupied_strategy_points = []
 
             for piece in self.player_pieces_list[self.playing_player]:
-                if piece not in STRATEGIC_POINTS[self.playing_player]:
+                if piece not in player.strategy_points:
                     pieces_not_in_strategies_points.append(piece)
                 else:
                     occupied_strategy_points.append(piece)
 
-            unoccupied_strategy_points = list(set(STRATEGIC_POINTS[self.playing_player]) - set(occupied_strategy_points))
+            unoccupied_strategy_points = list(set(player.strategy_points) - set(occupied_strategy_points))
 
             # print(pieces_not_in_strategies_points, unoccupied_strategy_points)
             return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, player.strategy_points_walls) + \
@@ -657,27 +657,5 @@ class State:
 
     def is_player_knock_out(self, player):
         return len(self.player_pieces_list[player]) == 0
-
-    def player_pieces_in_strategy_points(self, player):
-        arrived = 0
-
-        for piece in self.player_pieces_list[player]:
-            if piece in STRATEGIC_POINTS[player]:
-                arrived += 1
-
-        return arrived == PLAYER_WIN_THRESHOLD
-
-    def divide_pieces_to_strategies_points(self, player):
-        upstream_points = []
-        downstream_points = []
-
-        for i, piece in enumerate(STRATEGIC_POINTS[player]):
-            if piece in self.player_pieces_list[player]:
-                if i <= 1:
-                    upstream_points.append(piece)
-                else:
-                    downstream_points.append(piece)
-
-        return tuple(upstream_points), tuple(downstream_points)
 
     # def is_other_player_finished(self):
