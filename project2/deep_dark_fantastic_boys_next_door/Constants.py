@@ -55,6 +55,10 @@ PLAYER_GOAL = {0: [(BOARD_BOUND, -i) for i in range(0, PLAYER_WIN_THRESHOLD)],
                    for i in range(0, PLAYER_WIN_THRESHOLD)],
                2: [(-i, i-BOARD_BOUND) for i in range(0, PLAYER_WIN_THRESHOLD)]}
 
+PLAYER_GOAL_STRATEGY_POINTS = {0: ((3, -3), (3,  0)),
+                               1: ((0,  3), (-3, 3)),
+                               2: ((-3, 0), (0, -3))}
+
 """ number of players in game """
 N_PLAYER = 3
 

@@ -7,7 +7,7 @@ Description: State to store information about the environment
 
 from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
-                        PLAYER_GOAL, STRATEGIC_POINTS)
+                        PLAYER_GOAL, PLAYER_GOAL_STRATEGY_POINTS)
 from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple, normalize)
 
 
@@ -343,6 +343,18 @@ class State:
                 res += 1
         return res
 
+    def _piece_wander_cost(self, player_id):
+        total_dist = 0
+
+        for i in self.player_pieces_list[player_id]:
+            min_dist = 10
+            for j in PLAYER_GOAL_STRATEGY_POINTS[player_id]:
+                curr_dist = self._hex_dist(i, j) / 2 + 1
+                if curr_dist < min_dist:
+                    min_dist = curr_dist
+            total_dist += min_dist
+        return total_dist
+
     @staticmethod
     def _hex_dist(hex1, hex2):
         return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
@@ -414,7 +426,7 @@ class State:
     def _evaluate12(self, player_id, player):
         # print(">>>>>")
         if player_id == self.playing_player:
-            return - 0.1 * self._cost_to_finish(player_id) + \
+            return - 0.1 * self._piece_wander_cost(player_id) + \
                    len(self.player_pieces_list[player_id]) - \
                     self._piece_should_not_be_in(self.playing_player, player.strategy_points_walls)
                    # + 0.25 * self._piece_cost_away_points(self.playing_player, player.strategy_traps)
