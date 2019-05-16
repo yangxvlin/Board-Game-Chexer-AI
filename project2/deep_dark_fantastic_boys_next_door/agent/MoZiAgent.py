@@ -78,7 +78,7 @@ class MoZiAgent:
 
             else:
                 assert state.playing_player == 2
-                if (-1, 3) in state.pieces_player_dict:
+                if ((-1, 3) in state.pieces_player_dict) and (state.pieces_player_dict[(-1, 3)] == state.playing_player):
                     if self.strategy_point_occupied(state, STRATEGIC_POINTS[state.playing_player][0]):
                         return MOVE, ((1, 2), (0, 3))
                     elif self.strategy_point_occupied(state, (-2, 3)) and (not self.strategy_point_occupied(state, (-3, 3))):

@@ -31,6 +31,6 @@ class AgentFactory:
         elif agent_type == 6:
             return MoZiAgent(kwargs["upstream"], kwargs["downstream"], kwargs["depth"])
         elif agent_type == 7:
-            return HumanAgent(kwargs["upstream"], kwargs["downstream"], kwargs["depth"])
+            return HumanAgent()
         else:
             return RandomAgent()
