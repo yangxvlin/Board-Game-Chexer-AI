@@ -101,18 +101,14 @@ def element_to_tuple(list_of_elements):
 def calculate_jumped_hexe(from_hexe, to_hexe):
     """
     return the coordinate of the hexagon being jumped over
+    adapted from provided game.py in referee
     :param from_hexe: the coordinate of the piece before it jumps
     :param to_hexe: the coordinate of the piece after it jumps
     :return: coordinate of the hexagon being jumped over
     """
-    for delta in MOVE_DELTA:
-        jumped_hexe = vector_add(from_hexe, delta)
-        # from_hexe perform a jump
-        tmp_to_hexe = vector_add(jumped_hexe, delta)
-
-        # from_hexe jumped over correct piece to to_hexe
-        if tmp_to_hexe == to_hexe:
-            return jumped_hexe
+    (q_a, r_a), (q_b, r_b) = from_hexe, to_hexe
+    qr_c = (q_a + q_b) // 2, (r_a + r_b) // 2
+    return qr_c
 
 
 def normalize(x, x_max, x_min):
