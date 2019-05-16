@@ -13,6 +13,10 @@ PAUSE = False
 
 
 def initial_state():
+    """
+    return initial state
+    :return: initial state
+    """
     from .State import State
 
     return State(0, [[(-3, i) for i in range(0, 4)], 
@@ -95,6 +99,12 @@ def element_to_tuple(list_of_elements):
 
 
 def calculate_jumped_hexe(from_hexe, to_hexe):
+    """
+    return the coordinate of the hexagon being jumped over
+    :param from_hexe: the coordinate of the piece before it jumps
+    :param to_hexe: the coordinate of the piece after it jumps
+    :return: coordinate of the hexagon being jumped over
+    """
     for delta in MOVE_DELTA:
         jumped_hexe = vector_add(from_hexe, delta)
         # from_hexe perform a jump
@@ -106,4 +116,12 @@ def calculate_jumped_hexe(from_hexe, to_hexe):
 
 
 def normalize(x, x_max, x_min):
+    """
+    return the normalised value of the input
+    value using given max and min values
+    :param x: the value to be normalised
+    :param x_max: the max value of x
+    :param x_min: the min value of x
+    :return: normalised value
+    """
     return (x - x_min) / (x_max - x_min)

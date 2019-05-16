@@ -661,9 +661,17 @@ class State:
         return tuple(element_to_tuple(self.player_pieces_list)) + tuple(self.finished_pieces)
 
     def is_playing_player_finished(self):
+        """
+        check if player
+        :return:
+        """
         return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
 
     def playing_player_has_pieces(self):
+        """
+        check if player has pieces left
+        :return: true if player still has pieces
+        """
         return len(self.player_pieces_list[self.playing_player]) != 0
 
     def is_binary(self):
@@ -678,6 +686,11 @@ class State:
         return len(self.player_pieces_list[player]) + self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD
 
     def is_player_knock_out(self, player):
+        """
+        check if the given player has no pieces left
+        :param player: the player to be checked
+        :return: true if the player has no pieces left
+        """
         return len(self.player_pieces_list[player]) == 0
 
     # def is_other_player_finished(self):

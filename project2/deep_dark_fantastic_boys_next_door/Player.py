@@ -146,5 +146,11 @@ class Player:
         self.states_history.append(next_state)
 
     def choose_eval(self, index=0):
+        """
+        return the evaluation function with specified index in player's
+        evaluation function list
+        :param index: the index of the evaluation function to be returned
+        :return: evaluation function with specified index
+        """
         # print(index)
         return self.eval[index]
