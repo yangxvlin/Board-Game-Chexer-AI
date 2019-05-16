@@ -142,7 +142,7 @@ class MoZiAgent:
             if copied_state.player_has_win_chance(copied_state.playing_player):
                 return self.search_agent.get_next_action(copied_state, player, 2, 4)
             # not enough to exit, go to goals and wait to exit
-            return self.search_agent.get_next_action(copied_state, player, 1, 4)
+            return self.search_agent.get_next_action(copied_state, player, 1, 3)
         else:
             # choose an safe move
             enemy_gift = self.choose_safe_jump(state, player_arrived_pieces)
@@ -222,7 +222,7 @@ class MoZiAgent:
         upstream_points = []
         downstream_points = []
 
-        for i, piece in enumerate(self.strategy_points):
+        for i, piece in enumerate(STRATEGIC_POINTS[player]):
             if piece in state.player_pieces_list[player]:
                 if i <= 1:
                     upstream_points.append(piece)

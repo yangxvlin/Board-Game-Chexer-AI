@@ -336,6 +336,13 @@ class State:
             total_dist += min_dist
         return total_dist
 
+    def _piece_should_not_be_in(self, player_id, points):
+        res = 0
+        for piece in self.player_pieces_list[player_id]:
+            if piece in points:
+                res += 1
+        return res
+
     @staticmethod
     def _hex_dist(hex1, hex2):
         return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
@@ -367,7 +374,7 @@ class State:
         elif eval_function == 8:
             return self._evaluate8(player_id)
         elif eval_function == 9:
-            return self._evaluate9(player_id)
+            return self._evaluate9(player_id, player)
         elif eval_function == 10:
             return self._evaluate10(player_id)
         elif eval_function == 11:
@@ -408,8 +415,9 @@ class State:
         # print(">>>>>")
         if player_id == self.playing_player:
             return - 0.1 * self._cost_to_finish(player_id) + \
-                   len(self.player_pieces_list[player_id]) + \
-                    0.25 * self._piece_cost_away_points(self.playing_player, player.strategy_traps)
+                   len(self.player_pieces_list[player_id]) - \
+                    self._piece_should_not_be_in(self.playing_player, player.strategy_points_walls)
+                   # + 0.25 * self._piece_cost_away_points(self.playing_player, player.strategy_traps)
         else:
             return self._evaluate1(player_id)
 
@@ -456,17 +464,18 @@ class State:
                normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
                2 * normalize(self.finished_pieces[player], 4, 0)
 
-    def _evaluate9(self, player):
+    def _evaluate9(self, player_id, player):
         """ xulin modification """
 
-        my_pieces_num = len(self.player_pieces_list[player])
+        my_pieces_num = len(self.player_pieces_list[player_id])
 
-        if self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD:
+        if self.finished_pieces[player_id] >= PLAYER_WIN_THRESHOLD:
             return 100
 
-        return - 0.1 * self._necessary_cost_to_finish(player) + \
-               self.finished_pieces[player] + my_pieces_num + \
-               self.finished_pieces[player]
+        return - 0.1 * self._necessary_cost_to_finish(player_id) + \
+               self.finished_pieces[player_id] + my_pieces_num + \
+               self.finished_pieces[player_id] - \
+               self._piece_should_not_be_in(self.playing_player, player.strategy_points_walls)
 
     def _evaluate10(self, player):
         """ xulin modification """
