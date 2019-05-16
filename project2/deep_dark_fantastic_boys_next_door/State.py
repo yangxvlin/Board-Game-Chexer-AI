@@ -396,8 +396,10 @@ class State:
         elif eval_function == 13:
             # print(Player.PLAYER_INDEX)
             return self._evaluate13(Player.PLAYER_INDEX)
+        # for completeness
         else:
             print("unsupported eval!!")
+            return None
 
     # eval for move to customized goals
     def _evaluate11(self, player_id, player):
