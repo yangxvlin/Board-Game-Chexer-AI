@@ -17,9 +17,16 @@ BOARD_BOUND = 3
 """ hexe piece's moving delta """
 MOVE_DELTA = [(-1, 0), (0, -1), (1, -1), (1, 0), (0, 1), (-1, 1)]
 
-PLAYER_PREFERRED_MOVE_DELTA = {0: [(1, -1), (1, 0), (0, -1), (0, 1), (-1, 1), (-1, 0)],
-                               1: [(-1, 1), (0, 1), (-1, 0), (1, 0), (0, -1), (1, -1)],
-                               2: [(-1, 0), (0, -1), (1, -1), (-1, 1), (1, 0), (0, 1)]}
+""" 
+a modified moving delta (based on direction to the player's goal hexes) for 
+each player 
+"""
+PLAYER_PREFERRED_MOVE_DELTA = {0: [(1, -1), (1, 0), (0, -1),
+                                   (0, 1), (-1, 1), (-1, 0)],
+                               1: [(-1, 1), (0, 1), (-1, 0),
+                                   (1, 0), (0, -1), (1, -1)],
+                               2: [(-1, 0), (0, -1), (1, -1),
+                                   (-1, 1), (1, 0), (0, 1)]}
 
 """ move action """
 MOVE = "MOVE"
@@ -30,8 +37,10 @@ JUMP = "JUMP"
 """ exit action """
 EXIT = "EXIT"
 
+""" pass action """
 PASS = "PASS"
 
+""" a predefined pass action in the chexer game """
 PASS_ACTION = ("PASS", None)
 
 """ player win when 4 pieces exit """
@@ -55,6 +64,10 @@ PLAYER_GOAL = {0: [(BOARD_BOUND, -i) for i in range(0, PLAYER_WIN_THRESHOLD)],
                    for i in range(0, PLAYER_WIN_THRESHOLD)],
                2: [(-i, i-BOARD_BOUND) for i in range(0, PLAYER_WIN_THRESHOLD)]}
 
+""" 
+the corner point in player's goal hexes are considered as important  strategy 
+points 
+"""
 PLAYER_GOAL_STRATEGY_POINTS = {0: ((3, -3), (3,  0)),
                                1: ((0,  3), (-3, 3)),
                                2: ((-3, 0), (0, -3))}
@@ -62,10 +75,14 @@ PLAYER_GOAL_STRATEGY_POINTS = {0: ((3, -3), (3,  0)),
 """ number of players in game """
 N_PLAYER = 3
 
+""" the number of turn of open game human-start strategy """
 OPEN_GAME_TURN_LIMIT = 3
 
-# TODO solitary at higher position (closer/far away) from origin
-""" {player: {turn: action}} """
+""" 
+open game human-start strategy for each player's starting turns to achieve a 
+good started hexe pattern for adversarial agents
+{player: {turn: action}} 
+"""
 OPEN_GAME_AGENT = {0: {0: (MOVE, ((-3, 0), (-2, 0))),
                        1: (MOVE, ((-2, 0), (-2, 1))),
                        2: (MOVE, ((-3, 3), (-2, 2)))},
@@ -76,20 +93,24 @@ OPEN_GAME_AGENT = {0: {0: (MOVE, ((-3, 0), (-2, 0))),
                        1: (MOVE, ((2,  1), (1,  1))),
                        2: (MOVE, ((3,  0), (2,  1)))}}
 
+""" 
+open game human-start strategy for each player's starting turns to achieve a 
+good started hexe pattern for MoZi Agent
+{player: {turn: action}} 
+"""
 THE_ART_OF_WAR = {0: {0: (MOVE, ((-3, 0), (-2, -1)))},
                   1: {0: (MOVE, ((3, -3), (3,  -2)))},
                   2: {0: (MOVE, ((0,  3), (-1,  3)))}}
 
-""" {player: (upstream points, downstream points)} """
+""" 
+strategy points for each player to capture used by MoZi Agent
+{player: (upstream points, downstream points)} 
+"""
 STRATEGIC_POINTS = {0: [(0, -3), (-3, 0), (0, 3), (-3, 3)],
                     1: [(3,  0), (3, -3), (-3, 0), (0, -3)],
                     2: [(-3, 3), (0,  3), (3, -3), (3, 0)]}
 
 ALL_STRATEGIC_POINTS = [(-3, 0), (0, -3), (3, -3), (3, 0), (0, 3), (-3, 3)]
-
-# PLAYER_WALLS = {0: [(-3, 0), (0, -3), (-2, -1), (-1, -2), (-3, 3), (0,  3), (-2,  3), (-1,  3)],
-#                 1: [(3, -3), (3,  0), (3,  -1), (3,  -2), (0, -3), (-3, 0), (-2, -1), (-1, -2)],
-#                 2: [(0,  3), (-3, 3), (-2,  3), (-1,  3), (3,  0), (3, -3), (3,  -2), (3,  -1)]}
 
 """ wall points for each player """
 PLAYER_WALLS = {0: [(-2, -1), (-1, -2), (-2,  3), (-1,  3)],
