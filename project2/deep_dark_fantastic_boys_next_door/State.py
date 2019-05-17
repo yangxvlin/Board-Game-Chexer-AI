@@ -242,6 +242,10 @@ class State:
             self.action = (action, None)
 
     def get_next_player_index(self):
+        """
+        return the index of the next player
+        :return: index of the next player
+        """
         if self.playing_player != 2:
             return self.playing_player + 1
         else:
@@ -260,17 +264,26 @@ class State:
         return self.pieces_player_dict.keys()
 
     def get_winner(self):
+        """
+        return the winner of the game, None if there is no winner
+        :return: winner of the game
+        """
         for player in range(0, N_PLAYER):
             if self.finished_pieces[player] == PLAYER_WIN_THRESHOLD:
                 return player
         return None
 
     def is_terminate(self):
+        """
+        check if the game is finished
+        :return: true if the game is finished
+        """
         return (self.turns == MAX_TURN) or (self.get_winner() is not None)
 
     def _cost_to_finish(self, player):
-        """ h(state)
-        :return: distance from current state to goal state
+        """
+        return the estimate of cost for the given player to finish the game
+        :return: the approximate cost
         """
         # hex distance right now
         total_dist = 0
@@ -296,6 +309,11 @@ class State:
         return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD - self.finished_pieces[player]])
 
     def _cost_to_goal(self, player, goals):
+        """
+        return the estimate of cost for the given player to move all the pieces
+        to the given goals
+        :return: the approximate cost
+        """
         total_dist = 0
         for i in self.player_pieces_list[player]:
             min_dist = 10
@@ -307,8 +325,8 @@ class State:
         return total_dist
 
     def _pieces_cost_to_goal(self, pieces, goals):
-        total_dist = 0
 
+        total_dist = 0
         if len(pieces) >= len(goals):
             froms = goals
             tos = pieces
@@ -443,6 +461,11 @@ class State:
 
     # first attempt for eval f()
     def _evaluate1(self, player):
+        """
+        this is the evaluation function with feature:
+        :param player:
+        :return:
+        """
         # feature dist to destination, number of player's pieces(include player and finished)
         # eval func = 1 * distance +  1 * num_all_pieces
         return - 0.1 * self._cost_to_finish(player) + \
@@ -622,14 +645,26 @@ class State:
                    w3 * normalize(self._solitary_score1(player), 10, TOTAL_NUM_PIECES_AROUND_MIN) + \
                    2 * normalize(self.finished_pieces[player], MAX_SCORE, MIN_SCORE)
 
-    # number of friends
     def _solitary_score1(self, player):
+        # TODO not sure
+        # """
+        # calculate the number of partners around the given player
+        # :param player: the player whose partners is to be calculated
+        # :return: number of partners
+        # """
         num_friends = 0
         for my_hexe in self.player_pieces_list[player]:
             num_friends += self._get_hex_around_num(my_hexe, player)
         return num_friends
 
     def _get_hex_around(self, my_hexe, player):
+        """
+        return the coordinates of hexagons around the given hexagon for the
+        given player
+        :param my_hexe: the coordinate of the hexagon at the centre
+        :param player: the player for which the result is calculated
+        :return: a list of coordinates
+        """
         res = []
         for delta in MOVE_DELTA:
             move_to = vector_add(my_hexe, delta)
@@ -639,6 +674,13 @@ class State:
         return res
 
     def _get_hex_around_num(self, my_hexe, player):
+        """
+        return the number of hexagons around the given hexagon for the given
+        player
+        :param my_hexe: the coordinate of the hexagon at the centre
+        :param player: the player for which the result is calculated
+        :return: the number of hexagons around
+        """
         count = 0
         for delta in MOVE_DELTA:
             move_to = vector_add(my_hexe, delta)
@@ -651,6 +693,13 @@ class State:
 
     # total dist between friends
     def _solidarity_score2(self, player):
+        # TODO not sure
+        # """
+        # calculate the total hex distance between the given player and all its
+        # partners
+        # :param player:
+        # :return: total hex distance
+        # """
         total_dist = 0
         for i in range(len(self.player_pieces_list[player])):
             for j in range(i + 1, len(self.player_pieces_list[player])):
@@ -664,8 +713,8 @@ class State:
 
     def is_playing_player_finished(self):
         """
-        check if player
-        :return:
+        check if the player has completed the game
+        :return: true if the player has exited the required number of pieces
         """
         return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
 
@@ -677,11 +726,17 @@ class State:
         return len(self.player_pieces_list[self.playing_player]) != 0
 
     def is_binary(self):
-        """ check whether there are only 2 players """
+        """
+        check whether there are only 2 players
+        :return: true if there are two players playing in the game
+        """
         return [len(self.player_pieces_list[player]) != 0 for player in range(0, N_PLAYER)].count(True) == 2
 
     def is_single(self):
-        """ check whether there is only 1 player left """
+        """
+        check whether there is only 1 player left
+        :return: true if only one player is playing
+        """
         return [len(self.player_pieces_list[player]) != 0 for player in range(0, N_PLAYER)].count(True) == 1
 
     def player_has_win_chance(self, player):
