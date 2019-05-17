@@ -1,8 +1,8 @@
 {
   "red": {
-    "agent": 0,
+    "agent": 4,
     "depth": 4,
-    "eval": [1],
+    "eval": [10],
     "can_binary": false,
     "can_single": false,
     "human_start": true,
@@ -10,17 +10,17 @@
     "downstream": 1
   },
   "green": {
-    "agent": 0,
+    "agent": 4,
     "depth": 4,
-    "eval": [1],
+    "eval": [10],
     "can_binary": false,
     "can_single": false,
     "human_start": true
   },
   "blue": {
-    "agent": 0,
+    "agent": 4,
     "depth": 4,
-    "eval": [1],
+    "eval": [10],
     "can_binary": false,
     "can_single": false,
     "human_start": true

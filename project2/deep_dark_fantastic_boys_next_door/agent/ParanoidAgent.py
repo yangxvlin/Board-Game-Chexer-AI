@@ -35,7 +35,7 @@ class ParanoidAgent:
 
         my_next_state = None
 
-        if depth <= 0 or s.is_terminate():
+        if depth <= 0 or s.is_terminate(player):
             # print(">>>>>")
             # if currentPlayer == rootPlayer then
             if cur_player == root_player:

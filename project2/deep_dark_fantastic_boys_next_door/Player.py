@@ -10,15 +10,15 @@ from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
                         OPEN_GAME_AGENT, OPEN_GAME_TURN_LIMIT, PASS_ACTION,
                         PLAYER_WALLS, STRATEGIC_POINTS)
 from .util import (calculate_jumped_hexe, initial_state)
-
+from collections import defaultdict
 import json
 
 
 class Player:
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/three.json"
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/setup.json"
-    PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/haha.json"
-    # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/mozi.json"
+    # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/haha.json"
+    PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/mozi.json"
     # PLAYER_SETUP = "./deep_dark_fantastic_boys_next_door/human.json"
 
     PLAYER_INDEX = -1
@@ -52,6 +52,7 @@ class Player:
         self.human_start = player_setup[colour]["human_start"]
 
         self.states_history = [initial_state()]
+        self.states_counter = defaultdict(int)
         self.has_player_knock_out = False
         self.is_just_need_to_exit = False
 
@@ -145,6 +146,8 @@ class Player:
                                      action[1][0], action[1][1], jumped_hexe)
 
         self.states_history.append(next_state)
+        self.states_counter[frozenset(next_state.pieces_player_dict)] += 1
+        print("!!!!!!!!", self.states_counter[frozenset(next_state.pieces_player_dict)], frozenset(next_state.pieces_player_dict))
 
     def choose_eval(self, index=0):
         """

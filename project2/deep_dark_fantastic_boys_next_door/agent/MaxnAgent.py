@@ -8,7 +8,7 @@ Page 20 index 34/205
 """
 
 import numpy as np
-from deep_dark_fantastic_boys_next_door.Constants import (N_PLAYER)
+from deep_dark_fantastic_boys_next_door.Constants import (N_PLAYER, PLAYER_WIN_THRESHOLD)
 
 SEARCH_DEPTH = 3
 
@@ -31,7 +31,9 @@ class MaxnAgent:
         # print("2222222222", player is None)
         next_state, best = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY, player, eval_index, opponent_index)
         # print(state, "->", next_state)
-        # print(">>>> ", best, state.evaluate(state.playing_player, player.choose_eval()), "->", next_state.evaluate(state.playing_player, player.choose_eval()))
+        # print(state)
+        # print(">>>> ", best, state.evaluate(state.playing_player, player.choose_eval(eval_index), player),
+        #       "->", next_state.evaluate(state.playing_player, player.choose_eval(eval_index), player))
         assert next_state is not None
         return next_state.action
 
@@ -43,12 +45,14 @@ class MaxnAgent:
         my_next_state = None
 
         # print("!!!!!!!!!", s.is_terminate())
-        if depth <= 0 or s.is_terminate():
+        if (depth <= 0) or ((depth < self.depth) and s.is_terminate(player)):
             # print(">>>>>>")
             res = []
             for i in range(0, 3):
                 if i == s.playing_player:
-                    if i == root_player:
+                    if player.states_counter[frozenset(s.pieces_player_dict)] == (PLAYER_WIN_THRESHOLD-1):
+                        res.append(-100)  # doesn't want to draw so early
+                    elif i == root_player:
                         res.append(s.evaluate(i, player.choose_eval(eval_index), player))
                     else:
                         res.append(s.evaluate(i, player.choose_eval(opponent_index)))
@@ -61,6 +65,7 @@ class MaxnAgent:
         cur_player = s.playing_player
 
         next_states = s.all_next_state()
+        # print(next_states)
         # print(depth, SEARCH_DEPTH)
         # print("#####", len(next_states))
         for next_state in next_states:
@@ -69,8 +74,10 @@ class MaxnAgent:
 
             _, result = self.maxn(next_state, depth - 1, root_player, best[next_player], player, eval_index, opponent_index)
             if result[cur_player] is None:
+                if player.states_counter[frozenset(next_state.pieces_player_dict)] == (PLAYER_WIN_THRESHOLD-1):
+                    result[cur_player] = -100  # doesn't want to draw so early
                 # print("!!!!!")
-                if cur_player == root_player:
+                elif cur_player == root_player:
                     # print("1111111", player is None)
                     result[cur_player] = next_state.evaluate(cur_player, player.choose_eval(eval_index), player)
                 else:

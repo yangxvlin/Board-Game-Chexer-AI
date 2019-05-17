@@ -39,7 +39,7 @@ class RandomMaxnAgent:
         my_next_states = []
 
         # print("!!!!!!!!!", s.is_terminate())
-        if depth <= 0 or s.is_terminate():
+        if depth <= 0 or s.is_terminate(player):
             return s, [s.evaluate(i, player.choose_eval()) if i == s.playing_player else None for i in range(0, 3)]
 
         best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]

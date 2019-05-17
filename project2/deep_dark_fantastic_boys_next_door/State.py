@@ -4,6 +4,7 @@ Student id:  904904
 Date:        2019-3-14 14:32:08
 Description: State to store information about the environment
 """
+import random
 
 from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
                         PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
@@ -121,7 +122,9 @@ class State:
 
         all_piece = self.all_pieces()
 
-        player_pieces = self.player_pieces_list[self.playing_player]
+        player_pieces = self.player_pieces_list[self.playing_player].copy()
+        random.shuffle(player_pieces)
+        # print(player_pieces, self.player_pieces_list[self.playing_player])
 
         # if there is an exit action, then current state has only this
         # next state
@@ -265,8 +268,10 @@ class State:
                 return player
         return None
 
-    def is_terminate(self):
-        return (self.turns == MAX_TURN) or (self.get_winner() is not None)
+    def is_terminate(self, player):
+        return (self.turns == MAX_TURN) or \
+                (self.get_winner() is not None) or \
+               (player.states_counter[frozenset(self.pieces_player_dict)] >= (PLAYER_WIN_THRESHOLD-1))
 
     def _cost_to_finish(self, player):
         """ h(state)
@@ -421,7 +426,7 @@ class State:
             # print(pieces_not_in_strategies_points, unoccupied_strategy_points)
             return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, player.strategy_points_walls) + \
                     - 0.2 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
-                   self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player])
+                   2 * (self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player]))
         else:
             return self._evaluate1(player_id)
 
