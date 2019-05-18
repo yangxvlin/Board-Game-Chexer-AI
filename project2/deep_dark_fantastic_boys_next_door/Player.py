@@ -88,7 +88,8 @@ class Player:
             return OPEN_GAME_AGENT[previous_state.playing_player][previous_state.turns]
 
         # TODO what if maxn is good enough that we won't in lose condition, lol
-        if not previous_state.player_has_win_chance(previous_state.playing_player):
+        if not previous_state.player_has_win_chance(
+                previous_state.playing_player):
             # TODO switch our game playing strategy
             pass
         if self.can_binary_game and (not self.has_player_knock_out) and previous_state.is_binary():

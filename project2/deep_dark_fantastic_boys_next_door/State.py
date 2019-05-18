@@ -15,7 +15,8 @@ from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple,
 
 
 class State:
-    """ class used to store information of pieces on board and player is playing
+    """
+    class used to store information of pieces on board and player is playing
     """
 
     def __init__(self, playing_player, player_pieces):
@@ -286,6 +287,50 @@ class State:
                 return player
         return None
 
+    def is_playing_player_finished(self):
+        """
+        check if player has 4 exited pieces
+        :return:
+        """
+        return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
+
+    def playing_player_has_pieces(self):
+        """
+        check if player has pieces left
+        :return: true if player still has pieces
+        """
+        return len(self.player_pieces_list[self.playing_player]) != 0
+
+    def _get_player_all_pieces_num(self, player_id):
+        """
+        :param player_id: player index to calculate distances for
+        :return: exited pieces num + remaining pieces num
+        """
+        return len(self.player_pieces_list[player_id]) + \
+               self.finished_pieces[player_id]
+
+    def player_has_win_chance(self, player_id):
+        """
+        :param player_id: player index to calculate distances for
+        :return: player has no winning chance when less than 4 pieces
+        """
+        return self._get_player_all_pieces_num(player_id) >= \
+               PLAYER_WIN_THRESHOLD
+
+    def is_player_knock_out(self, player):
+        """
+        check if the given player has no pieces left
+        :param player: the player to be checked
+        :return: true if the player has no pieces left
+        """
+        return len(self.player_pieces_list[player]) == 0
+
+    def snap(self):
+        """
+        adapt from provided game.py and modified by ourselves
+        """
+        return frozenset(self.pieces_player_dict), self.playing_player
+
     def is_terminate(self, player):
         """
         a game is terminated when have reached 256 turns or has one winner in
@@ -332,7 +377,11 @@ class State:
                                            PLAYER_GOAL[player_id])
 
     def _necessary_cost_to_finish(self, player_id):
-        """ first four pieces' avg distance to finish """
+        """
+        minimum distance to finish
+        :param player_id: player index to calculate distances for
+        :return: minimum cost for player
+        """
         return np.sum(np.sort(
             self._pieces_cost_to_points(self.player_pieces_list[player_id],
                                         PLAYER_GOAL[player_id], True))
@@ -340,10 +389,17 @@ class State:
                       )
 
     def _pieces_cost_to_goal(self, pieces, goals):
-
+        """
+        used when we want to move one piece to one goal
+        :param pieces: pieces to be moved
+        :param goals: goal hexe to have pieces moved in
+        :return: distance for each pieces to reach a goal respectively
+        """
+        # when pieces are more than goals, associate a goal with pieces
         if len(pieces) >= len(goals):
             froms = goals
             tos = pieces
+        # when pieces are less than goals, associate a piece with a closest goal
         else:
             froms = pieces
             tos = goals
@@ -351,6 +407,12 @@ class State:
         return self._pieces_cost_to_points(froms, tos)
 
     def _piece_should_not_be_in(self, player_id, points):
+        """
+        used when we don't want pieces in certain points
+        :param player_id: player index to calculate distances for
+        :param points: points we don't want pieces to be in
+        :return: number of pieces in unwanted points
+        """
         res = 0
         for piece in self.player_pieces_list[player_id]:
             if piece in points:
@@ -358,28 +420,37 @@ class State:
         return res
 
     def _piece_wander_cost(self, player_id):
+        """
+        used when only want to move less than 4 pieces to goal strategy points
+        instead of 4 goal points
+        :param player_id: player index to calculate distances for
+        :return: distance to player's two exit strategy points
+        """
         return self._pieces_cost_to_points(self.player_pieces_list[player_id],
                                        PLAYER_GOAL_STRATEGY_POINTS[player_id])
 
     @staticmethod
     def _hex_dist(hex1, hex2):
         """
-        :param hex1:
-        :param hex2:
-        :return:
+        modified from red blob game
+        :param hex1: first hexe piece
+        :param hex2: second hexe piece
+        :return: hexe distance between two pieces
         """
         return max(abs(hex1[0] - hex2[0]),
                    abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
                    abs(hex1[1] - hex2[1])
                    )
 
-    # TODO
-    #  how to distinguish state with same score?
-    #  how to switch eval for different phase?
-    #  do we need to move the most not yet moved pieces?
-    #  how about prefer kill strategy(the move can gain pieces)?
-    #  seems blue can always win when all are maxn
     def evaluate(self, player_id, eval_function, player=None):
+        """
+        an interface provided to outside object
+        :param player_id: player index to evaluate for
+        :param eval_function: evaluation function identifier
+        :param player: some player object attribute required for certain
+                       evaluate function
+        :return: evaluate value for certain player, larger means better
+        """
         from .Player import Player
 
         if eval_function == 1:
@@ -407,60 +478,99 @@ class State:
         elif eval_function == 12:
             return self._evaluate12(player_id, player)
         elif eval_function == 13:
-            # print(Player.PLAYER_INDEX)
             return self._evaluate13(Player.PLAYER_INDEX)
         # for completeness
         else:
             print("unsupported eval!!")
             return None
 
-    # eval for move to customized goals
+    def _evaluate1(self, player_id):
+        """
+        :param player_id: player index to evaluate for
+        :return: evaluate value considering distance to exit and owning pieces
+                 num
+        """
+        return - 0.1 * self._cost_to_finish(player_id) + \
+               self._get_player_all_pieces_num(player_id)
+
+    def _evaluate9(self, player_id, player):
+        """
+        :param player_id: player index to evaluate for
+        :param player: some player object attribute required for certain
+                       evaluate function
+        :return: evaluate value considering distance to exit and owning pieces
+                 num and points should not occupied
+        """
+        # win immediately
+        if self.finished_pieces[player_id] >= PLAYER_WIN_THRESHOLD:
+            return 100
+
+        return - 0.1 * self._necessary_cost_to_finish(player_id) + \
+               self._get_player_all_pieces_num(player_id) + \
+               self.finished_pieces[player_id] - \
+               self._piece_should_not_be_in(self.playing_player,
+                                            player.strategy_points_walls)
+
     def _evaluate11(self, player_id, player):
-        # print(">>>>> in 111111111111111111")
-        # print(player_id, player is None)
+        """
+        :param player_id: player index to evaluate for
+        :param player: some player object attribute required for certain
+                       evaluate function
+        :return: evaluate value for root player considering move pieces to
+                 strategy points; otherwise follow normal game strategy
+        """
+        # win immediately
+        if self.finished_pieces[player_id] >= PLAYER_WIN_THRESHOLD:
+            return 100
+
         if player_id == self.playing_player:
-            # print(self.player_pieces_list[self.playing_player])
             pieces_not_in_strategies_points = []
             occupied_strategy_points = []
 
+            # filter pieces
             for piece in self.player_pieces_list[self.playing_player]:
                 if piece not in player.strategy_points:
                     pieces_not_in_strategies_points.append(piece)
                 else:
                     occupied_strategy_points.append(piece)
 
-            unoccupied_strategy_points = list(set(player.strategy_points) - set(occupied_strategy_points))
+            unoccupied_strategy_points = list(
+                set(player.strategy_points) - set(occupied_strategy_points))
 
-            # print(pieces_not_in_strategies_points, unoccupied_strategy_points)
-            return - 0.1 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, player.strategy_points_walls) + \
-                    - 0.2 * self._pieces_cost_to_goal(pieces_not_in_strategies_points, unoccupied_strategy_points) + \
-                   2 * (self.finished_pieces[self.playing_player] + len(self.player_pieces_list[self.playing_player]))
+            return - 0.1 * self._pieces_cost_to_goal(
+                    pieces_not_in_strategies_points,
+                    player.strategy_points_walls) + \
+                   - 0.2 * self._pieces_cost_to_goal(
+                    pieces_not_in_strategies_points,
+                    unoccupied_strategy_points) + \
+                   2 * self._get_player_all_pieces_num(player_id)
         else:
             return self._evaluate1(player_id)
 
     def _evaluate12(self, player_id, player):
-        # print(">>>>>")
+        """
+        :param player_id: player index to evaluate for
+        :param player: some player object attribute required for certain
+                       evaluate function
+        :return: evaluate value for player to move several pieces to goal and
+                 not exit and let pieces in the unwanted points to leave
+        """
         if player_id == self.playing_player:
             return - 0.1 * self._piece_wander_cost(player_id) + \
                    len(self.player_pieces_list[player_id]) - \
-                    self._piece_should_not_be_in(self.playing_player, player.strategy_points_walls)
-                   # + 0.25 * self._piece_cost_away_points(self.playing_player, player.strategy_traps)
+                   self._piece_should_not_be_in(self.playing_player,
+                                                player.strategy_points_walls)
         else:
             return self._evaluate1(player_id)
 
-    def _evaluate13(self, player):
-        # print(player)
-        # feature dist to destination, number of player's pieces(include player and finished)
-        # eval func = 1 * distance +  1 * num_all_pieces
-        return - (self.finished_pieces[player] + len(self.player_pieces_list[player]))
+    def _evaluate13(self, player_id):
+        """
+        :param player_id: player index to evaluate for
+        :return: evaluate value for player to minimize given player's pieces num
+        """
+        return - self._get_player_all_pieces_num(player_id)
 
-    # first attempt for eval f()
-    def _evaluate1(self, player):
-        # feature dist to destination, number of player's pieces(include player and finished)
-        # eval func = 1 * distance +  1 * num_all_pieces
-        return - 0.1 * self._cost_to_finish(player) + \
-               self.finished_pieces[player] + \
-               len(self.player_pieces_list[player])
+# ************************* unused function but worth a look ******************
 
     # consider for solitary pattern
     def _evaluate7(self, player):
@@ -491,18 +601,7 @@ class State:
                normalize(self.finished_pieces[player] + my_pieces_num, NUM_PIECES_MAX, NUM_PIECES_MIN) + \
                2 * normalize(self.finished_pieces[player], 4, 0)
 
-    def _evaluate9(self, player_id, player):
-        """ xulin modification """
 
-        my_pieces_num = len(self.player_pieces_list[player_id])
-
-        if self.finished_pieces[player_id] >= PLAYER_WIN_THRESHOLD:
-            return 100
-
-        return - 0.1 * self._necessary_cost_to_finish(player_id) + \
-               self.finished_pieces[player_id] + my_pieces_num + \
-               self.finished_pieces[player_id] - \
-               self._piece_should_not_be_in(self.playing_player, player.strategy_points_walls)
 
     def _evaluate10(self, player):
         """ xulin modification """
@@ -672,44 +771,20 @@ class State:
         return total_dist
 
     def get_key(self):
-        """  """
-        return tuple(element_to_tuple(self.player_pieces_list)) + tuple(self.finished_pieces)
-
-    def is_playing_player_finished(self):
         """
-        check if player
-        :return:
+        :return: the key representation of the state
         """
-        return self.finished_pieces[self.playing_player] == PLAYER_WIN_THRESHOLD
-
-    def playing_player_has_pieces(self):
-        """
-        check if player has pieces left
-        :return: true if player still has pieces
-        """
-        return len(self.player_pieces_list[self.playing_player]) != 0
+        return tuple(element_to_tuple(self.player_pieces_list)) + \
+               tuple(self.finished_pieces)
 
     def is_binary(self):
-        """ check whether there are only 2 players """
+        """
+        :return: True if there are only 2 players
+        """
         return [len(self.player_pieces_list[player]) != 0 for player in range(0, N_PLAYER)].count(True) == 2
 
     def is_single(self):
-        """ check whether there is only 1 player left """
+        """
+        :return: True if there are only 1 player
+        """
         return [len(self.player_pieces_list[player]) != 0 for player in range(0, N_PLAYER)].count(True) == 1
-
-    def player_has_win_chance(self, player):
-        return len(self.player_pieces_list[player]) + self.finished_pieces[player] >= PLAYER_WIN_THRESHOLD
-
-    def is_player_knock_out(self, player):
-        """
-        check if the given player has no pieces left
-        :param player: the player to be checked
-        :return: true if the player has no pieces left
-        """
-        return len(self.player_pieces_list[player]) == 0
-
-    def snap(self):
-        """ adapt from provided game.py and modified by ourselves """
-        return frozenset(self.pieces_player_dict), self.playing_player
-
-    # def is_other_player_finished(self):
