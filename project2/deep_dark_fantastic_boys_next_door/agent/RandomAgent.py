@@ -2,7 +2,7 @@
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-4-14 23:26:22
-Description: agent make random move
+Description: agent make random move (not adapted)
 """
 from numpy.random import choice
 

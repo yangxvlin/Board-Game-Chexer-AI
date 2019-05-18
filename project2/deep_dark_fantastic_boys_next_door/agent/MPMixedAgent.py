@@ -2,7 +2,7 @@
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-3-11 22:42:08
-Description: MP Mixed agent
+Description: MP Mixed agent (not adapted)
              https://www.aaai.org/ocs/index.php/IJCAI/IJCAI-09/paper/viewFile/507/728
 """
 from Agent import Agent

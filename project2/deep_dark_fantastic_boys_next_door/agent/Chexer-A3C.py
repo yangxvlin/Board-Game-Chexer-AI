@@ -2,7 +2,9 @@
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-5-7 13:23:34
-Description: modify from https://jaromiru.com/2017/03/26/lets-make-an-a3c-implementation/
+Description: (not adapted)
+             modify from https://jaromiru.com/2017/03/26/lets-make-an-a3c-implementation/
+             tried, but found difficult to modify it. So give up it.
 """
 
 import numpy as np

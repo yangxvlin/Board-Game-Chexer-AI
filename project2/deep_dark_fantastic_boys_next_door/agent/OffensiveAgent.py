@@ -2,7 +2,7 @@
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-3-12 11:14:03
-Description: Offensive Agent
+Description: Offensive Agent (not adapted)
              https://www.aaai.org/ocs/index.php/IJCAI/IJCAI-09/paper/viewFile/507/728
 """
 from Agent import Agent

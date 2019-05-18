@@ -1,11 +1,10 @@
 """
 Author:      XuLin Yang
 Student id:  904904
-Date:        
-Description: modify from https://github.com/dennybritz/reinforcement-learning/blob/master/TD/Q-Learning%20Solution.ipynb
-
+Date:        2019-5-18 20:23:00
+Description: agent used for reinforcement learning by policy learning
+modify from https://github.com/dennybritz/reinforcement-learning/blob/master/TD/Q-Learning%20Solution.ipynb
 if want to study https://www.cse.unsw.edu.au/~cs9417ml/RL1/algorithms.html
-
 terminology: "round" == "turn"
 """
 

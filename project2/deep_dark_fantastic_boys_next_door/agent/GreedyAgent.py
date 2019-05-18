@@ -2,7 +2,7 @@
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-5-9 17:20:06
-Description: 
+Description: greedy agent == maxn with depth=1 (not adapted)
 """
 
 from .MaxnAgent import MaxnAgent
