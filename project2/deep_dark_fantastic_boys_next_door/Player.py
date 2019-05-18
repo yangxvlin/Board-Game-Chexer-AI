@@ -146,8 +146,8 @@ class Player:
                                      action[1][0], action[1][1], jumped_hexe)
 
         self.states_history.append(next_state)
-        self.states_counter[frozenset(next_state.pieces_player_dict)] += 1
-        print("!!!!!!!!", self.states_counter[frozenset(next_state.pieces_player_dict)], frozenset(next_state.pieces_player_dict))
+        self.states_counter[next_state.snap()] += 1
+        print("!!!!!!!!", self.states_counter[frozenset(next_state.snap())], next_state.snap())
 
     def choose_eval(self, index=0):
         """

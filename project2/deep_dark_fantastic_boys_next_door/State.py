@@ -700,4 +700,8 @@ class State:
         """
         return len(self.player_pieces_list[player]) == 0
 
+    def snap(self):
+        """ adapt from provided game.py and modified by ourselves """
+        return frozenset(self.pieces_player_dict), self.playing_player
+
     # def is_other_player_finished(self):

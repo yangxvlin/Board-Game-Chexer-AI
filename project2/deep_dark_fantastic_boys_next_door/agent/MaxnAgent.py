@@ -50,7 +50,7 @@ class MaxnAgent:
             res = []
             for i in range(0, 3):
                 if i == s.playing_player:
-                    if player.states_counter[frozenset(s.pieces_player_dict)] == (PLAYER_WIN_THRESHOLD-1):
+                    if player.states_counter[s.snap()] == (PLAYER_WIN_THRESHOLD-1):
                         res.append(-100)  # doesn't want to draw so early
                     elif i == root_player:
                         res.append(s.evaluate(i, player.choose_eval(eval_index), player))
@@ -74,7 +74,7 @@ class MaxnAgent:
 
             _, result = self.maxn(next_state, depth - 1, root_player, best[next_player], player, eval_index, opponent_index)
             if result[cur_player] is None:
-                if player.states_counter[frozenset(next_state.pieces_player_dict)] == (PLAYER_WIN_THRESHOLD-1):
+                if player.states_counter[next_state.snap()] == (PLAYER_WIN_THRESHOLD-1):
                     result[cur_player] = -100  # doesn't want to draw so early
                 # print("!!!!!")
                 elif cur_player == root_player:
