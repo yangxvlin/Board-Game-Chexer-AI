@@ -5,11 +5,13 @@ Date:        2019-3-14 14:32:08
 Description: State to store information about the environment
 """
 import random
-
-from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP, EXIT, PASS,
-                        PLAYER_PLAYING_ORDER, EMPTY_BOARD, PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER,
-                        PLAYER_GOAL, PLAYER_GOAL_STRATEGY_POINTS)
-from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple, normalize)
+import numpy as np
+from .Constants import (MOVE_DELTA, PLAYER_PREFERRED_MOVE_DELTA, MOVE, JUMP,
+                        EXIT, PASS, PLAYER_PLAYING_ORDER, EMPTY_BOARD,
+                        PLAYER_WIN_THRESHOLD, MAX_TURN, N_PLAYER, PLAYER_GOAL,
+                        PLAYER_GOAL_STRATEGY_POINTS, BLUE_PLAYER_INDEX)
+from .util import (vector_add, on_board, is_in_goal_hexe, element_to_tuple,
+                   normalize)
 
 
 class State:
@@ -17,39 +19,46 @@ class State:
     """
 
     def __init__(self, playing_player, player_pieces):
-        """ initialize a state
+        """
+        initialize a state
         :param playing_player: the  player is going to perform an action
         :param player_pieces: player's corresponding pieces
         """
         # playing_player
         self.playing_player = playing_player
-        # [[(q, r), ...], ...]  list planned for project 2
+        # mapping between player with their own pieces
+        # [[(q, r), ...], ...]
         self.player_pieces_list = player_pieces
+        # mapping between piece with its owner
         # {(q, r): player, ...}
         self.pieces_player_dict = {piece: player
                                    for player in PLAYER_PLAYING_ORDER.values()
                                    for piece in self.player_pieces_list[player]}
-
         # action from previous state to current state
         self.action = None
+        # turns played by player up to the current state
         self.turns = 0
+        # number of pieces finished by each player up to current state
         self.finished_pieces = [0, 0, 0]
 
     def __repr__(self):
-        """ str(State)
+        """
+        str(State)
         :return: state.toString()
         """
         return str(self.player_pieces_list)
 
     def __hash__(self):
-        """ hash(State)
+        """
+        hash(State)
         :return: hash value the state
         """
         # return hash(str(self))
         return hash(tuple(element_to_tuple(self.player_pieces_list)))
 
     def __eq__(self, other):
-        """ check the equality of two states
+        """
+        check the equality of two states
         :param other: the other state
         :return: True if state has same board configuration. otherwise False
         """
@@ -57,13 +66,11 @@ class State:
                set(other.pieces_player_dict.items())
 
     def copy(self):
-        """ copy(state)
-        :return: deepcopy of current copy
+        """
+        copy(state)
+        :return: shallow copy of state's attribute
         """
         copyed = State(self.playing_player, EMPTY_BOARD)
-        # copyed.pieces_player_dict = deepcopy(self.pieces_player_dict)
-        # copyed.player_pieces_list = deepcopy(self.player_pieces_list)
-        # copyed.player_pieces_list = self.player_pieces_list.copy()
         copyed.player_pieces_list = [i.copy() for i in self.player_pieces_list]
         copyed.pieces_player_dict = self.pieces_player_dict.copy()
         copyed.turns = self.turns
@@ -72,14 +79,16 @@ class State:
         return copyed
 
     def all_next_action(self):
+        """
+        :return: list of possible actions can be taken by the player
+        """
         res = []
 
         all_piece = self.all_pieces()
 
         player_pieces = self.player_pieces_list[self.playing_player]
 
-        # if there is an exit action, then current state has only this
-        # next state
+        # exit actions
         for piece in player_pieces:
             if is_in_goal_hexe(piece, self.playing_player):
                 res.append((EXIT, piece))
@@ -101,45 +110,43 @@ class State:
                         jump_piece = vector_add(adj_piece, delta)
 
                         # not occupied & on board
-                        if (jump_piece not in all_piece) & \
-                                on_board(jump_piece):
+                        if (jump_piece not in all_piece) & on_board(jump_piece):
                             res.append((JUMP, (piece, jump_piece)))
 
         if len(res) == 0:
             return [(PASS, None)]
         else:
-            # sort the output to process exit action first then jump then move
             return res
 
     def all_next_state(self):
-        """ find all possible states
+        """
+        find all possible states
         :return: list of state after performed one action
 
-        additional note: state's copy should inside each if condition as copy
-        is an expensive operation
+        additional note: return the next state ordered by player's preferred
+        move action order to ensure choices are sort by the distance to player
+        finish goal order; shuffle the candidate player pieces to avoid agent
+        always choose the same next state when choices are with same evaluation
+        value.
         """
         res = []
-
         all_piece = self.all_pieces()
-
+        # inplace shuffle requires a copy
         player_pieces = self.player_pieces_list[self.playing_player].copy()
         random.shuffle(player_pieces)
-        # print(player_pieces, self.player_pieces_list[self.playing_player])
 
-        # if there is an exit action, then current state has only this
-        # next state
+        # state with exit action
         for piece in player_pieces:
             if is_in_goal_hexe(piece, self.playing_player):
                 # create next state
                 next_state = self.copy()
                 # update action
                 next_state.update_action(EXIT, self.playing_player, piece)
-
                 if next_state not in res:
                     res.append(next_state)
 
         # foreach movable piece
-        # TODO change the next state preference order
+        # the order of for loop is discussed in the function comments
         for delta in PLAYER_PREFERRED_MOVE_DELTA[self.playing_player]:
             for piece in player_pieces:
                 adj_piece = vector_add(piece, delta)
@@ -153,7 +160,6 @@ class State:
                         # update action
                         next_state.update_action(MOVE, self.playing_player,
                                                  piece, adj_piece)
-
                         if next_state not in res:
                             res.append(next_state)
 
@@ -163,15 +169,13 @@ class State:
                         jump_piece = vector_add(adj_piece, delta)
 
                         # not occupied & on board
-                        if (jump_piece not in all_piece) & \
-                                on_board(jump_piece):
+                        if (jump_piece not in all_piece) & on_board(jump_piece):
                             # create next state
                             next_state = self.copy()
                             # update action
                             next_state.update_action(JUMP, self.playing_player,
                                                      piece, jump_piece,
                                                      adj_piece)
-
                             if next_state not in res:
                                 res.append(next_state)
 
@@ -180,13 +184,12 @@ class State:
             next_state.update_action(PASS, self.playing_player)
             return [next_state]
         else:
-            # sort the output to process exit action first then jump then move
-            # return sorted(res, key=lambda x: x.action[0])
             return res
 
-    def update_action(self, action, previous_player, from_hexe=None, to_hexe=None,
-                      jumped_hexe=None):
-        """ update a state by action
+    def update_action(self, action, previous_player, from_hexe=None,
+                      to_hexe=None, jumped_hexe=None):
+        """
+        update a state by action
         :param previous_player: player playing in previous state
         :param action: MOVE or JUMP or EXIT
         :param from_hexe: original hexe piece coordinate
@@ -216,13 +219,16 @@ class State:
                 # jump need to update jumped piece info
                 if action == JUMP:
                     # jumped other player's piece
-                    if jumped_hexe not in self.player_pieces_list[previous_player]:
+                    if jumped_hexe not in self.player_pieces_list[
+                            previous_player]:
                         # get jumped piece's player index
-                        jumped_hexe_player = self.pieces_player_dict[jumped_hexe]
+                        jumped_hexe_player = self.pieces_player_dict[
+                            jumped_hexe]
                         # update player's new piece info over original piece
                         self.player_pieces_list[jumped_hexe_player].remove(
                             jumped_hexe)
-                        self.player_pieces_list[previous_player].append(jumped_hexe)
+                        self.player_pieces_list[previous_player].append(
+                            jumped_hexe)
 
                         # update location of piece
                         self.pieces_player_dict.pop(jumped_hexe)
@@ -245,74 +251,95 @@ class State:
             self.action = (action, None)
 
     def get_next_player_index(self):
-        if self.playing_player != 2:
+        """ 
+        :return: next player's index in [0, 1, 2] for red, green, blue 
+        respectively 
+        """
+        if self.playing_player != BLUE_PLAYER_INDEX:
+            # +1 to get next player
             return self.playing_player + 1
         else:
+            # blue player (index: 2) next player is red player (index: 0)
             return 0
 
     def has_remaining_pieces(self):
-        """ check whether a player has exited all player's pieces
+        """
+        check whether a player has exited all player's pieces
         :return: True if player has no more pieces, otherwise False
         """
         return len(self.player_pieces_list[self.playing_player]) != 0
 
     def all_pieces(self):
-        """ find all pieces on board
+        """
+        find all pieces on board
         :return: list of all pieces
         """
         return self.pieces_player_dict.keys()
 
     def get_winner(self):
+        """
+        When a player has exited 4 pieces, then this player is the winner.
+        :return: player if player is the winner, None otherwise
+        """
         for player in range(0, N_PLAYER):
             if self.finished_pieces[player] == PLAYER_WIN_THRESHOLD:
                 return player
         return None
 
     def is_terminate(self, player):
+        """
+        a game is terminated when have reached 256 turns or has one winner in
+        the game or board configure occurred 4 times
+        :param player: Player object holds board configure counter
+        :return: True if a game is terminated, False otherwise
+        """
         return (self.turns == MAX_TURN) or \
-                (self.get_winner() is not None) or \
-               (player.states_counter[frozenset(self.pieces_player_dict)] >= (PLAYER_WIN_THRESHOLD-1))
+               (self.get_winner() is not None) or \
+               (player.states_counter[self.snap()] >= PLAYER_WIN_THRESHOLD)
 
-    def _cost_to_finish(self, player):
-        """ h(state)
-        :return: distance from current state to goal state
+    def _pieces_cost_to_points(self, pieces, points, to_array=False):
+        """
+        calculate the minimum summed distance for all pieces to reach in one of
+        the points
+        :param pieces: list of hexes to move
+        :param points: list of hexes to arrive
+        :param to_array: return distance for each piece in numpy.array or
+                         summed value
+        :return: hexe distance(s)
         """
         # hex distance right now
-        total_dist = 0
-        for i in self.player_pieces_list[player]:
-            min_dist = 10
-            for j in PLAYER_GOAL[player]:
-                curr_dist = self._hex_dist(i, j)/2 + 1
-                if curr_dist < min_dist:
-                    min_dist = curr_dist
-            total_dist += min_dist
-        return total_dist
-
-    def _necessary_cost_to_finish(self, player):
-        """ first four pieces' avg distance to finish """
-        total_dist = []
-        for i in self.player_pieces_list[player]:
-            min_dist = 10
-            for j in PLAYER_GOAL[player]:
-                curr_dist = self._hex_dist(i, j)/2 + 1
-                if curr_dist < min_dist:
-                    min_dist = curr_dist
-            total_dist.append(min_dist)
-        return sum(sorted(total_dist)[:PLAYER_WIN_THRESHOLD - self.finished_pieces[player]])
-
-    def _cost_to_goal(self, player, goals):
-        total_dist = 0
-        for i in self.player_pieces_list[player]:
-            min_dist = 10
-            for j in goals[player]:
+        total_dist = np.array([])
+        for i in pieces:
+            min_dist = float("inf")
+            for j in points:
+                # /2 +1 to let dist() be admissible
                 curr_dist = self._hex_dist(i, j) / 2 + 1
                 if curr_dist < min_dist:
                     min_dist = curr_dist
-            total_dist += min_dist
-        return total_dist
+
+            total_dist = np.append(total_dist, min_dist)
+        if to_array:
+            return total_dist
+        else:
+            return np.sum(total_dist)
+
+    def _cost_to_finish(self, player_id):
+        """
+        :param player_id: player index to calculate distances for
+        :return: distance from current state to goal state
+        """
+        return self._pieces_cost_to_points(self.player_pieces_list[player_id],
+                                           PLAYER_GOAL[player_id])
+
+    def _necessary_cost_to_finish(self, player_id):
+        """ first four pieces' avg distance to finish """
+        return np.sum(np.sort(
+            self._pieces_cost_to_points(self.player_pieces_list[player_id],
+                                        PLAYER_GOAL[player_id], True))
+                      [:PLAYER_WIN_THRESHOLD - self.finished_pieces[player_id]]
+                      )
 
     def _pieces_cost_to_goal(self, pieces, goals):
-        total_dist = 0
 
         if len(pieces) >= len(goals):
             froms = goals
@@ -321,25 +348,7 @@ class State:
             froms = pieces
             tos = goals
 
-        for i in froms:
-            min_dist = 10
-            for j in tos:
-                curr_dist = self._hex_dist(i, j) / 2 + 1
-                if curr_dist < min_dist:
-                    min_dist = curr_dist
-            total_dist += min_dist
-        return total_dist
-
-    def _piece_cost_away_points(self, player, points):
-        total_dist = 0
-        for i in self.player_pieces_list[player]:
-            min_dist = 10
-            for j in points:
-                curr_dist = self._hex_dist(i, j) / 2 + 1
-                if curr_dist < min_dist:
-                    min_dist = curr_dist
-            total_dist += min_dist
-        return total_dist
+        return self._pieces_cost_to_points(froms, tos)
 
     def _piece_should_not_be_in(self, player_id, points):
         res = 0
@@ -349,21 +358,20 @@ class State:
         return res
 
     def _piece_wander_cost(self, player_id):
-        total_dist = 0
-
-        for i in self.player_pieces_list[player_id]:
-            min_dist = 10
-            for j in PLAYER_GOAL_STRATEGY_POINTS[player_id]:
-                curr_dist = self._hex_dist(i, j) / 2 + 1
-                if curr_dist < min_dist:
-                    min_dist = curr_dist
-            total_dist += min_dist
-        return total_dist
+        return self._pieces_cost_to_points(self.player_pieces_list[player_id],
+                                       PLAYER_GOAL_STRATEGY_POINTS[player_id])
 
     @staticmethod
     def _hex_dist(hex1, hex2):
-        return max(abs(hex1[0] - hex2[0]), abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
-                   abs(hex1[1] - hex2[1]))
+        """
+        :param hex1:
+        :param hex2:
+        :return:
+        """
+        return max(abs(hex1[0] - hex2[0]),
+                   abs((-hex1[0] - hex1[1]) - (-hex2[0] - hex2[1])),
+                   abs(hex1[1] - hex2[1])
+                   )
 
     # TODO
     #  how to distinguish state with same score?

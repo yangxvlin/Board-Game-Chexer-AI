@@ -30,10 +30,10 @@ class MaxnAgent:
         # print("1", state)
         # print("2222222222", player is None)
         next_state, best = self.maxn(state, self.depth, state.playing_player, NEGATIVE_INFINITY, player, eval_index, opponent_index)
-        # print(state, "->", next_state)
+        print(state, "->", next_state)
         # print(state)
-        # print(">>>> ", best, state.evaluate(state.playing_player, player.choose_eval(eval_index), player),
-        #       "->", next_state.evaluate(state.playing_player, player.choose_eval(eval_index), player))
+        print(">>>> ", best, state.evaluate(state.playing_player, player.choose_eval(eval_index), player),
+              "->", next_state.evaluate(state.playing_player, player.choose_eval(eval_index), player))
         assert next_state is not None
         return next_state.action
 
@@ -50,7 +50,7 @@ class MaxnAgent:
             res = []
             for i in range(0, 3):
                 if i == s.playing_player:
-                    if player.states_counter[s.snap()] == (PLAYER_WIN_THRESHOLD-1):
+                    if player.states_counter[s.snap()] == PLAYER_WIN_THRESHOLD:
                         res.append(-100)  # doesn't want to draw so early
                     elif i == root_player:
                         res.append(s.evaluate(i, player.choose_eval(eval_index), player))
@@ -58,7 +58,7 @@ class MaxnAgent:
                         res.append(s.evaluate(i, player.choose_eval(opponent_index)))
                 else:
                     res.append(None)
-            return s, res
+            return None, res
             # return s, [None for i in range(0, 3)]
 
         best = [NEGATIVE_INFINITY for _ in np.arange(0, N_PLAYER)]
@@ -74,7 +74,7 @@ class MaxnAgent:
 
             _, result = self.maxn(next_state, depth - 1, root_player, best[next_player], player, eval_index, opponent_index)
             if result[cur_player] is None:
-                if player.states_counter[next_state.snap()] == (PLAYER_WIN_THRESHOLD-1):
+                if player.states_counter[next_state.snap()] == PLAYER_WIN_THRESHOLD:
                     result[cur_player] = -100  # doesn't want to draw so early
                 # print("!!!!!")
                 elif cur_player == root_player:

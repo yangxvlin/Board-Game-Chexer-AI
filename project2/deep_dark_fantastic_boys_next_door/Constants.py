@@ -55,6 +55,9 @@ PLAYER_PLAYING_ORDER = {"red": 0, "green": 1, "blue": 2}
 """ player index playing order """
 PLAYER_ORDER = [0, 1, 2]
 
+""" index representation of blue player """
+BLUE_PLAYER_INDEX = 2
+
 """ player playing order with map player string """
 PLAYING_ORDER_PLAYER_MAP = {0: "red", 1: "green", 2: "blue"}
 
