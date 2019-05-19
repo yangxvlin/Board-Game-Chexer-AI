@@ -1,11 +1,11 @@
 {
   "red": {
-    "agent": 0,
-    "depth": 4,
-    "eval": [1, 11, 12, 9, 13, 1],
+    "agent": 6,
+    "depth": 3,
+    "eval": [11, 12, 9, 13, 1],
     "can_binary": false,
     "can_single": false,
-    "human_start": true,
+    "human_start": false,
     "upstream": 2,
     "downstream": 1
   },
@@ -20,12 +20,12 @@
     "downstream": 2
   },
   "blue": {
-    "agent": 0,
+    "agent": 6,
     "depth": 3,
-    "eval": [1, 11, 12, 9, 13, 1],
+    "eval": [11, 12, 9, 13, 1],
     "can_binary": false,
     "can_single": false,
-    "human_start": true,
+    "human_start": false,
     "upstream": 1,
     "downstream": 0
   }
