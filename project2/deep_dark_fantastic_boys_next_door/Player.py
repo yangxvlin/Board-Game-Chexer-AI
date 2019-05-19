@@ -12,6 +12,7 @@ from .Constants import (MOVE, JUMP, EXIT, PASS, PLAYER_PLAYING_ORDER,
 from .util import (calculate_jumped_hexe, initial_state)
 from collections import defaultdict
 import json
+import gc
 
 
 class Player:
@@ -120,6 +121,7 @@ class Player:
         self.states_counter[next_state.snap()] += 1
         print(previous_state.turns)
         print("!!!!!!!!", self.states_counter[next_state.snap()], next_state.snap())
+        gc.collect()
 
     def choose_eval(self, index=0):
         """
