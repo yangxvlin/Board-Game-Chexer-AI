@@ -55,8 +55,9 @@ class Player:
         # choose human start strategy
         self.human_start = player_setup[colour]["human_start"]
 
+        self.history = initial_state()
         # all played state
-        self.states_history = [initial_state()]
+        # self.states_history = [initial_state()]
         # board configure counter
         self.states_counter = defaultdict(int)
 
@@ -72,7 +73,8 @@ class Player:
         :return: our agent's chosen action
         """
 
-        previous_state = self.states_history[-1]
+        # previous_state = self.states_history[-1]
+        previous_state = self.history
 
         # player has no pieces, so no need to search
         if not previous_state.playing_player_has_pieces():
@@ -90,7 +92,8 @@ class Player:
         :param colour: representing the player make the action
         :param action: the action made by the player
         """
-        previous_state = self.states_history[-1]
+        # previous_state = self.states_history[-1]
+        previous_state = self.history
         assert previous_state.playing_player == PLAYER_PLAYING_ORDER[colour]
         # generate state | action
         next_state = previous_state.copy()
@@ -110,9 +113,10 @@ class Player:
             next_state.update_action(action[0], previous_state.playing_player,
                                      action[1][0], action[1][1], jumped_hexe)
 
-        self.states_history.clear()
-        self.states_history.append(next_state)
-        # self.states_history = self.states_history[-1:]
+        # self.states_history.clear()
+        # self.states_history.append(next_state)
+        # # self.states_history = self.states_history[-1:]
+            self.history = previous_state
         self.states_counter[next_state.snap()] += 1
         print(previous_state.turns)
         print("!!!!!!!!", self.states_counter[next_state.snap()], next_state.snap())
