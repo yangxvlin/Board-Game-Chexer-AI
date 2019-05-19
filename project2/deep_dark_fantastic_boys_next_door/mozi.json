@@ -1,11 +1,11 @@
 {
   "red": {
-    "agent": 6,
-    "depth": 3,
-    "eval": [11, 12, 9, 13, 1],
+    "agent": 0,
+    "depth": 4,
+    "eval": [1, 11, 12, 9, 13, 1],
     "can_binary": false,
     "can_single": false,
-    "human_start": false,
+    "human_start": true,
     "upstream": 2,
     "downstream": 1
   },
