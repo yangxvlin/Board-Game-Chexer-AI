@@ -47,7 +47,6 @@ class MoZiAgent:
         if self.strategy_points is None:
             self.strategy_points = player.strategy_points
         self.update_strategy_points(state)
-        print(">>>>", player.strategy_points, self.strategy_points)
 
         # human learned good start strategy
         if state.turns < THE_ART_OF_WAR_TURN_LIMIT:
@@ -68,7 +67,6 @@ class MoZiAgent:
 
             # second phase
             if (not self.arrived_strategy_points) and strategy_points_arrived:
-                # print("now phase 2 !!!!")
                 self.arrived_strategy_points = True
                 return self.get_second_phase_action(state,
                                                     player,
@@ -81,7 +79,6 @@ class MoZiAgent:
             # agent try to go to strategy points in first phase
             else:
                 self.update_walls(state, player)
-                print(">>>>>>", player.strategy_points_walls, player.strategy_traps)
                 # 0, 3 are chosen evaluation function in this phase
                 return self.search_agent.get_next_action(state, player, 0, 3)
 
@@ -97,7 +94,6 @@ class MoZiAgent:
         :return: action MoZi agent chosen in second phase
         """
         self.update_walls(state, player)
-        print(">>>>>>", player.strategy_points_walls, player.strategy_traps)
         player_arrived_pieces, player_outside_pieces = self.divide_pieces(state)
 
         num_player_outside_pieces = len(player_outside_pieces)
@@ -202,7 +198,6 @@ class MoZiAgent:
                             break
                     if has_move:
                         safe_move.append((MOVE, (piece, move_choice[0])))
-        print(">>>>>>>>>>>>", safe_move)
         return safe_move
 
     def choose_safe_jump(self, state, pieces_in_strategy_points):
@@ -220,8 +215,6 @@ class MoZiAgent:
                                            jump_choice[1]) and \
                     (jump_choice[2] not in state.pieces_player_dict):
                 enemy_gift.append((JUMP, (piece, jump_choice[1])))
-
-        print("<<<<<<<<<<", enemy_gift)
         return enemy_gift
 
     def check_gift_jump(self, state, pieces_in_strategy_points):
