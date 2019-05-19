@@ -1,7 +1,7 @@
 {
   "red": {
     "agent": 0,
-    "depth": 6,
+    "depth": 4,
     "eval": [1, 11, 12, 9, 13, 1],
     "can_binary": false,
     "can_single": false,
