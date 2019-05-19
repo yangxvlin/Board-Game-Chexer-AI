@@ -1,6 +1,6 @@
 {
   "red": {
-    "agent": 6,
+    "agent": 0,
     "depth": 3,
     "eval": [11, 12, 9, 13, 1],
     "can_binary": false,
@@ -20,7 +20,7 @@
     "downstream": 2
   },
   "blue": {
-    "agent": 6,
+    "agent": 0,
     "depth": 3,
     "eval": [11, 12, 9, 13, 1],
     "can_binary": false,
