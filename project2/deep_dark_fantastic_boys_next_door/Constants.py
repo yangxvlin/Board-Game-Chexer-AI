@@ -75,26 +75,14 @@ PLAYER_GOAL_STRATEGY_POINTS = {0: ((3, -3), (3,  0)),
                                1: ((0,  3), (-3, 3)),
                                2: ((-3, 0), (0, -3))}
 
+""" maximum evaluation function value """
+MAX_EVALUATION_VALUE = 100
+
+""" minimum evaluation function value """
+MIN_EVALUATION_VALUE = -100
+
 """ number of players in game """
 N_PLAYER = 3
-
-""" the number of turn of open game human-start strategy """
-OPEN_GAME_TURN_LIMIT = 3
-
-""" 
-open game human-start strategy for each player's starting turns to achieve a 
-good started hexe pattern for adversarial agents
-{player: {turn: action}} 
-"""
-OPEN_GAME_AGENT = {0: {0: (MOVE, ((-3, 0), (-2, 0))),
-                       1: (MOVE, ((-2, 0), (-2, 1))),
-                       2: (MOVE, ((-3, 3), (-2, 2)))},
-                   1: {0: (MOVE, ((0, -3), (0, -2))),
-                       1: (MOVE, ((0, -2), (1, -2))),
-                       2: (MOVE, ((3, -3), (2, -2)))},
-                   2: {0: (MOVE, ((0,  3), (0,  2))),
-                       1: (MOVE, ((2,  1), (1,  1))),
-                       2: (MOVE, ((3,  0), (2,  1)))}}
 
 """ 
 open game human-start strategy for each player's starting turns to achieve a 
@@ -166,8 +154,27 @@ STRATEGY_SAFE_MOVE_TO_OUTSIDE_POINTS = {(0, -3): (((-1, -2), (0, -2), (1, -3), (
 
 THE_ART_OF_WAR_TURN_LIMIT = 1
 
+""" negative infinity used in program """
 NEGATIVE_INFINITY = float('-inf')
 
+""" positive infinity used in program """
 POSITIVE_INFINITY = float('inf')
 
-# PLAYER = -1
+# ************************* unused but worth a look ***************************
+""" 
+open game human-start strategy for each player's starting turns to achieve a 
+good started hexe pattern for adversarial agents
+{player: {turn: action}} 
+"""
+OPEN_GAME_AGENT = {0: {0: (MOVE, ((-3, 0), (-2, 0))),
+                       1: (MOVE, ((-2, 0), (-2, 1))),
+                       2: (MOVE, ((-3, 3), (-2, 2)))},
+                   1: {0: (MOVE, ((0, -3), (0, -2))),
+                       1: (MOVE, ((0, -2), (1, -2))),
+                       2: (MOVE, ((3, -3), (2, -2)))},
+                   2: {0: (MOVE, ((0,  3), (0,  2))),
+                       1: (MOVE, ((2,  1), (1,  1))),
+                       2: (MOVE, ((3,  0), (2,  1)))}}
+
+""" the number of turn of open game human-start strategy """
+OPEN_GAME_TURN_LIMIT = 3
