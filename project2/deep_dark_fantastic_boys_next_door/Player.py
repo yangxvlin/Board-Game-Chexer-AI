@@ -114,6 +114,7 @@ class Player:
         self.states_history.append(next_state)
         # self.states_history = self.states_history[-1:]
         self.states_counter[next_state.snap()] += 1
+        print(previous_state.turns)
         print("!!!!!!!!", self.states_counter[next_state.snap()], next_state.snap())
 
     def choose_eval(self, index=0):
