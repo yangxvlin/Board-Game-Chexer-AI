@@ -626,7 +626,6 @@ class State:
         NUM_PIECES_MIN = 0
         NUM_PIECES_MAX = 12
         TOTAL_NUM_PIECES_AROUND_MIN = 0
-        # TODO solitary max score {1:..., 2:..., 3:..., }
         ONE_NUM_PIECES_AROUND_MAX = 6
         my_pieces_num = len(self.player_pieces_list[player])
 
@@ -641,7 +640,6 @@ class State:
         NUM_PIECES_MIN = 0
         NUM_PIECES_MAX = 12
         TOTAL_NUM_PIECES_AROUND_MIN = 0
-        # TODO solitary max score {1:..., 2:..., 3:..., }
         ONE_NUM_PIECES_AROUND_MAX = 6
         my_pieces_num = len(self.player_pieces_list[player])
 
@@ -659,7 +657,6 @@ class State:
         NUM_PIECES_MIN = 0
         NUM_PIECES_MAX = 12
         TOTAL_NUM_PIECES_AROUND_MIN = 0
-        # TODO solitary max score {1:..., 2:..., 3:..., }
         ONE_NUM_PIECES_AROUND_MAX = 6
         MIN_SCORE = 0
         MAX_SCORE = 4
@@ -683,7 +680,6 @@ class State:
         NUM_PIECES_MIN = 0
         NUM_PIECES_MAX = 12
         TOTAL_NUM_PIECES_AROUND_MIN = 0
-        # TODO solitary max score {1:..., 2:..., 3:..., }
         ONE_NUM_PIECES_AROUND_MAX = 6
         MIN_SCORE = 0
         MAX_SCORE = 4
@@ -712,7 +708,6 @@ class State:
         NUM_PIECES_MIN = 0
         NUM_PIECES_MAX = 12
         TOTAL_NUM_PIECES_AROUND_MIN = 0
-        # TODO solitary max score {1:..., 2:..., 3:..., }
         ONE_NUM_PIECES_AROUND_MAX = 6
         MIN_SCORE = 0
         MAX_SCORE = 4

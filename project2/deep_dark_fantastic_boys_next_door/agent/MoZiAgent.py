@@ -11,7 +11,7 @@ from deep_dark_fantastic_boys_next_door.Constants import (THE_ART_OF_WAR,
     NEGATIVE_INFINITY, STRATEGIC_POINTS, ALL_STRATEGIC_POINTS,
     STRATEGY_JUMP_FROM_TO_POINTS, PLAYER_WIN_THRESHOLD,
     STRATEGY_POINTS_AND_WALL, STRATEGY_JUMP_FROM_TO_OUTSIDE_POINTS,
-    STRATEGY_SAFE_MOVE_TO_OUTSIDE_POINTS)
+    STRATEGY_SAFE_MOVE_TO_OUTSIDE_POINTS, BLUE_PLAYER_INDEX, DEATH_POINT)
 from deep_dark_fantastic_boys_next_door.agent.MaxnAgent import MaxnAgent
 from numpy.random import choice
 
@@ -49,54 +49,24 @@ class MoZiAgent:
         self.update_strategy_points(state)
         print(">>>>", player.strategy_points, self.strategy_points)
 
-        # return self.search_agent.get_next_action(state, player)
+        # human learned good start strategy
         if state.turns < THE_ART_OF_WAR_TURN_LIMIT:
-            if (state.playing_player == 2) and \
-                    self.strategy_point_occupied(state, (-2, 3)):
+            # can't choose predefined strategy, then directly jump to first
+            # phase maxn search
+            if (state.playing_player == BLUE_PLAYER_INDEX) and \
+                    self.strategy_point_occupied(state, DEATH_POINT):
+                # 0, 3 are chosen evaluation function in this phase
                 return self.search_agent.get_next_action(state, player, 0, 3)
             else:
                 return THE_ART_OF_WAR[state.playing_player][state.turns]
         elif state.turns == 1:
+            return self.start_game_agent_action_search(state, player)
 
-            if state.playing_player == 0:
-                if self.strategy_point_occupied(
-                        state, STRATEGIC_POINTS[state.playing_player][0]):
-                    return MOVE, ((-3, 1), (-3, 0))
-                elif self.strategy_point_occupied(state, (-1, -2)) and \
-                        (not self.strategy_point_occupied(state, (0, -3))):
-                    return JUMP, ((-2, -1), (0, -3))
-                else:
-                    return MOVE, ((-2, -1), (-1, -2))
-
-            elif state.playing_player == 1:
-                if self.strategy_point_occupied(
-                        state, STRATEGIC_POINTS[state.playing_player][0]):
-                    return MOVE, ((2, -3), (3, -3))
-                elif self.strategy_point_occupied(state, (3, -1)) and \
-                        (not self.strategy_point_occupied(state, (3, 0))):
-                    return JUMP, ((3, -2), (3, 0))
-                else:
-                    return MOVE, ((3, -2), (3, -1))
-
-            else:
-                assert state.playing_player == 2
-                if ((-1, 3) in state.pieces_player_dict) and \
-                        (state.pieces_player_dict[(-1, 3)] ==
-                         state.playing_player):
-                    if self.strategy_point_occupied(
-                            state, STRATEGIC_POINTS[state.playing_player][0]):
-                        return MOVE, ((1, 2), (0, 3))
-                    elif self.strategy_point_occupied(state, (-2, 3)) and \
-                            (not self.strategy_point_occupied(state, (-3, 3))):
-                        return JUMP, ((-1, 3), (-3, 3))
-                    else:
-                        return MOVE, ((-1, 3), (-2, 3))
-                else:
-                    return self.search_agent.get_next_action(state, player, 0, 3)
         else:
             strategy_points_arrived = self.player_pieces_in_strategy_points(
                 state.playing_player, state)
 
+            # second phase
             if (not self.arrived_strategy_points) and strategy_points_arrived:
                 # print("now phase 2 !!!!")
                 self.arrived_strategy_points = True
@@ -107,40 +77,57 @@ class MoZiAgent:
                 return self.get_second_phase_action(state,
                                                     player,
                                                     strategy_points_arrived)
-            # agent try to go to strategy points 1st time
+
+            # agent try to go to strategy points in first phase
             else:
                 self.update_walls(state, player)
                 print(">>>>>>", player.strategy_points_walls, player.strategy_traps)
+                # 0, 3 are chosen evaluation function in this phase
                 return self.search_agent.get_next_action(state, player, 0, 3)
 
     def get_second_phase_action(self, state, player, strategy_points_arrived):
+        """
+        MoZi Agent has occupied all enemy's strategy points and start capturing
+        enemy gift piece in the trap; moving extra pieces to self strategy
+        points; set pieces in strategy points free when the hunted player in
+        knocked out; exit pieces when have enough pieces to win
+        :param state: current state
+        :param player: player object
+        :param strategy_points_arrived: strategy points player has occupied
+        :return: action MoZi agent chosen in second phase
+        """
         self.update_walls(state, player)
         print(">>>>>>", player.strategy_points_walls, player.strategy_traps)
         player_arrived_pieces, player_outside_pieces = self.divide_pieces(state)
 
         num_player_outside_pieces = len(player_outside_pieces)
-        # num_player_arrived_pieces = len(player_arrived_pieces)
 
         # enemy gift piece check
         move = self.check_gift_jump(state, player_arrived_pieces)
         if move is not None:
             return move
 
+        # remove to enemy strategy points
         if not strategy_points_arrived:
+            # 0, 4 are chosen evaluation function in this phase
             return self.search_agent.get_next_action(state, player, 0, 4)
 
-        # has free pieces (#pieces > 4)
-        # if (num_player_arrived_pieces == len(self.strategy_points)) and (num_player_outside_pieces > 0):
+        # has extra pieces, thus wander pieces to strategy points; or exit
+        # pieces when have enough pieces to win
         if num_player_outside_pieces > 0:
             copied_state = state.copy()
-            copied_state.player_pieces_list[copied_state.playing_player] = player_outside_pieces
+            copied_state.player_pieces_list[copied_state.playing_player] = \
+                player_outside_pieces
             # enough to exit, exit as quick as possible
             if copied_state.player_has_win_chance(copied_state.playing_player):
+                # 2, 4 are chosen evaluation function in this phase
                 return self.search_agent.get_next_action(copied_state, player, 2, 4)
             # not enough to exit, go to goals and wait to exit
+            # 1, 3 are chosen evaluation function in this phase
             return self.search_agent.get_next_action(copied_state, player, 1, 3)
+
+        # has no extra pieces, thus choose an safe move
         else:
-            # choose an safe move
             enemy_gift = self.choose_safe_jump(state, player_arrived_pieces)
             if len(enemy_gift) > 0:
                 return enemy_gift[choice(len(enemy_gift))]
@@ -150,6 +137,7 @@ class MoZiAgent:
                 return safe_move[choice(len(safe_move))]
 
             # otherwise do whatever
+            # 0, 4 are chosen evaluation function in this phase
             return self.search_agent.get_next_action(state, player, 0, 4)
 
     def strategy_point_occupied(self, state, point):
@@ -165,6 +153,7 @@ class MoZiAgent:
         delete unnecessary strategy points when the player is knock out
         :param state: current state
         """
+        # 2 here is number of two strategy point for each player
         if state.is_player_knock_out(self.upstream):
             for point in STRATEGIC_POINTS[state.playing_player][:2]:
                 if point in self.strategy_points:
@@ -182,7 +171,7 @@ class MoZiAgent:
         """
         upstream_points, downstream_points = \
             self.divide_pieces_to_strategies_points(state.playing_player, state)
-
+        # 2 here is number of two strategy point for each player
         if len(upstream_points) == 2:
             for wall in STRATEGY_POINTS_AND_WALL[upstream_points]:
                 if wall in player.strategy_points_walls:
@@ -316,3 +305,18 @@ class MoZiAgent:
                     downstream_points.append(piece)
 
         return tuple(upstream_points), tuple(downstream_points)
+
+    def start_game_agent_action_search(self, state, player):
+        """
+        :param state: input state
+        :param player: player object contains information parameter
+        :return: start game action
+        """
+        actions = set(state.all_next_action())
+
+        for action in THE_ART_OF_WAR[state.playing_player][state.turns]:
+            if action in actions:
+                return action
+        # otherwise directly step to first phase
+        # 0, 3 are chosen evaluation function in this phase
+        return self.search_agent.get_next_action(state, player, 0, 3)
