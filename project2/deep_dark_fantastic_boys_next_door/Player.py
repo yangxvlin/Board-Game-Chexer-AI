@@ -111,6 +111,7 @@ class Player:
                                      action[1][0], action[1][1], jumped_hexe)
 
         self.states_history.append(next_state)
+        self.states_history = self.states_history[-1:]
         self.states_counter[next_state.snap()] += 1
         print("!!!!!!!!", self.states_counter[next_state.snap()], next_state.snap())
 
