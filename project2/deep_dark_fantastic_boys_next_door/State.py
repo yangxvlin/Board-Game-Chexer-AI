@@ -136,16 +136,6 @@ class State:
         player_pieces = self.player_pieces_list[self.playing_player].copy()
         random.shuffle(player_pieces)
 
-        # state with exit action
-        for piece in player_pieces:
-            if is_in_goal_hexe(piece, self.playing_player):
-                # create next state
-                next_state = self.copy()
-                # update action
-                next_state.update_action(EXIT, self.playing_player, piece)
-                if next_state not in res:
-                    res.append(next_state)
-
         # foreach movable piece
         # the order of for loop is discussed in the function comments
         for delta in PLAYER_PREFERRED_MOVE_DELTA[self.playing_player]:
@@ -179,6 +169,16 @@ class State:
                                                      adj_piece)
                             if next_state not in res:
                                 res.append(next_state)
+
+        # state with exit action
+        for piece in player_pieces:
+            if is_in_goal_hexe(piece, self.playing_player):
+                # create next state
+                next_state = self.copy()
+                # update action
+                next_state.update_action(EXIT, self.playing_player, piece)
+                if next_state not in res:
+                    res.append(next_state)
 
         if len(res) == 0:
             next_state = self.copy()
@@ -543,7 +543,7 @@ class State:
                    - 0.2 * self._pieces_cost_to_goal(
                     pieces_not_in_strategies_points,
                     unoccupied_strategy_points) + \
-                   2 * self._get_player_all_pieces_num(player_id)
+                   5 * self._get_player_all_pieces_num(player_id)
         else:
             return self._evaluate1(player_id)
 

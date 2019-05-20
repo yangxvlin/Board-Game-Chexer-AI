@@ -46,14 +46,6 @@ class MaxnAgent:
         next_state, best = self.maxn(state, self.depth, state.playing_player,
                                      NEGATIVE_INFINITY, player, eval_index,
                                      opponent_index)
-        print(state, "->", next_state)
-        # print(state)
-        print(">>>> ", best, state.evaluate(state.playing_player,
-                                            player.choose_eval(eval_index),
-                                            player),
-              "->", next_state.evaluate(state.playing_player,
-                                        player.choose_eval(eval_index),
-                                        player))
         assert next_state is not None
         return next_state.action
 
