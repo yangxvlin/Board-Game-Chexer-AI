@@ -1,8 +1,8 @@
 """
 Author:      XuLin Yang
 Student id:  904904
-Date:        
-Description: 
+Date:        2019-5-18 20:02:21
+Description: class used to provide an environment for learning
 """
 
 from deep_dark_fantastic_boys_next_door.Constants import (MAX_TURN,
@@ -51,7 +51,6 @@ class GameEnv:
         player_reward = [0, 0, 0]
 
         for player, player_next_state in enumerate(players_next_states):
-            # assert player == player_next_state.playing_player
             # add to history
             self.states_history.append(player_next_state)
 
@@ -69,12 +68,9 @@ class GameEnv:
             # no piece to keeps fighting == Lose
             if len(player_next_state.player_pieces_list[player]) == 0:
                 player_reward[player] = LOSE_REWARD
-            # print(player,  player_next_state.finished_pieces[player],
-            #     len(player_next_state.player_pieces_list[player]))
 
         # turn ends
         if players_next_states[0].turns == MAX_TURN:
             is_done = True
             return [0, 0, 0], is_done
-        # print(player_reward)
         return player_reward, is_done

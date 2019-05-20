@@ -18,6 +18,11 @@ class AgentFactory:
 
     @staticmethod
     def create_agent(agent_type, **kwargs):
+        """
+        :param agent_type:  agent unique identifier
+        :param kwargs: dictionary
+        :return: created game agent
+        """
         if agent_type == 0:
             return MaxnAgent(kwargs["depth"], float('inf'))
         elif agent_type == 1:
@@ -29,7 +34,9 @@ class AgentFactory:
         elif agent_type == 5:
             return RandomMaxnAgent(kwargs["depth"])
         elif agent_type == 6:
-            return MoZiAgent(kwargs["upstream"], kwargs["downstream"], kwargs["depth"])
+            return MoZiAgent(kwargs["upstream"],
+                             kwargs["downstream"],
+                             kwargs["depth"])
         elif agent_type == 7:
             return HumanAgent()
         else:

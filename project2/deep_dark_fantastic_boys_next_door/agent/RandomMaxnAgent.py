@@ -2,7 +2,7 @@
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-5-12 20:07:31
-Description: 
+Description: (not adapted)
 """
 
 from numpy.random import choice

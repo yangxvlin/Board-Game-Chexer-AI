@@ -1,8 +1,9 @@
 """
 Author:      XuLin Yang
 Student id:  904904
-Date:        
-Description: https://medium.com/@violante.andre/simple-reinforcement-learning-temporal-difference-learning-e883ea0d65b0
+Date:        2019-5-18 20:29:11
+Description: (not adapted)
+https://medium.com/@violante.andre/simple-reinforcement-learning-temporal-difference-learning-e883ea0d65b0
 
 I think we should use TD(1) because 1 makes our agent long term reward considered
 which means it becomes monte carlo method by https://blog.csdn.net/weixin_37895339/article/details/74644038

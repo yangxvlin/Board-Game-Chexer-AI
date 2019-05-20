@@ -2,7 +2,7 @@
 Author:      XuLin Yang
 Student id:  904904
 Date:        2019-3-11 22:33:05
-Description: paranoid agent with alpha-beta pruning
+Description: paranoid agent with alpha-beta pruning (not adapted)
              https://project.dke.maastrichtuniversity.nl/games/files/phd/Nijssen_thesis.pdf
 """
 
