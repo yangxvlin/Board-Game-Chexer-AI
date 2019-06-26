@@ -29,3 +29,10 @@ Feedback on code quality, correctness, and performance:
   searching       62.5%
   (email Matt for logs)
   ---------------------
+
+Feedback on creativity:
+
+Well done for the awesome number of substantial improvements you've adopted over
+the basic techniques included in lectures, and for your impressively creative
+insights into the game of Chexers itself, resulting in a highly dynamic and
+highly effective playing strategy. Super great!
