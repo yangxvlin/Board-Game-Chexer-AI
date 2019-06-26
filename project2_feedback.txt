@@ -1,0 +1,31 @@
+================================================================================
+COMP30024 Artificial Intelligence - Project Part B - Marks and Feedback
+================================================================================
+
+Team: liguoc-xuliny-deep_dark_fantastic_boys_next_door
+
+Marks:
+
+---------------------------
+Code quality:  4.00 /  4.00
+Correctness:   4.00 /  4.00
+Performance:   6.50 /  7.00
+Creativity:    7.00 /  7.00
+---------------------------
+Total mark:   21.50 / 22.00
+---------------------------
+
+Feedback:
+
+Feedback on code quality, correctness, and performance:
+
+  Results from test games against benchmark opponents:
+
+  ---------------------
+  opponent    win ratio
+  ---------------------
+  random         100.0%
+  greedy          50.0%
+  searching       62.5%
+  (email Matt for logs)
+  ---------------------

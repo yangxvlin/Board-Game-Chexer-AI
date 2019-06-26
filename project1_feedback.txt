@@ -1,0 +1,32 @@
+================================================================================
+COMP30024 Artificial Intelligence - Project Part A - Marks and Feedback
+================================================================================
+
+Team: liguoc-xuliny-deep_dark_fantastic_boys_next_door
+
+Marks:
+
+--------------------------
+Report:       2.0    / 2.0
+Code quality: 2.0    / 2.0
+Auto-testing: 4.0    / 4.0
+--------------------------
+Total mark:   8.0    / 8.0
+--------------------------
+
+Feedback:
+
+Feedback on report:
+
+  Your representation of the problem is natural and sensible - well done!
+  
+  A very interesting approach to designing your heuristic. It's nice to see your
+  discussion that a complex heuristic like Dijkstra can work for this problem,
+  since h(n) is so good that A* doesn't need to expand too many nodes. The
+  relaxation to allow a piece to jump at any time is an elegant way of making
+  the heuristic admissible.
+  
+  Your empirical approach to determining the factors that influence the space/
+  time complexity is excellent - the graphs clearly display many of the features
+  we'd expect from the theoretical time/space complexity of A*.
+  
